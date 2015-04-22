@@ -12,7 +12,8 @@
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:text="@string/join_poll"
-                android:id="@+id/join_poll_button" android:layout_weight="1"/>
+                android:id="@+id/join_poll_button" android:layout_weight="1" android:onClick="joinPoll"
+                />
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
