@@ -30,4 +30,9 @@ public class MainScreen extends Activity {
         intent.putExtra("options", options);
         startActivity(intent);
     }
+
+    public void createPoll(View view) {
+        Intent intent = new Intent(this, CreatePollChooseType.class);
+        startActivity(intent);
+    }
 }

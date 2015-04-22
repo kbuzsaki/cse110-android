@@ -14,6 +14,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".SingleChoicePoll"/>
+        <activity android:name=".CreatePollChooseType"/>
     </application>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" >
     </uses-permission>

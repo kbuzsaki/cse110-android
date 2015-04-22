@@ -24,8 +24,8 @@
         <Button
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:text="@string/new_poll"
-                android:id="@+id/new_poll_button" android:layout_weight="1"/>
+                android:text="@string/create_poll"
+                android:id="@+id/new_poll_button" android:layout_weight="1" android:onClick="createPoll"/>
     </LinearLayout>
     <EditText
             android:layout_width="match_parent"

@@ -2,5 +2,5 @@
 <resources>
     <string name="app_name">Pollr</string>
     <string name="join_poll">Join</string>
-    <string name="new_poll">Create</string>
+    <string name="create_poll">Create</string>
 </resources>
