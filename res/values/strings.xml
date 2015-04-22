@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Pollr</string>
-    <string name="join_poll">Join</string>
-    <string name="create_poll">Create</string>
-</resources>
