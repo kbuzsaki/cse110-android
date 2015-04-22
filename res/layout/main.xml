@@ -1,12 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+              xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
         >
-    <TextView android:id="@+id/text_view"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:text="Hello World, MyActivity"
-            />
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:minHeight="50dp">
+        <Button
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:text="@string/join_poll"
+                android:id="@+id/join_poll_button" android:layout_weight="1"/>
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:text="@string/app_name"
+                android:id="@+id/textView" android:layout_weight="1" android:textAlignment="center"
+                android:gravity="center" android:elegantTextHeight="false" android:autoText="false"
+                android:textSize="30dp"/>
+        <Button
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:text="@string/new_poll"
+                android:id="@+id/new_poll_button" android:layout_weight="1"/>
+    </LinearLayout>
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editText" android:hint="search"/>
+    <ListView
+            android:layout_width="match_parent"
+            android:layout_height="451dp"
+            android:id="@+id/listView" tools:listitem="@android:layout/simple_list_item_2"/>
 </LinearLayout>
