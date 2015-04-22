@@ -3,9 +3,13 @@ package edu.ucsd.studentpoll;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +21,18 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+//        LinearLayout contentView = (LinearLayout) findViewById(R.id.contentView);
+//
+//        CardView cardView = new CardView(this);
+//
+//        EditText editText = new EditText(this);
+//        editText.setText("card Text");
+//
+//        cardView.addView(editText);
+//        cardView.att
+//
+//        contentView.addView(cardView);
     }
 
     public void joinPoll(View view) {
