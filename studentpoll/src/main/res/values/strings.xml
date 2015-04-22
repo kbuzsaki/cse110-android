@@ -1,5 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">studentpoll</string>
+    <string name="app_name">Pollr</string>
+    <string name="join_poll">Join</string>
+    <string name="create_poll">Create</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

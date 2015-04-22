@@ -1,9 +1,14 @@
 package edu.ucsd.studentpoll;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class MainActivity extends Activity {
@@ -14,6 +19,18 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
     }
 
+    public void joinPoll(View view) {
+        Intent intent = new Intent(this, SingleChoicePoll.class);
+        ArrayList<String> options = new ArrayList<>();
+        options.addAll(Arrays.asList("Cheese", "Pepperoni", "Sausage", "Mushroom", "Onion"));
+        intent.putExtra("options", options);
+        startActivity(intent);
+    }
+
+    public void createPoll(View view) {
+        Intent intent = new Intent(this, CreatePollChooseType.class);
+        startActivity(intent);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
