@@ -40,10 +40,7 @@ public class MainActivity extends Activity {
     }
 
     public void joinPoll(View view) {
-        Intent intent = new Intent(this, SingleChoicePoll.class);
-        ArrayList<String> options = new ArrayList<>();
-        options.addAll(Arrays.asList("Cheese", "Pepperoni", "Sausage", "Mushroom", "Onion"));
-        intent.putExtra("options", options);
+        Intent intent = new Intent(this, JoinPoll.class);
         startActivity(intent);
     }
 
