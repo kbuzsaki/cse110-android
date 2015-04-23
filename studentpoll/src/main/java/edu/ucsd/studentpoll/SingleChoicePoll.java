@@ -21,6 +21,7 @@ public class SingleChoicePoll extends Activity {
         ArrayList<String> options = intent.getStringArrayListExtra("options");
 
         RadioGroup optionsGroup = (RadioGroup) findViewById(R.id.options_group);
+        optionsGroup.removeAllViews();
 
         for(String option : options) {
             RadioButton button = new RadioButton(this);
