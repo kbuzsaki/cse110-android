@@ -5,12 +5,16 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +26,20 @@ public class JoinPoll extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.join_poll);
+
+        final Button submitButton = (Button) findViewById(R.id.accessCodeSubmit);
+        EditText edit_txt = (EditText) findViewById(R.id.accessCodeField);
+
+        edit_txt.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_DONE) {
+                    submitButton.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         LinearLayout joinPollList = (LinearLayout) findViewById(R.id.joinPollList);
         LayoutInflater.from(this).inflate(R.layout.join_poll_card, joinPollList);

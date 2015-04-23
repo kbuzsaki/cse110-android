@@ -16,12 +16,17 @@
         <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/accessCodeField" android:layout_weight="1" android:hint="enter access code"/>
+                android:id="@+id/accessCodeField"
+                android:layout_weight="1"
+                android:hint="enter access code"
+                android:inputType="text"
+                android:singleLine="true"
+                android:imeOptions="actionDone" />
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Join"
-                android:id="@+id/button5" android:onClick="joinPoll"/>
+                android:id="@+id/accessCodeSubmit" android:onClick="joinPoll"/>
     </LinearLayout>
     <RelativeLayout
             android:layout_width="match_parent"
