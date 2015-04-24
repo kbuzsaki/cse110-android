@@ -13,13 +13,13 @@
                 android:layout_height="fill_parent"
                 android:text="Single Choice"
                 android:id="@+id/button" android:layout_gravity="center_vertical" android:layout_weight="1"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp" android:onClick="createSingleChoicePoll"/>
         <Button
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:text="Multi Choice"
                 android:id="@+id/button2" android:layout_gravity="center_vertical" android:layout_weight="1"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp" android:onClick="createMultipleChoicePoll"/>
     </LinearLayout>
     <LinearLayout
             android:orientation="horizontal"

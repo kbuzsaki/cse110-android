@@ -1,9 +1,11 @@
 package edu.ucsd.studentpoll;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CheckBox;
 
 
 public class CreateChoicePoll extends Activity {
@@ -12,8 +14,15 @@ public class CreateChoicePoll extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_choice_poll);
-    }
 
+        Intent intent = getIntent();
+
+        boolean allowMultiple = intent.getBooleanExtra("allowMultiple", false);
+        boolean allowCustom = intent.getBooleanExtra("allowCustom", false);
+
+        ((CheckBox)findViewById(R.id.allow_multiple_checkbox)).setChecked(allowMultiple);
+        ((CheckBox)findViewById(R.id.allow_custom_checkbox)).setChecked(allowCustom);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

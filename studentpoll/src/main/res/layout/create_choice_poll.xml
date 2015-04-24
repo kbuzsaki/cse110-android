@@ -72,7 +72,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Allow\nCustom\nOptions"
-                        android:id="@+id/checkBox" android:checked="false"/>
+                        android:id="@+id/allow_custom_checkbox" android:checked="false"/>
             </LinearLayout>
             <LinearLayout
                     android:orientation="horizontal"
@@ -82,7 +82,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Allow\nMultiple\nChoices"
-                        android:id="@+id/checkBox2" android:checked="false"/>
+                        android:id="@+id/allow_multiple_checkbox" android:checked="false"/>
             </LinearLayout>
             <Button
                     android:layout_width="wrap_content"
