@@ -64,29 +64,25 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-            <CheckBox
+            <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Allow\nCustom"
-                    android:id="@+id/checkBox" android:checked="false"/>
+                    android:layout_height="match_parent" android:gravity="center_vertical">
+                <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Allow\nCustom\nOptions"
+                        android:id="@+id/checkBox" android:checked="false"/>
+            </LinearLayout>
             <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center">
-                <RadioGroup
+                <CheckBox
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                    <RadioButton
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Single Choice"
-                            android:id="@+id/radioButton6" android:checked="false"/>
-                    <RadioButton
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Multi Choice"
-                            android:id="@+id/radioButton5" android:checked="false"/>
-                </RadioGroup>
+                        android:layout_height="wrap_content"
+                        android:text="Allow\nMultiple\nChoices"
+                        android:id="@+id/checkBox2" android:checked="false"/>
             </LinearLayout>
             <Button
                     android:layout_width="wrap_content"
