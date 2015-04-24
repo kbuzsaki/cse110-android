@@ -28,9 +28,9 @@ public class JoinPoll extends Activity {
         setContentView(R.layout.join_poll);
 
         final Button submitButton = (Button) findViewById(R.id.accessCodeSubmit);
-        EditText edit_txt = (EditText) findViewById(R.id.accessCodeField);
+        EditText accessCodeField = (EditText) findViewById(R.id.accessCodeField);
 
-        edit_txt.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+        accessCodeField.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if(actionId == EditorInfo.IME_ACTION_DONE) {
