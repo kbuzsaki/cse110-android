@@ -2,27 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.ucsd.studentpoll" >
 
-    <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:windowSoftInputMode="stateHidden">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".SingleChoicePoll"/>
-        <activity android:name=".CreatePollChooseType"/>
-        <activity
-            android:name=".JoinPoll"
-            android:label="@string/title_activity_join_poll"
-            android:windowSoftInputMode="stateHidden" />
-    </application>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" >
     </uses-permission>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" >
@@ -33,4 +12,32 @@
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".SingleChoicePoll" />
+        <activity android:name=".CreatePollChooseType" />
+        <activity
+            android:name=".JoinPoll"
+            android:label="@string/title_activity_join_poll"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".CreateChoicePoll"
+            android:label="@string/title_activity_create_choice_poll" >
+        </activity>
+    </application>
+
 </manifest>
