@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import edu.ucsd.studentpoll.view.SlidingTabLayout;
 
 
 public class MainActivity extends FragmentActivity {
@@ -26,6 +27,8 @@ public class MainActivity extends FragmentActivity {
      */
     private PagerAdapter pagerAdapter;
 
+    private SlidingTabLayout slidingTabLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +39,10 @@ public class MainActivity extends FragmentActivity {
         pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(1);
+
+        slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+        slidingTabLayout.setDistributeEvenly(true);
+        slidingTabLayout.setViewPager(viewPager);
     }
 
     public void switchToJoinPoll() {
@@ -78,6 +85,19 @@ public class MainActivity extends FragmentActivity {
                     return new CreatePollChooseType();
             }
             return new HomeFragment();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch(position) {
+                case 0:
+                    return "Polls";
+                case 1:
+                    return "Groups";
+                case 2:
+                    return "Create";
+            }
+            return "wat";
         }
 
         @Override
