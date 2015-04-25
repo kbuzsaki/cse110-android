@@ -29,11 +29,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".SingleChoicePoll" />
-        <activity android:name=".CreatePollChooseType" />
-        <activity
-            android:name=".JoinPoll"
-            android:label="@string/title_activity_join_poll"
-            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".CreateChoicePoll"
             android:label="@string/title_activity_create_choice_poll"

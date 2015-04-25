@@ -1,73 +1,88 @@
 package edu.ucsd.studentpoll;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
+    /**
+     * The number of pages (wizard steps) to show in this demo.
+     */
+    private static final int NUM_PAGES = 3;
 
-    private static int randInt(int min, int max) {
-        return (int)Math.floor(Math.random() * (max - min)) + min;
-    }
+    /**
+     * The pager widget, which handles animation and allows swiping horizontally to access previous
+     * and next wizard steps.
+     */
+    private ViewPager viewPager;
+
+    /**
+     * The pager adapter, which provides the pages to the view pager widget.
+     */
+    private PagerAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        LinearLayout contentView = (LinearLayout) findViewById(R.id.contentView);
-        for(int i = 0; i < 10; i++) {
-            LayoutInflater.from(this).inflate(R.layout.poll_history_card, contentView);
-            View cardView = contentView.getChildAt(i);
-            String timeText = randInt(2, 21) + " minutes ago";
-            String voteText = randInt(0, 7) + "/" + randInt(7, 10) + " votes";
-            ((TextView)cardView.findViewById(R.id.time)).setText(timeText);
-            ((TextView)cardView.findViewById(R.id.votes)).setText(voteText);
-        }
+        // Instantiate a ViewPager and a PagerAdapter.
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(pagerAdapter);
+        viewPager.setCurrentItem(1);
     }
 
-    public void joinPoll(View view) {
-        Intent intent = new Intent(this, JoinPoll.class);
-        startActivity(intent);
+    public void switchToJoinPoll() {
+        viewPager.setCurrentItem(0);
     }
 
-    public void createPoll(View view) {
-        Intent intent = new Intent(this, CreatePollChooseType.class);
-        startActivity(intent);
+    public void switchToCreatePoll() {
+        viewPager.setCurrentItem(2);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    public void onBackPressed() {
+        if (viewPager.getCurrentItem() == 0) {
+            // If the user is currently looking at the first step, allow the system to handle the
+            // Back button. This calls finish() on this activity and pops the back stack.
+            super.onBackPressed();
+        } else {
+            // Otherwise, select the previous step.
+            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+        }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if(id == R.id.action_settings) {
-            return true;
+    /**
+     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
+     * sequence.
+     */
+    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+        public ScreenSlidePagerAdapter(FragmentManager fm) {
+            super(fm);
         }
 
-        return super.onOptionsItemSelected(item);
+        @Override
+        public Fragment getItem(int position) {
+            switch(position) {
+                case 0:
+                    return new JoinPoll();
+                case 1:
+                    return new HomeFragment();
+                case 2:
+                    return new CreatePollChooseType();
+            }
+            return new HomeFragment();
+        }
+
+        @Override
+        public int getCount() {
+            return NUM_PAGES;
+        }
     }
 }

@@ -12,14 +12,14 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:text="Single Choice"
-                android:id="@+id/button" android:layout_gravity="center_vertical" android:layout_weight="1"
-                android:layout_margin="10dp" android:onClick="createSingleChoicePoll"/>
+                android:id="@+id/create_single_choice_button" android:layout_gravity="center_vertical" android:layout_weight="1"
+                android:layout_margin="10dp"/>
         <Button
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:text="Multi Choice"
-                android:id="@+id/button2" android:layout_gravity="center_vertical" android:layout_weight="1"
-                android:layout_margin="10dp" android:onClick="createMultipleChoicePoll"/>
+                android:id="@+id/create_multi_choice_button" android:layout_gravity="center_vertical" android:layout_weight="1"
+                android:layout_margin="10dp"/>
     </LinearLayout>
     <LinearLayout
             android:orientation="horizontal"
