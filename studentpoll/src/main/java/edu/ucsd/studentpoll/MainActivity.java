@@ -1,16 +1,27 @@
 package edu.ucsd.studentpoll;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import edu.ucsd.studentpoll.view.SlidingTabLayout;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -60,14 +71,82 @@ public class MainActivity extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if(id == R.id.action_settings) {
-            return true;
+        switch(item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_join:
+                joinPollDialog();
+                return true;
+            case R.id.action_search:
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void joinPollDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter Access Code");
+
+        final EditText accessCodeInput = new EditText(this);
+        accessCodeInput.setHint("e.g. redpanda");
+
+        FrameLayout frameLayout = new FrameLayout(this);
+        frameLayout.setPadding(40, 0, 40, 0);
+        frameLayout.addView(accessCodeInput);
+
+        builder.setView(frameLayout);
+
+        builder.setPositiveButton("Join", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dismissKeyboardFrom(accessCodeInput);
+                String accessCode = accessCodeInput.getText().toString();
+                handleAccessCode(accessCode);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // canceled
+                dismissKeyboardFrom(accessCodeInput);
+            }
+        });
+
+        builder.show();
+    }
+
+    private void handleAccessCode(String accessCode) {
+        if (accessCode.equalsIgnoreCase("redpanda")) {
+            Intent intent = new Intent(this, SingleChoicePoll.class);
+            ArrayList<String> options = new ArrayList<>();
+            options.addAll(Arrays.asList("Cheese", "Pepperoni", "Sausage", "Mushroom", "Onion"));
+            intent.putExtra("options", options);
+            startActivity(intent);
+        }
+        else {
+            AlertDialog errorDialog = new AlertDialog.Builder(this)
+                    .setTitle("Join Failed")
+                    .setMessage("We couldn't find a poll for \"" + accessCode + "\". Did you enter it correctly?")
+                    .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            joinPollDialog();
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .create();
+            errorDialog.show();
+        }
+    }
+
+    private void dismissKeyboardFrom(View view) {
+        // Check if no view has focus:
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
     public void switchToJoinPoll() {
