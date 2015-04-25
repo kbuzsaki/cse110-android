@@ -5,9 +5,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import edu.ucsd.studentpoll.view.SlidingTabLayout;
 
 
 public class HomeFragment extends Fragment {
@@ -34,23 +39,23 @@ public class HomeFragment extends Fragment {
 //            }
 //        });
 
-        Button joinButton = (Button) rootView.findViewById(R.id.join_poll_button);
-        joinButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.switchToJoinPoll();
-            }
-        });
-
-        Button createButton = (Button) rootView.findViewById(R.id.new_poll_button);
-        createButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.switchToCreatePoll();
-            }
-        });
+//        Button joinButton = (Button) rootView.findViewById(R.id.join_poll_button);
+//        joinButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                MainActivity mainActivity = (MainActivity) getActivity();
+//                mainActivity.switchToJoinPoll();
+//            }
+//        });
+//
+//        Button createButton = (Button) rootView.findViewById(R.id.new_poll_button);
+//        createButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                MainActivity mainActivity = (MainActivity) getActivity();
+//                mainActivity.switchToCreatePoll();
+//            }
+//        });
 
         LinearLayout contentView = (LinearLayout) rootView.findViewById(R.id.contentView);
         for(int i = 0; i < 10; i++) {

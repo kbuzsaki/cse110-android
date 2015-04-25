@@ -2,8 +2,17 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="edu.ucsd.studentpoll.MainActivity">
-    <item android:id="@+id/action_settings"
-          android:title="@string/action_settings"
-          android:orderInCategory="100"
-          app:showAsAction="never"/>
+      <!-- get icons here: https://developer.android.com/design/downloads/index.html#action-bar-icon-pack -->
+      <item android:id="@+id/action_join"
+            android:icon="@drawable/ic_action_new"
+            android:title="Join Poll"
+            app:showAsAction="ifRoom" />
+      <item android:id="@+id/action_search"
+            android:icon="@drawable/ic_action_search"
+            android:title="Search"
+            app:showAsAction="ifRoom" />
+      <item android:id="@+id/action_settings"
+            android:title="@string/action_settings"
+            android:orderInCategory="100"
+            app:showAsAction="never"/>
 </menu>
