@@ -115,6 +115,7 @@ public class MainActivity extends ActionBarActivity {
         });
 
         builder.show();
+        focusKeyboardOn(accessCodeInput);
     }
 
     private void handleAccessCode(String accessCode) {
@@ -141,10 +142,18 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    private void focusKeyboardOn(View view) {
+        if(view != null) {
+            view.requestFocus();
+            InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
+    }
+
     private void dismissKeyboardFrom(View view) {
-        // Check if no view has focus:
         if (view != null) {
             InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
             inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
