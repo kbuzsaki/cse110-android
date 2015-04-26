@@ -2,6 +2,7 @@ package edu.ucsd.studentpoll;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,8 +37,35 @@ public class HomeFragment extends Fragment {
         groupsView = (RecyclerView) rootView.findViewById(R.id.groupsView);
         groupsView.setLayoutManager(new LinearLayoutManager(getActivity()));
         groupsView.setAdapter(new GroupsAdapter(Arrays.asList(new Group(), new Group(), new Group(), new Group(),
-                       new Group(), new Group(), new Group(), new Group(), new Group(), new Group(), new Group(),
-                       new Group(), new Group(), new Group())));
+                new Group(), new Group(), new Group(), new Group(), new Group(), new Group(), new Group(),
+                new Group(), new Group(), new Group())));
+
+        groupsView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            private boolean hideToolBar = false;
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (hideToolBar) {
+                    ((ActionBarActivity)getActivity()).getSupportActionBar().hide();
+                } else {
+                    ((ActionBarActivity)getActivity()).getSupportActionBar().show();
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                
+                if (dy > 20) {
+                    hideToolBar = true;
+                }
+                else if (dy < -5) {
+                    hideToolBar = false;
+                }
+            }
+        });
 
         return rootView;
     }
