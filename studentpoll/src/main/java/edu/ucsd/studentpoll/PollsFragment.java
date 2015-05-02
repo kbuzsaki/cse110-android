@@ -16,6 +16,7 @@ import edu.ucsd.studentpoll.models.Group;
 import edu.ucsd.studentpoll.models.ModelUtils;
 import edu.ucsd.studentpoll.models.Poll;
 import edu.ucsd.studentpoll.models.User;
+import edu.ucsd.studentpoll.view.ActionBarHider;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,33 +41,7 @@ public class PollsFragment extends Fragment {
         pollsAdapter = new PollsAdapter(Collections.<Poll>emptyList());
         pollsView.setAdapter(pollsAdapter);
 
-        pollsView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            private boolean hideToolBar = false;
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                if(hideToolBar) {
-                    ((ActionBarActivity) getActivity()).getSupportActionBar().hide();
-                }
-                else {
-                    ((ActionBarActivity) getActivity()).getSupportActionBar().show();
-                }
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                if(dy > 20) {
-                    hideToolBar = true;
-                }
-                else if(dy < -5) {
-                    hideToolBar = false;
-                }
-            }
-        });
+        pollsView.setOnScrollListener(new ActionBarHider(((ActionBarActivity) getActivity()).getSupportActionBar()));
 
         final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.pollsRefreshLayout);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
