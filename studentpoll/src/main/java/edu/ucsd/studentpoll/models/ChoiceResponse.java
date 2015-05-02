@@ -17,10 +17,12 @@ public class ChoiceResponse implements Response {
 
     }
 
+    @Override
     public User getResponder() {
         return responder;
     }
 
+    @Override
     public ChoiceQuestion getQuestion() {
         return question;
     }

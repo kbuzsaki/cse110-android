@@ -13,20 +13,29 @@ public class ChoiceQuestion implements Question {
 
     private List<String> options;
 
+    private List<ChoiceResponse> responses;
+
     public ChoiceQuestion() {
 
     }
 
+    @Override
     public Poll getPoll() {
         return poll;
     }
 
+    @Override
     public String getTitle() {
         return title;
     }
 
     public List<String> getOptions() {
         return options;
+    }
+
+    @Override
+    public List<ChoiceResponse> getResponses() {
+        return responses;
     }
 
 }
