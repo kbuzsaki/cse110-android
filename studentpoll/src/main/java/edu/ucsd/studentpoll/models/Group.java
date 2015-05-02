@@ -10,26 +10,23 @@ public class Group {
 
     private String name;
 
-    private List<String> members;
+    private List<User> members;
 
-    private String lastPoll;
+    private List<Poll> polls;
 
     public Group() {
-        this.name = "Group Name";
-        this.members = Arrays.asList("John Smith", "Jane Doe", "Earl Warren");
-        this.lastPoll = "What should we have for dinner?";
     }
 
     public String getName() {
         return name;
     }
 
-    public List<String> getMembers() {
+    public List<User> getMembers() {
         return members;
     }
 
-    public String getLastPoll() {
-        return lastPoll;
+    public List<Poll> getPolls() {
+        return polls;
     }
 
 }
