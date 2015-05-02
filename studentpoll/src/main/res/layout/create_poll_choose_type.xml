@@ -35,7 +35,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:text="Schedule"
-                android:id="@+id/button4" android:layout_gravity="center_vertical" android:layout_weight="1"
+                android:id="@+id/create_schedule_choice_button" android:layout_gravity="center_vertical" android:layout_weight="1"
                 android:layout_margin="10dp"/>
     </LinearLayout>
 </LinearLayout>

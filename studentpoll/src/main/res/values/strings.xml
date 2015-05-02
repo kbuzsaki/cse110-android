@@ -8,5 +8,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_join_poll">JoinPoll</string>
     <string name="title_activity_create_choice_poll">CreateChoicePoll</string>
+    <string name="title_activity_create_schedule_poll">CreateSchedulePoll</string>
     <string name="title_activity_main">MainActivity</string>
 </resources>

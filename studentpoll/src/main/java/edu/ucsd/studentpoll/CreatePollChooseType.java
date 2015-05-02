@@ -36,6 +36,15 @@ public class CreatePollChooseType extends Fragment {
             }
         });
 
+        Button scheduleChoiceButton = (Button) rootView.findViewById(R.id.create_schedule_choice_button);
+        scheduleChoiceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createScheduleChoicePoll(view);
+            }
+        });
+
+
         return rootView;
     }
 
@@ -48,6 +57,11 @@ public class CreatePollChooseType extends Fragment {
     public void createMultipleChoicePoll(View view) {
         Intent intent = new Intent(getActivity(), CreateChoicePoll.class);
         intent.putExtra("allowMultiple", true);
+        startActivity(intent);
+    }
+
+    public void createScheduleChoicePoll(View view) {
+        Intent intent = new Intent(getActivity(), CreateSchedulePoll.class);
         startActivity(intent);
     }
 }

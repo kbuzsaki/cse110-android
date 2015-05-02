@@ -33,6 +33,10 @@
             android:name=".CreateChoicePoll"
             android:label="@string/title_activity_create_choice_poll"
             android:windowSoftInputMode="stateHidden" />
+        <activity
+                android:name=".CreateSchedulePoll"
+                android:label="@string/title_activity_create_schedule_poll"
+                android:windowSoftInputMode="stateHidden" />
     </application>
 
 </manifest>
