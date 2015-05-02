@@ -5,6 +5,8 @@ package edu.ucsd.studentpoll.models;
  */
 public interface Model {
 
+    static final long UNINITIALIZED = -1;
+
     long getId();
 
 }
