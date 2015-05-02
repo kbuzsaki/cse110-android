@@ -1,5 +1,6 @@
 package edu.ucsd.studentpoll;
 
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -9,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import edu.ucsd.studentpoll.models.Group;
 import edu.ucsd.studentpoll.models.ModelUtils;
@@ -67,7 +67,37 @@ public class PollsFragment extends Fragment {
             }
         });
 
+        refreshPolls();
+
         return rootView;
+    }
+
+    public void refreshPolls() {
+        new AsyncTask<Object, Object, List<Poll>>() {
+
+            @Override
+            protected List<Poll> doInBackground(Object... params) {
+                User user = User.getDeviceUser();
+                user.inflate();
+
+                List<Group> groups = user.getGroups();
+                ModelUtils.inflateAll(groups);
+
+                List<Poll> polls = new ArrayList<>();
+                for(Group group : groups) {
+                    polls.addAll(group.getPolls());
+                }
+
+                ModelUtils.inflateAll(polls);
+
+                return polls;
+            }
+
+            @Override
+            protected void onPostExecute(List<Poll> polls) {
+                pollsAdapter.setPolls(polls);
+            }
+        }.execute();
     }
 
     private static class PollsAdapter extends RecyclerView.Adapter<PollsViewHolder> {

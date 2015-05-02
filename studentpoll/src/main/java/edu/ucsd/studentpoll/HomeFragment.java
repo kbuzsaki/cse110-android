@@ -1,5 +1,6 @@
 package edu.ucsd.studentpoll;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -9,18 +10,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import edu.ucsd.studentpoll.models.Group;
-import edu.ucsd.studentpoll.view.SlidingTabLayout;
+import edu.ucsd.studentpoll.models.ModelUtils;
+import edu.ucsd.studentpoll.models.User;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -69,15 +64,43 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        refreshGroups();
+
         return rootView;
+    }
+
+    public void refreshGroups() {
+        new AsyncTask<Object, Object, List<Group>>() {
+
+            @Override
+            protected List<Group> doInBackground(Object[] params) {
+                User user = User.getDeviceUser();
+                user.inflate();
+
+                List<Group> groups = user.getGroups();
+                ModelUtils.inflateAll(groups);
+
+                return groups;
+            }
+
+            @Override
+            protected void onPostExecute(List<Group> groups) {
+                groupsAdapter.setGroups(groups);
+            }
+        }.execute();
     }
 
     private static class GroupsAdapter extends RecyclerView.Adapter<GroupsViewHolder> {
 
-        private final List<Group> groups;
+        private List<Group> groups;
 
         public GroupsAdapter(List<Group> groups) {
             this.groups = groups;
+        }
+
+        public void setGroups(List<Group> groups) {
+            this.groups = groups;
+            this.notifyDataSetChanged();
         }
 
         @Override
