@@ -94,7 +94,11 @@ public class User implements Model {
     }
 
     public static User getDeviceUser() {
-        return null;
+        return User.getOrStub(getDeviceUserId());
+    }
+
+    private static long getDeviceUserId() {
+        return UNINITIALIZED;
     }
 
 }
