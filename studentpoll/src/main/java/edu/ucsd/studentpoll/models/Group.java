@@ -1,7 +1,9 @@
 package edu.ucsd.studentpoll.models;
 
 import android.util.Log;
+import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
+import edu.ucsd.studentpoll.rest.RestRouter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,6 +22,8 @@ public class Group implements Model {
     private static Map<Long, Group> CACHE = new HashMap<>();
 
     private long id;
+
+    private boolean inflated = false;
 
     private String name;
 
@@ -41,6 +45,19 @@ public class Group implements Model {
         }
 
         return CACHE.get(id);
+    }
+
+    public void inflate() {
+        if(this.id == UNINITIALIZED) {
+            throw new AssertionError("Attempting to inflate uninitialized Model!");
+        }
+
+        if(!inflated) {
+            AndrestClient client = new AndrestClient();
+            JSONObject response = client.get(RestRouter.getGroup(id));
+            initFromJson(response);
+            inflated = true;
+        }
     }
 
     Group initFromJson(JSONObject json) {
