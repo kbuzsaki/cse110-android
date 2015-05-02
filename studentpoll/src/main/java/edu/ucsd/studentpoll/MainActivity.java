@@ -191,7 +191,7 @@ public class MainActivity extends ActionBarActivity {
         public Fragment getItem(int position) {
             switch(position) {
                 case 0:
-                    return new JoinPoll();
+                    return new PollsFragment();
                 case 1:
                     return new HomeFragment();
                 case 2:

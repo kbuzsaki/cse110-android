@@ -30,15 +30,17 @@ public class HomeFragment extends Fragment {
 
     private RecyclerView groupsView;
 
+    private GroupsAdapter groupsAdapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(R.layout.home, container, false);
 
         groupsView = (RecyclerView) rootView.findViewById(R.id.groupsView);
         groupsView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        groupsView.setAdapter(new GroupsAdapter(Arrays.asList(new Group(), new Group(), new Group(), new Group(),
-                new Group(), new Group(), new Group(), new Group(), new Group(), new Group(), new Group(),
-                new Group(), new Group(), new Group())));
+
+        groupsAdapter = new GroupsAdapter(Collections.<Group>emptyList());
+        groupsView.setAdapter(groupsAdapter);
 
         groupsView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             private boolean hideToolBar = false;
