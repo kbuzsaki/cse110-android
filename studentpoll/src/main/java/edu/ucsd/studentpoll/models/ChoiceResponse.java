@@ -7,6 +7,8 @@ import java.util.List;
  */
 public class ChoiceResponse implements Response {
 
+    private long id;
+
     private User responder;
 
     private ChoiceQuestion question;
@@ -15,6 +17,10 @@ public class ChoiceResponse implements Response {
 
     public ChoiceResponse() {
 
+    }
+
+    public long getId() {
+        return id;
     }
 
     @Override

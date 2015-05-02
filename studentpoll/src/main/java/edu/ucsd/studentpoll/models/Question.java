@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by kbuzsaki on 5/1/15.
  */
-public interface Question {
+public interface Question extends Model {
 
     public Poll getPoll();
 

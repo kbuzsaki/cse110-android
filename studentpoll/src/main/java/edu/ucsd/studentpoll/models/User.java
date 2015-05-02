@@ -7,7 +7,9 @@ import java.util.List;
 /**
  * Created by kbuzsaki on 5/1/15.
  */
-public class User {
+public class User implements Model {
+
+    private long id;
 
     private String name;
 
@@ -17,6 +19,10 @@ public class User {
 
     public User() {
 
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getName() {

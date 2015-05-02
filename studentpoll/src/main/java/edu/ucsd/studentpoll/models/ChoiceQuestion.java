@@ -7,6 +7,8 @@ import java.util.List;
  */
 public class ChoiceQuestion implements Question {
 
+    private long id;
+
     private Poll poll;
 
     private String title;
@@ -17,6 +19,10 @@ public class ChoiceQuestion implements Question {
 
     public ChoiceQuestion() {
 
+    }
+
+    public long getId() {
+        return id;
     }
 
     @Override
