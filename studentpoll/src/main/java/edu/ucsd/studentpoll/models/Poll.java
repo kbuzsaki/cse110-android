@@ -6,7 +6,9 @@ import java.util.List;
 /**
  * Created by kbuzsaki on 5/1/15.
  */
-public class Poll {
+public class Poll implements Model {
+
+    private long id;
 
     private Group group;
 
@@ -20,6 +22,10 @@ public class Poll {
 
     public Poll() {
 
+    }
+
+    public long getId() {
+        return id;
     }
 
     public Group getGroup() {
