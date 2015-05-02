@@ -1,13 +1,23 @@
 package edu.ucsd.studentpoll.models;
 
 import android.graphics.drawable.Drawable;
+import android.util.Log;
+import edu.ucsd.studentpoll.rest.JsonUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by kbuzsaki on 5/1/15.
  */
 public class User implements Model {
+
+    private static final String TAG = "User";
+    private static final Map<Long, User> CACHE = new HashMap<>();
 
     private long id;
 
@@ -17,8 +27,37 @@ public class User implements Model {
 
     private List<Group> groups;
 
-    public User() {
+    private User() {
+        this(UNINITIALIZED);
+    }
 
+    private User(long id) {
+        this.id = id;
+    }
+
+    public static User getOrStub(Long id) {
+        if(!CACHE.containsKey(id)) {
+            CACHE.put(id, new User(id));
+        }
+
+        return CACHE.get(id);
+    }
+
+    User initFromJson(JSONObject json) {
+        try {
+            id = json.getLong("id");
+            name = json.getString("name");
+            avatar = null;
+            List<Long> groupIds = JsonUtils.toListOfLong(json.optJSONArray("groups"));
+            groups = new ArrayList<>(groupIds.size());
+            for(Long groupId : groupIds) {
+                groups.add(Group.getOrStub(groupId));
+            }
+        } catch (JSONException e) {
+            Log.wtf(TAG, e);
+        }
+
+        return this;
     }
 
     public long getId() {
