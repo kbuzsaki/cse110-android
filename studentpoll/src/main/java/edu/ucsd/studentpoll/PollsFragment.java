@@ -3,6 +3,7 @@ package edu.ucsd.studentpoll;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -64,6 +65,15 @@ public class PollsFragment extends Fragment {
                 else if(dy < -5) {
                     hideToolBar = false;
                 }
+            }
+        });
+
+        final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.pollsRefreshLayout);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshPolls();
+                refreshLayout.setRefreshing(false);
             }
         });
 
