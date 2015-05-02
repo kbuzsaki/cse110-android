@@ -15,6 +15,7 @@ import android.widget.TextView;
 import edu.ucsd.studentpoll.models.Group;
 import edu.ucsd.studentpoll.models.ModelUtils;
 import edu.ucsd.studentpoll.models.User;
+import edu.ucsd.studentpoll.view.ActionBarHider;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,32 +39,7 @@ public class HomeFragment extends Fragment {
         groupsAdapter = new GroupsAdapter(Collections.<Group>emptyList());
         groupsView.setAdapter(groupsAdapter);
 
-        groupsView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            private boolean hideToolBar = false;
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                if (hideToolBar) {
-                    ((ActionBarActivity)getActivity()).getSupportActionBar().hide();
-                } else {
-                    ((ActionBarActivity)getActivity()).getSupportActionBar().show();
-                }
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                if (dy > 20) {
-                    hideToolBar = true;
-                }
-                else if (dy < -5) {
-                    hideToolBar = false;
-                }
-            }
-        });
+        groupsView.setOnScrollListener(new ActionBarHider(((ActionBarActivity) getActivity()).getSupportActionBar()));
 
         final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.groupsRefreshLayout);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
