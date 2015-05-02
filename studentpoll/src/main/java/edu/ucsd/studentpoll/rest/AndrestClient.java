@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import android.util.Log;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -40,6 +41,8 @@ import org.json.JSONObject;
  * @version 09/03/2014
  */
 public class AndrestClient {
+
+    private static final String TAG = "AndrestClient";
 
     // The client to use for requests
     DefaultHttpClient client = new DefaultHttpClient();
@@ -79,13 +82,18 @@ public class AndrestClient {
     public JSONObject get(String url) throws RESTException {
         HttpGet request = new HttpGet(url);
         try {
+            Log.d(TAG, "getting url: " + url);
             HttpResponse response = client.execute(request);
             int statusCode = response.getStatusLine().getStatusCode();
             if(statusCode != 200) {
                 throw new Exception("Error executing GET request! Received error code: " + response.getStatusLine().getStatusCode());
             }
-            return new JSONObject(readInput(response.getEntity().getContent()));
+
+            JSONObject jsonResponse = new JSONObject(readInput(response.getEntity().getContent()));
+            Log.d(TAG, "got response: " + jsonResponse.toString());
+            return jsonResponse;
         } catch (Exception e) {
+            Log.e(TAG, "error getting url: " + url, e);
             throw new RESTException(e);
         }
     }
@@ -101,6 +109,7 @@ public class AndrestClient {
         HttpPost request = new HttpPost(url);
         List<NameValuePair> nameValuePairs = setParams(data);
         try {
+            Log.d(TAG, "posting url: " + url);
             request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
             HttpResponse response = client.execute(request);
 
@@ -109,8 +118,11 @@ public class AndrestClient {
                 throw new Exception("Error executing POST request! Received error code: " + response.getStatusLine().getStatusCode());
             }
 
-            return new JSONObject(readInput(response.getEntity().getContent()));
+            JSONObject jsonResponse = new JSONObject(readInput(response.getEntity().getContent()));
+            Log.d(TAG, "got post response: " + jsonResponse.toString());
+            return jsonResponse;
         } catch (Exception e) {
+            Log.e(TAG, "error posting url: " + url, e);
             throw new RESTException(e);
         }
     }
@@ -126,6 +138,7 @@ public class AndrestClient {
         HttpPut request = new HttpPut(url);
         List<NameValuePair> nameValuePairs = setParams(data);
         try {
+            Log.d(TAG, "putting url: " + url);
             request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
             HttpResponse response = client.execute(request);
 
@@ -134,8 +147,11 @@ public class AndrestClient {
                 throw new Exception("Error executing PUT request! Received error code: " + response.getStatusLine().getStatusCode());
             }
 
-            return new JSONObject(readInput(response.getEntity().getContent()));
+            JSONObject jsonResponse = new JSONObject(readInput(response.getEntity().getContent()));
+            Log.d(TAG, "got put response: " + jsonResponse.toString());
+            return jsonResponse;
         } catch (Exception e) {
+            Log.e(TAG, "error putting url: " + url, e);
             throw new RESTException(e);
         }
     }
@@ -149,6 +165,7 @@ public class AndrestClient {
     public JSONObject delete(String url) throws RESTException {
         HttpDelete request = new HttpDelete(url);
         try {
+            Log.d(TAG, "deleting url: " + url);
             HttpResponse response = client.execute(request);
 
             int statusCode = response.getStatusLine().getStatusCode();
@@ -156,8 +173,11 @@ public class AndrestClient {
                 throw new Exception("Error executing DELETE request! Received error code: " + response.getStatusLine().getStatusCode());
             }
 
-            return new JSONObject(readInput(response.getEntity().getContent()));
+            JSONObject jsonResponse = new JSONObject(readInput(response.getEntity().getContent()));
+            Log.d(TAG, "got delete response: " + jsonResponse.toString());
+            return jsonResponse;
         } catch (Exception e) {
+            Log.e(TAG, "error deleting url: " + url, e);
             throw new RESTException(e);
         }
     }
