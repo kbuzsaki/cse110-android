@@ -1,7 +1,9 @@
 package edu.ucsd.studentpoll.models;
 
 import android.util.Log;
+import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
+import edu.ucsd.studentpoll.rest.RestRouter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,6 +21,8 @@ public class ChoiceQuestion implements Question {
     private static final Map<Long, ChoiceQuestion> CACHE = new HashMap<>();
 
     private long id;
+
+    private boolean inflated = false;
 
     private Poll poll;
 
@@ -42,6 +46,19 @@ public class ChoiceQuestion implements Question {
         }
 
         return CACHE.get(id);
+    }
+
+    public void inflate() {
+        if(this.id == UNINITIALIZED) {
+            throw new AssertionError("Attempting to inflate uninitialized Model!");
+        }
+
+        if(!inflated) {
+            AndrestClient client = new AndrestClient();
+            JSONObject response = client.get(RestRouter.getQuestion(id));
+            initFromJson(response);
+            inflated = true;
+        }
     }
 
     ChoiceQuestion initFromJson(JSONObject json) {

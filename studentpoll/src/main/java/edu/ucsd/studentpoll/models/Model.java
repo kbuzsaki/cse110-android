@@ -9,4 +9,6 @@ public interface Model {
 
     long getId();
 
+    void inflate();
+
 }

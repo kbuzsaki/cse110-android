@@ -2,7 +2,9 @@ package edu.ucsd.studentpoll.models;
 
 import android.util.Log;
 import com.google.common.collect.ImmutableMap;
+import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
+import edu.ucsd.studentpoll.rest.RestRouter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,6 +21,8 @@ public class ChoiceResponse implements Response {
     private static final Map<Long, ChoiceResponse> CACHE = new HashMap<>();
 
     private long id;
+
+    private boolean inflated = false;
 
     private User responder;
 
@@ -40,6 +44,19 @@ public class ChoiceResponse implements Response {
         }
 
         return CACHE.get(id);
+    }
+
+    public void inflate() {
+        if(this.id == UNINITIALIZED) {
+            throw new AssertionError("Attempting to inflate uninitialized Model!");
+        }
+
+        if(!inflated) {
+            AndrestClient client = new AndrestClient();
+            JSONObject response = client.get(RestRouter.getResponse(id));
+            initFromJson(response);
+            inflated = true;
+        }
     }
 
     ChoiceResponse initFromJson(JSONObject json) {
