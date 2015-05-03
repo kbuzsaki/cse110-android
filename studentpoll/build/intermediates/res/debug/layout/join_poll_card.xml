@@ -47,4 +47,4 @@
                     android:layout_alignParentEnd="true"/>
         </RelativeLayout>
     </LinearLayout>
-</android.support.v7.widget.CardView>
+</android.support.v7.widget.CardView><!-- From: file:/Users/kdhuynh/Projects/android/studentpoll/studentpoll/src/main/res/layout/join_poll_card.xml -->
