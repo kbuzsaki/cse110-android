@@ -1,25 +1,12 @@
 package edu.ucsd.studentpoll;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class JoinPoll extends Fragment {
@@ -52,9 +39,24 @@ public class JoinPoll extends Fragment {
 
         LinearLayout joinPollList = (LinearLayout) rootView.findViewById(R.id.joinPollList);
         inflater.inflate(R.layout.join_poll_card, joinPollList);
-        inflater.inflate(R.layout.join_poll_card, joinPollList);
+
+        LinearLayout joinPollCard = (LinearLayout) rootView.findViewById(R.id.joinPollCard);
+        joinPollCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createPollActivity(view);
+            }
+        });
+
+
 
         return rootView;
+    }
+
+    public void createPollActivity(View view) {
+        Intent intent = new Intent(getActivity(), PollActivity.class);
+        intent.putExtra("allowMultiple", false);
+        startActivity(intent);
     }
 
     private void joinPoll(View view) {
