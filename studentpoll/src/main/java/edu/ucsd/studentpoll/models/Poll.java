@@ -121,4 +121,39 @@ public class Poll extends Model {
         return questions;
     }
 
+    public static class Builder {
+
+        private Poll poll;
+        private List<Question> questions;
+
+        public Builder() {
+            this.poll = new Poll();
+            this.questions = new ArrayList<>();
+        }
+
+        public Builder withGroup(Group group) {
+            poll.group = group;
+            return this;
+        }
+
+        public Builder withTitle(String name) {
+            poll.name = name;
+            return this;
+        }
+
+        public Builder withChoiceQuestion(String title, List<String> options) {
+            questions.add(ChoiceQuestion.makeQuestion(poll, title, options));
+            return this;
+        }
+
+        public Poll build() {
+            if(poll.group == null) {
+                poll.group = Group.getOrStub(UNINITIALIZED);
+            }
+            poll.creator = User.getDeviceUser();
+            poll.questions = questions;
+            return poll;
+        }
+    }
+
 }

@@ -1,7 +1,6 @@
 package edu.ucsd.studentpoll.models;
 
 import android.util.Log;
-import com.google.common.collect.ImmutableMap;
 import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
 import edu.ucsd.studentpoll.rest.RestRouter;
@@ -9,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,6 +115,15 @@ public class ChoiceQuestion extends Question {
     @Override
     public List<ChoiceResponse> getResponses() {
         return responses;
+    }
+
+    public static ChoiceQuestion makeQuestion(Poll poll, String title, List<String> options) {
+        ChoiceQuestion question = new ChoiceQuestion();
+        question.poll = poll;
+        question.title = title;
+        question.options = options;
+        question.responses = Collections.emptyList();
+        return question;
     }
 
 }
