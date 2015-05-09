@@ -1,6 +1,8 @@
 package edu.ucsd.studentpoll.models;
 
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
@@ -17,6 +19,19 @@ import java.util.Map;
  * Created by kbuzsaki on 5/1/15.
  */
 public class User extends Model {
+
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel source) {
+            Long id = source.readLong();
+            return User.getOrStub(id);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     private static final String TAG = "User";
     private static final Map<Long, User> CACHE = new HashMap<>();

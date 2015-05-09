@@ -1,5 +1,7 @@
 package edu.ucsd.studentpoll.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import com.google.common.collect.ImmutableMap;
 import edu.ucsd.studentpoll.rest.AndrestClient;
@@ -17,6 +19,19 @@ import java.util.Map;
  * Created by kbuzsaki on 5/1/15.
  */
 public class ChoiceResponse extends Response {
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator<ChoiceResponse>() {
+        @Override
+        public ChoiceResponse createFromParcel(Parcel source) {
+            Long id = source.readLong();
+            return ChoiceResponse.getOrStub(id);
+        }
+
+        @Override
+        public ChoiceResponse[] newArray(int size) {
+            return new ChoiceResponse[size];
+        }
+    };
 
     private static final String TAG = "ChoiceResponse";
     private static final Map<Long, ChoiceResponse> CACHE = new HashMap<>();

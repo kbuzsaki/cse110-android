@@ -1,5 +1,7 @@
 package edu.ucsd.studentpoll.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ import java.util.List;
 /**
  * Created by kbuzsaki on 5/1/15.
  */
-public abstract class Model {
+public abstract class Model implements Parcelable {
 
     static final Long UNINITIALIZED = null;
 
@@ -40,6 +42,16 @@ public abstract class Model {
     abstract <M extends Model> M initFromJson(JSONObject json);
 
     abstract JSONObject toJson();
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(getId());
+    }
 
     @Override
     public String toString() {

@@ -1,5 +1,7 @@
 package edu.ucsd.studentpoll.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
@@ -17,6 +19,19 @@ import java.util.Map;
  * Created by kbuzsaki on 5/1/15.
  */
 public class ChoiceQuestion extends Question {
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator<ChoiceQuestion>() {
+        @Override
+        public ChoiceQuestion createFromParcel(Parcel source) {
+            Long id = source.readLong();
+            return ChoiceQuestion.getOrStub(id);
+        }
+
+        @Override
+        public ChoiceQuestion[] newArray(int size) {
+            return new ChoiceQuestion[size];
+        }
+    };
 
     private static final String TAG = "ChoiceQuestion";
     private static final Map<Long, ChoiceQuestion> CACHE = new HashMap<>();

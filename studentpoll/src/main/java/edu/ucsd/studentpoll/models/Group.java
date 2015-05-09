@@ -1,5 +1,7 @@
 package edu.ucsd.studentpoll.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
@@ -17,6 +19,19 @@ import java.util.Map;
  * Created by kbuzsaki on 4/26/15.
  */
 public class Group extends Model {
+
+    public static final Parcelable.Creator<Group> CREATOR = new Parcelable.Creator<Group>() {
+        @Override
+        public Group createFromParcel(Parcel source) {
+            Long id = source.readLong();
+            return Group.getOrStub(id);
+        }
+
+        @Override
+        public Group[] newArray(int size) {
+            return new Group[size];
+        }
+    };
 
     private static final String TAG = "Group";
     private static Map<Long, Group> CACHE = new HashMap<>();

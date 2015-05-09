@@ -1,5 +1,7 @@
 package edu.ucsd.studentpoll.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import com.google.common.collect.ImmutableMap;
 import edu.ucsd.studentpoll.rest.AndrestClient;
@@ -18,6 +20,19 @@ import java.util.Map;
  * Created by kbuzsaki on 5/1/15.
  */
 public class Poll extends Model {
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator<Poll>() {
+        @Override
+        public Poll createFromParcel(Parcel source) {
+            Long id = source.readLong();
+            return Poll.getOrStub(id);
+        }
+
+        @Override
+        public Poll[] newArray(int size) {
+            return new Poll[size];
+        }
+    };
 
     private static final String TAG = "Poll";
     private static Map<Long, Poll> CACHE = new HashMap<>();
