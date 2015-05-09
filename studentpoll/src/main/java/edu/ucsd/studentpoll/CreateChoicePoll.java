@@ -2,7 +2,9 @@ package edu.ucsd.studentpoll;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,9 +16,17 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+import edu.ucsd.studentpoll.models.Poll;
+import edu.ucsd.studentpoll.rest.RESTException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class CreateChoicePoll extends Activity {
+
+    private static final String TAG = "CreateChoicePoll";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +66,48 @@ public class CreateChoicePoll extends Activity {
         LinearLayout clickedOptionContainer = (LinearLayout)view.getParent();
         LinearLayout optionsContainer = (LinearLayout)clickedOptionContainer.getParent();
         optionsContainer.removeView(clickedOptionContainer);
+    }
+
+    public void submitPoll(View view) {
+        String name = ((EditText)findViewById(R.id.titleBox)).getText().toString();
+
+        LinearLayout optionsLayout = (LinearLayout) findViewById(R.id.optionsLayout);
+        List<String> options = new ArrayList<>();
+        for(int childIndex = 0; childIndex < optionsLayout.getChildCount(); childIndex++) {
+            View child =optionsLayout.getChildAt(childIndex);
+            String option = ((EditText) child.findViewById(R.id.optionField)).getText().toString();
+            options.add(option);
+        }
+
+        Log.d(TAG, "name: " + name);
+        Log.d(TAG, "options: " + options);
+
+        final Poll poll = new Poll.Builder().withTitle("My Title").withChoiceQuestion(name, options).build();
+
+        new AsyncTask<Object, Object, Poll>() {
+            @Override
+            protected Poll doInBackground(Object[] params) {
+                try {
+                    return Poll.postPoll(poll);
+                }
+                catch (RESTException e) {
+                    Log.w(TAG, "Failed to post poll", e);
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Poll poll) {
+                if(poll == null) {
+                    Toast.makeText(getApplicationContext(), "Failed to make poll.", Toast.LENGTH_SHORT).show();
+                }
+                else {
+
+                }
+            }
+        }.execute();
+
+        finish();
     }
 
     private void addOptionFieldEnterListener(LinearLayout optionFieldLayout) {

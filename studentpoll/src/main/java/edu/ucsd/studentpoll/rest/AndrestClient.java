@@ -4,26 +4,25 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import android.util.Log;
+import com.google.common.io.CharStreams;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,7 +55,7 @@ public class AndrestClient {
      * @param data   the data you want to pass to the URL, can be null
      * @return JSON  the JSONObject returned from the request
      */
-    public JSONObject request(String url, String method, Map<String, Object> data) throws RESTException {
+    public JSONObject request(String url, String method, Map<String, JSONObject> data) throws RESTException {
         if(method.matches("GET")) {
             return get(url);
         }
@@ -102,19 +101,21 @@ public class AndrestClient {
      * Calls a POST request on a given url. Takes a data object in the form of a HashMap to POST.
      *
      * @param url   the url you wish to connect to
-     * @param data  the data object to post to the url
      * @return JSON the JSON response from the call
      */
-    public JSONObject post(String url, Map<String, Object> data) throws RESTException {
+    public JSONObject post(String url, Map<String, JSONObject> data) throws RESTException {
         HttpPost request = new HttpPost(url);
-        List<NameValuePair> nameValuePairs = setParams(data);
         try {
             Log.d(TAG, "posting url: " + url);
-            request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            Log.d(TAG, "with content: " + data);
+            request.setEntity(toStringEntity(data));
             HttpResponse response = client.execute(request);
 
             int statusCode = response.getStatusLine().getStatusCode();
-            if(statusCode != 200) {
+            if(statusCode != 200 && statusCode != 201) {
+                Log.d(TAG, "Got error code: " + statusCode);
+                String body = CharStreams.toString(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+                Log.d(TAG, "With body: " + body);
                 throw new Exception("Error executing POST request! Received error code: " + response.getStatusLine().getStatusCode());
             }
 
@@ -134,12 +135,12 @@ public class AndrestClient {
      * @param data  the data object to post to the url
      * @return JSON the JSON response from the call
      */
-    public JSONObject put(String url, Map<String, Object> data) throws RESTException {
+    public JSONObject put(String url, Map<String, JSONObject> data) throws RESTException {
         HttpPut request = new HttpPut(url);
-        List<NameValuePair> nameValuePairs = setParams(data);
         try {
             Log.d(TAG, "putting url: " + url);
-            request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            Log.d(TAG, "with content: " + data);
+            request.setEntity(toStringEntity(data));
             HttpResponse response = client.execute(request);
 
             int statusCode = response.getStatusLine().getStatusCode();
@@ -236,26 +237,11 @@ public class AndrestClient {
         return null;
     }
 
-    /**
-     * Loops all data inside the data object and maps to a list of Name/Values.
-     * Used alongside POST and PUT requests to neaten the parameters, rather than
-     * attempting to stringify the data.
-     *
-     * @param data  the data object we're going to pass
-     * @return List a list of Name/Value pairs
-     */
-    private List<NameValuePair> setParams(Map<String, Object> data) {
-        List<NameValuePair> nameValuePairs = null;
-        if(data != null && !data.isEmpty()) {
-            nameValuePairs = new ArrayList<NameValuePair>(2);
-            Iterator<String> it = data.keySet().iterator();
-            while(it.hasNext()) {
-                String name = it.next();
-                Object value = data.get(name);
-                nameValuePairs.add(new BasicNameValuePair(name, value.toString()));
-            }
-        }
-        return nameValuePairs;
+    private StringEntity toStringEntity(Map<String, JSONObject> data) throws UnsupportedEncodingException {
+        JSONObject param = new JSONObject(data);
+        StringEntity entity = new StringEntity(param.toString());
+        entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+        return entity;
     }
 
     /**
