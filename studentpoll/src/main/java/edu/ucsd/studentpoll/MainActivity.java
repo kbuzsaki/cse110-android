@@ -25,6 +25,9 @@ import java.util.Arrays;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    private static final String TAG = "MainActivity";
+
     /**
      * The number of pages (wizard steps) to show in this demo.
      */
@@ -191,10 +194,13 @@ public class MainActivity extends ActionBarActivity {
         public Fragment getItem(int position) {
             switch(position) {
                 case 0:
+                    Log.d(TAG, "Creating Polls Fragment");
                     return new PollsFragment();
                 case 1:
+                    Log.d(TAG, "Creating Home Fragment");
                     return new HomeFragment();
                 case 2:
+                    Log.d(TAG, "Creating Create Poll Fragment");
                     return new CreatePollChooseType();
             }
             return new HomeFragment();

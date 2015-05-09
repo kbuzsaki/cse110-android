@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import java.util.List;
 
 
 public class PollsFragment extends Fragment {
+
+    private static final String TAG = "PollsFragment";
 
     private ViewGroup rootView;
 
@@ -64,6 +67,8 @@ public class PollsFragment extends Fragment {
             protected List<Poll> doInBackground(Object... params) {
                 User user = User.getDeviceUser();
                 user.inflate();
+
+                Log.d(TAG, "Loading polls for user: " + user);
 
                 List<Group> groups = user.getGroups();
                 Model.inflateAll(groups);
