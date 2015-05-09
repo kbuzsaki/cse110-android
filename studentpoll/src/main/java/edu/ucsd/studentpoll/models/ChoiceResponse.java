@@ -20,8 +20,6 @@ public class ChoiceResponse extends Response {
     private static final String TAG = "ChoiceResponse";
     private static final Map<Long, ChoiceResponse> CACHE = new HashMap<>();
 
-    private long id;
-
     private boolean inflated = false;
 
     private User responder;
@@ -31,11 +29,10 @@ public class ChoiceResponse extends Response {
     private List<String> choices;
 
     private ChoiceResponse() {
-        this(UNINITIALIZED);
     }
 
-    private ChoiceResponse(long id) {
-        this.id = id;
+    private ChoiceResponse(Long id) {
+        super(id);
     }
 
     public static ChoiceResponse getOrStub(Long id) {
@@ -80,7 +77,7 @@ public class ChoiceResponse extends Response {
     }
 
     @Override
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

@@ -21,7 +21,6 @@ public class ChoiceQuestion extends Question {
     private static final String TAG = "ChoiceQuestion";
     private static final Map<Long, ChoiceQuestion> CACHE = new HashMap<>();
 
-    private long id;
 
     private boolean inflated = false;
 
@@ -34,11 +33,10 @@ public class ChoiceQuestion extends Question {
     private List<ChoiceResponse> responses;
 
     private ChoiceQuestion() {
-        this(UNINITIALIZED);
     }
 
-    private ChoiceQuestion(long id) {
-        this.id = id;
+    private ChoiceQuestion(Long id) {
+        super(id);
     }
 
     public static ChoiceQuestion getOrStub(Long id) {
@@ -86,19 +84,17 @@ public class ChoiceQuestion extends Question {
 
     @Override
     JSONObject toJson() {
-        Map<String, Object> data = ImmutableMap.<String, Object>builder()
+        return JsonUtils.builder()
                 .put("id", getId())
                 .put("poll", getPoll().getId())
                 .put("title", getTitle())
                 .put("options", getOptions())
                 .put("responses", Model.mapIds(responses))
                 .build();
-
-        return new JSONObject(data);
     }
 
     @Override
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

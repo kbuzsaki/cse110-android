@@ -9,6 +9,13 @@ import java.util.List;
  */
 public abstract class Question extends Model {
 
+    protected Question() {
+    }
+
+    protected Question(Long id) {
+        super(id);
+    }
+
     public abstract Poll getPoll();
 
     public abstract String getTitle();

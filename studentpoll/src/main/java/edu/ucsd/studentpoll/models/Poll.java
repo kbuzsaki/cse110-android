@@ -22,8 +22,6 @@ public class Poll extends Model {
     private static final String TAG = "Poll";
     private static Map<Long, Poll> CACHE = new HashMap<>();
 
-    private long id;
-
     private boolean inflated = false;
 
     private Group group;
@@ -37,11 +35,10 @@ public class Poll extends Model {
     private List<Question> questions;
 
     private Poll() {
-        this(UNINITIALIZED);
     }
 
-    private Poll(long id) {
-        this.id = id;
+    private Poll(Long id) {
+        super(id);
     }
 
     public static Poll getOrStub(Long id) {
@@ -93,7 +90,7 @@ public class Poll extends Model {
     }
 
     @Override
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

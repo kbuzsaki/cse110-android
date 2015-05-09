@@ -12,9 +12,21 @@ import java.util.List;
  */
 public abstract class Model {
 
-    static final long UNINITIALIZED = -1;
+    static final Long UNINITIALIZED = null;
 
-    public abstract long getId();
+    protected Long id;
+
+    protected Model() {
+        this(UNINITIALIZED);
+    }
+
+    protected Model(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
 
     public abstract void inflate();
 

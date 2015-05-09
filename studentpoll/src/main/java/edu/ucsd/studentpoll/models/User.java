@@ -21,8 +21,6 @@ public class User extends Model {
     private static final String TAG = "User";
     private static final Map<Long, User> CACHE = new HashMap<>();
 
-    private long id;
-
     private boolean inflated = false;
 
     private String name;
@@ -32,11 +30,10 @@ public class User extends Model {
     private List<Group> groups;
 
     private User() {
-        this(UNINITIALIZED);
     }
 
-    private User(long id) {
-        this.id = id;
+    private User(Long id) {
+        super(id);
     }
 
     public static User getOrStub(Long id) {
@@ -85,7 +82,7 @@ public class User extends Model {
     }
 
     @Override
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
