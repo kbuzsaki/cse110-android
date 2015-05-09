@@ -1,5 +1,7 @@
 package edu.ucsd.studentpoll;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -43,7 +45,7 @@ public class PollsFragment extends Fragment {
         pollsView = (RecyclerView) rootView.findViewById(R.id.pollsView);
         pollsView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        pollsAdapter = new PollsAdapter(Collections.<Poll>emptyList());
+        pollsAdapter = new PollsAdapter(getActivity(), Collections.<Poll>emptyList());
         pollsView.setAdapter(pollsAdapter);
 
         pollsView.setOnScrollListener(new ActionBarHider(((ActionBarActivity) getActivity()).getSupportActionBar()));
@@ -104,10 +106,11 @@ public class PollsFragment extends Fragment {
     }
 
     private static class PollsAdapter extends RecyclerView.Adapter<PollsViewHolder> {
-
+        private final Context context;
         private List<Poll> polls;
 
-        public PollsAdapter(List<Poll> polls) {
+        public PollsAdapter(Context context, List<Poll> polls) {
+            this.context = context;
             this.polls = polls;
         }
 
@@ -120,7 +123,7 @@ public class PollsFragment extends Fragment {
         public PollsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             CardView pollCard = (CardView) LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.poll_history_card, parent, false);
-            PollsViewHolder viewHolder = new PollsViewHolder(pollCard);
+            PollsViewHolder viewHolder = new PollsViewHolder(context, pollCard);
             // you don't have to set the content here before you return the viewHolder
             // onBindViewHolder will get called next and set the content for us
             // so just make and return an empty view
@@ -139,11 +142,13 @@ public class PollsFragment extends Fragment {
     }
 
     private static class PollsViewHolder extends RecyclerView.ViewHolder {
+        private Context context;
 
         private CardView pollCard;
 
-        public PollsViewHolder(CardView pollCard) {
+        public PollsViewHolder(Context context, CardView pollCard) {
             super(pollCard);
+            this.context = context;
             this.pollCard = pollCard;
         }
 
@@ -153,6 +158,15 @@ public class PollsFragment extends Fragment {
             String voteText = randInt(0, 7) + "/" + randInt(7, 10) + " votes";
             ((TextView) pollCard.findViewById(R.id.time)).setText(timeText);
             ((TextView) pollCard.findViewById(R.id.votes)).setText(voteText);
+
+            pollCard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    Intent intent = new Intent(context, PollActivity.class);
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 
