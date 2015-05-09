@@ -21,6 +21,7 @@ public class ChoiceQuestion extends Question {
     private static final String TAG = "ChoiceQuestion";
     private static final Map<Long, ChoiceQuestion> CACHE = new HashMap<>();
 
+    private static final String QUESTION_TYPE = "choice";
 
     private Poll poll;
 
@@ -86,7 +87,8 @@ public class ChoiceQuestion extends Question {
                 .put("id", getId())
                 .put("poll", getPoll().getId())
                 .put("title", getTitle())
-                .put("options", getOptions())
+                .put("type", QUESTION_TYPE)
+                .put("content", JsonUtils.builder().put("options", getOptions()).build())
                 .put("responses", Model.mapIds(responses))
                 .build();
     }

@@ -4,7 +4,6 @@ import android.util.Log;
 import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
 import edu.ucsd.studentpoll.rest.RestRouter;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,7 +29,7 @@ public class Poll extends Model {
 
     private String name;
 
-    private List<Question> questions;
+    private List<? extends Question> questions;
 
     private Poll() {
     }
@@ -69,12 +68,16 @@ public class Poll extends Model {
             creator = User.getOrStub(json.getLong("creator"));
             creationTime = null;
             name = json.getString("name");
+
+            // extra crap to make wildcards work properly
             List<Long> questionIds = JsonUtils.toListOfLong(json.optJSONArray("questions"));
-            questions = new ArrayList<>(questionIds.size());
+            List<Question> localQuestions = new ArrayList<>();
             for(Long questionId : questionIds) {
                 // TODO: make this work for any type of question
-                questions.add(ChoiceQuestion.getOrStub(questionId));
+                Question question = (Question)ChoiceQuestion.getOrStub(questionId);
+                localQuestions.add(question);
             }
+            questions = localQuestions;
         } catch (JSONException e) {
             Log.wtf(TAG, e);
         }
@@ -84,7 +87,13 @@ public class Poll extends Model {
 
     @Override
     JSONObject toJson() {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return JsonUtils.builder()
+                .put("id", getId())
+                .put("creator", getCreator().getId())
+                .put("group", getGroup().getId())
+                .put("name", getName())
+                .put("questions", Model.mapJson(getQuestions()))
+                .build();
     }
 
     @Override
@@ -108,7 +117,7 @@ public class Poll extends Model {
         return name;
     }
 
-    public List<Question> getQuestions() {
+    public List<? extends Question> getQuestions() {
         return questions;
     }
 
