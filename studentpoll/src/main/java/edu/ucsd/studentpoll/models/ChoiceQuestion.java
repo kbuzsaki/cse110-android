@@ -48,6 +48,8 @@ public class ChoiceQuestion extends Question {
 
     private List<ChoiceResponse> responses;
 
+    private boolean singleAnswer;
+
     private ChoiceQuestion() {
     }
 
@@ -115,9 +117,10 @@ public class ChoiceQuestion extends Question {
         return id;
     }
 
-    public ChoiceQuestion(String title, List<String> options) {
+    public ChoiceQuestion(String title, List<String> options, boolean singleAnswer) {
         this.title = title;
         this.options = options;
+        this.singleAnswer = singleAnswer;
     }
 
     @Override
@@ -132,6 +135,10 @@ public class ChoiceQuestion extends Question {
 
     public List<String> getOptions() {
         return options;
+    }
+
+    public boolean isSingleAnswer() {
+        return singleAnswer;
     }
 
     @Override
@@ -152,7 +159,7 @@ public class ChoiceQuestion extends Question {
         List<String> options = new ArrayList<>();
         options.add("Cat");
         options.add("Dog");
-        ChoiceQuestion choiceQuestion = new ChoiceQuestion("Favorite Pet?", options);
+        ChoiceQuestion choiceQuestion = new ChoiceQuestion("Favorite Pet?", options, true);
 
         return choiceQuestion;
     }
@@ -163,7 +170,7 @@ public class ChoiceQuestion extends Question {
         options.add("Platypus");
         options.add("Polar Bear");
         options.add("Pig");
-        ChoiceQuestion choiceQuestion = new ChoiceQuestion("Best Animal?", options);
+        ChoiceQuestion choiceQuestion = new ChoiceQuestion("Best Animal?", options, false);
 
         return choiceQuestion;
     }
@@ -176,7 +183,7 @@ public class ChoiceQuestion extends Question {
         options.add("Double Fun");
         options.add("Mega Fun");
         options.add("Mega No Fun");
-        ChoiceQuestion choiceQuestion = new ChoiceQuestion("Fun or no Fun?", options);
+        ChoiceQuestion choiceQuestion = new ChoiceQuestion("Fun or no Fun?", options, true);
 
         return choiceQuestion;
     }
