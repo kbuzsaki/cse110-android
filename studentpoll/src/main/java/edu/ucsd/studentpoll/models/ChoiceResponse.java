@@ -8,6 +8,7 @@ import edu.ucsd.studentpoll.rest.RestRouter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,5 +92,21 @@ public class ChoiceResponse extends Response {
 
     public List<String> getChoices() {
         return choices;
+    }
+
+    public static Map<String, Integer> aggregateResponses(Collection<ChoiceResponse> responses) {
+        Map<String, Integer> aggregate = new HashMap<>();
+
+        Log.d(TAG, "" + responses.size());
+
+        for(ChoiceResponse response : responses) {
+            for(String choice : response.getChoices()) {
+                Integer count = aggregate.get(choice);
+                count = count != null ? count : 0;
+                aggregate.put(choice, count + 1);
+            }
+        }
+
+        return aggregate;
     }
 }
