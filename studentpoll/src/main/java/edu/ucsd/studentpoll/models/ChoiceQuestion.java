@@ -1,5 +1,6 @@
 package edu.ucsd.studentpoll.models;
 
+
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -11,6 +12,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,6 +115,11 @@ public class ChoiceQuestion extends Question {
         return id;
     }
 
+    public ChoiceQuestion(String title, List<String> options) {
+        this.title = title;
+        this.options = options;
+    }
+
     @Override
     public Poll getPoll() {
         return poll;
@@ -139,6 +146,51 @@ public class ChoiceQuestion extends Question {
         question.options = options;
         question.responses = Collections.emptyList();
         return question;
+    }
+
+    public static ChoiceQuestion fakeChoiceQuestionOne() {
+        List<String> options = new ArrayList<>();
+        options.add("Cat");
+        options.add("Dog");
+        ChoiceQuestion choiceQuestion = new ChoiceQuestion("Favorite Pet?", options);
+
+        return choiceQuestion;
+    }
+
+    public static ChoiceQuestion fakeChoiceQuestionTwo() {
+        List<String> options = new ArrayList<>();
+        options.add("Pelican");
+        options.add("Platypus");
+        options.add("Polar Bear");
+        options.add("Pig");
+        ChoiceQuestion choiceQuestion = new ChoiceQuestion("Best Animal?", options);
+
+        return choiceQuestion;
+    }
+
+    public static ChoiceQuestion fakeChoiceQuestionThree() {
+        List<String> options = new ArrayList<>();
+        options.add("No Fun");
+        options.add("Fun");
+        options.add("Double No Fun");
+        options.add("Double Fun");
+        options.add("Mega Fun");
+        options.add("Mega No Fun");
+        ChoiceQuestion choiceQuestion = new ChoiceQuestion("Fun or no Fun?", options);
+
+        return choiceQuestion;
+    }
+
+    public static Map<String, Integer> fakeResponses() {
+
+        Map<String, Integer> responses = new HashMap<>();
+        responses.put("CatMan", 2);
+        responses.put("BatMan", 4);
+        responses.put("RatMan", 1);
+        responses.put("HatMan", 6);
+        responses.put("WatMan", 0);
+
+        return responses;
     }
 
 }

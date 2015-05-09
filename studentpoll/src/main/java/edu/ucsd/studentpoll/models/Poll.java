@@ -1,5 +1,6 @@
 package edu.ucsd.studentpoll.models;
 
+
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -117,6 +118,11 @@ public class Poll extends Model {
         return id;
     }
 
+    public Poll(String name, List<Question> questions) {
+        this.name = name;
+        this.questions = questions;
+    }
+
     public Group getGroup() {
         return group;
     }
@@ -177,6 +183,17 @@ public class Poll extends Model {
         Map<String, JSONObject> data = ImmutableMap.of("poll", poll.toJson());
         JSONObject response = client.post(RestRouter.postPoll(), data);
         return new Poll().initFromJson(response);
+    }
+
+    public static Poll fakePollOne() {
+        List<Question> questions = new ArrayList<>();
+        questions.add(ChoiceQuestion.fakeChoiceQuestionOne());
+        questions.add(ChoiceQuestion.fakeChoiceQuestionTwo());
+        questions.add(ChoiceQuestion.fakeChoiceQuestionThree());
+        questions.add(ChoiceQuestion.fakeChoiceQuestionOne());
+
+        Poll poll = new Poll("Pet Poll", questions);
+        return poll;
     }
 
 }
