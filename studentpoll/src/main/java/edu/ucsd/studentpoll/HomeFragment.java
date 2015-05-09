@@ -8,13 +8,16 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import edu.ucsd.studentpoll.models.Group;
 import edu.ucsd.studentpoll.models.Model;
 import edu.ucsd.studentpoll.models.User;
+import edu.ucsd.studentpoll.rest.RESTException;
 import edu.ucsd.studentpoll.view.ActionBarHider;
 
 import java.util.Collections;
@@ -22,6 +25,8 @@ import java.util.List;
 
 
 public class HomeFragment extends Fragment {
+
+    private static final String TAG = "HomeFragment";
 
     private ViewGroup rootView;
 
@@ -60,18 +65,29 @@ public class HomeFragment extends Fragment {
 
             @Override
             protected List<Group> doInBackground(Object[] params) {
-                User user = User.getDeviceUser();
-                user.inflate();
+                try {
+                    User user = User.getDeviceUser();
+                    user.refresh();
 
-                List<Group> groups = user.getGroups();
-                Model.inflateAll(groups);
+                    List<Group> groups = user.getGroups();
+                    Model.refreshAll(groups);
 
-                return groups;
+                    return groups;
+                }
+                catch(RESTException e) {
+                    Log.e(TAG, "Failed to reload groups", e);
+                    return null;
+                }
             }
 
             @Override
             protected void onPostExecute(List<Group> groups) {
-                groupsAdapter.setGroups(groups);
+                if(groups == null) {
+                    Toast.makeText(getActivity(), "Failed to load groups.", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    groupsAdapter.setGroups(groups);
+                }
             }
         }.execute();
     }

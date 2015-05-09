@@ -13,10 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import edu.ucsd.studentpoll.models.Group;
 import edu.ucsd.studentpoll.models.Model;
 import edu.ucsd.studentpoll.models.Poll;
 import edu.ucsd.studentpoll.models.User;
+import edu.ucsd.studentpoll.rest.RESTException;
 import edu.ucsd.studentpoll.view.ActionBarHider;
 
 import java.util.ArrayList;
@@ -65,27 +67,38 @@ public class PollsFragment extends Fragment {
 
             @Override
             protected List<Poll> doInBackground(Object... params) {
-                User user = User.getDeviceUser();
-                user.inflate();
+                try {
+                    User user = User.getDeviceUser();
+                    user.inflate();
 
-                Log.d(TAG, "Loading polls for user: " + user);
+                    Log.d(TAG, "Loading polls for user: " + user);
 
-                List<Group> groups = user.getGroups();
-                Model.inflateAll(groups);
+                    List<Group> groups = user.getGroups();
+                    Model.inflateAll(groups);
 
-                List<Poll> polls = new ArrayList<>();
-                for(Group group : groups) {
-                    polls.addAll(group.getPolls());
+                    List<Poll> polls = new ArrayList<>();
+                    for(Group group : groups) {
+                        polls.addAll(group.getPolls());
+                    }
+
+                    Model.refreshAll(polls);
+
+                    return polls;
                 }
-
-                Model.inflateAll(polls);
-
-                return polls;
+                catch (RESTException e) {
+                    Log.e(TAG, "Failed to reload polls", e);
+                    return null;
+                }
             }
 
             @Override
             protected void onPostExecute(List<Poll> polls) {
-                pollsAdapter.setPolls(polls);
+                if(polls == null) {
+                    Toast.makeText(getActivity(), "Failed to load polls.", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    pollsAdapter.setPolls(polls);
+                }
             }
         }.execute();
     }
