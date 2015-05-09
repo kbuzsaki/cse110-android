@@ -41,6 +41,11 @@ public abstract class Model {
 
     abstract JSONObject toJson();
 
+    @Override
+    public String toString() {
+        return "class=" + this.getClass() + ", id=" + getId() + ", inflated=" + inflated;
+    }
+
     public static void inflateAll(Collection<? extends Model> models) {
         for(Model model : models) {
             model.inflate();
