@@ -1,6 +1,7 @@
 package edu.ucsd.studentpoll.models;
 
 import android.util.Log;
+import com.google.common.collect.ImmutableMap;
 import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
 import edu.ucsd.studentpoll.rest.RestRouter;
@@ -15,7 +16,7 @@ import java.util.Map;
 /**
  * Created by kbuzsaki on 5/1/15.
  */
-public class ChoiceQuestion implements Question {
+public class ChoiceQuestion extends Question {
 
     private static final String TAG = "ChoiceQuestion";
     private static final Map<Long, ChoiceQuestion> CACHE = new HashMap<>();
@@ -48,6 +49,7 @@ public class ChoiceQuestion implements Question {
         return CACHE.get(id);
     }
 
+    @Override
     public void inflate() {
         if(this.id == UNINITIALIZED) {
             throw new AssertionError("Attempting to inflate uninitialized Model!");
@@ -61,13 +63,16 @@ public class ChoiceQuestion implements Question {
         }
     }
 
+    @Override
     ChoiceQuestion initFromJson(JSONObject json) {
         try {
             id = json.getLong("id");
             poll = Poll.getOrStub(json.getLong("poll"));
             title = json.getString("title");
-            options = JsonUtils.toListOfString(json.getJSONArray("options"));
-            List<Long> responseIds = JsonUtils.toListOfLong(json.optJSONArray("responses"));
+
+            JSONObject content = json.getJSONObject("content");
+            options = JsonUtils.toListOfString(content.getJSONArray("options"));
+            List<Long> responseIds = JsonUtils.toListOfLong(content.optJSONArray("responses"));
             responses = new ArrayList<>(responseIds.size());
             for(Long responseId : responseIds) {
                 responses.add(ChoiceResponse.getOrStub(responseId));
@@ -79,6 +84,20 @@ public class ChoiceQuestion implements Question {
         return this;
     }
 
+    @Override
+    JSONObject toJson() {
+        Map<String, Object> data = ImmutableMap.<String, Object>builder()
+                .put("id", getId())
+                .put("poll", getPoll().getId())
+                .put("title", getTitle())
+                .put("options", getOptions())
+                .put("responses", Model.mapIds(responses))
+                .build();
+
+        return new JSONObject(data);
+    }
+
+    @Override
     public long getId() {
         return id;
     }

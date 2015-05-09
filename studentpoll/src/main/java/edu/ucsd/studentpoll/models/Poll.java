@@ -4,6 +4,7 @@ import android.util.Log;
 import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
 import edu.ucsd.studentpoll.rest.RestRouter;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,7 +17,7 @@ import java.util.Map;
 /**
  * Created by kbuzsaki on 5/1/15.
  */
-public class Poll implements Model {
+public class Poll extends Model {
 
     private static final String TAG = "Poll";
     private static Map<Long, Poll> CACHE = new HashMap<>();
@@ -51,6 +52,7 @@ public class Poll implements Model {
         return CACHE.get(id);
     }
 
+    @Override
     public void inflate() {
         if(this.id == UNINITIALIZED) {
             throw new AssertionError("Attempting to inflate uninitialized Model!");
@@ -64,6 +66,7 @@ public class Poll implements Model {
         }
     }
 
+    @Override
     Poll initFromJson(JSONObject json) {
         try {
             id = json.getLong("id");
@@ -84,6 +87,12 @@ public class Poll implements Model {
         return this;
     }
 
+    @Override
+    JSONObject toJson() {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    @Override
     public long getId() {
         return id;
     }

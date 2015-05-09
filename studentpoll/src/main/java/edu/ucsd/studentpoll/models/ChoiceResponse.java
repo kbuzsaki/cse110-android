@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Created by kbuzsaki on 5/1/15.
  */
-public class ChoiceResponse implements Response {
+public class ChoiceResponse extends Response {
 
     private static final String TAG = "ChoiceResponse";
     private static final Map<Long, ChoiceResponse> CACHE = new HashMap<>();
@@ -46,6 +46,7 @@ public class ChoiceResponse implements Response {
         return CACHE.get(id);
     }
 
+    @Override
     public void inflate() {
         if(this.id == UNINITIALIZED) {
             throw new AssertionError("Attempting to inflate uninitialized Model!");
@@ -59,6 +60,7 @@ public class ChoiceResponse implements Response {
         }
     }
 
+    @Override
     ChoiceResponse initFromJson(JSONObject json) {
         try {
             id = json.getLong("id");
@@ -72,6 +74,12 @@ public class ChoiceResponse implements Response {
         return this;
     }
 
+    @Override
+    JSONObject toJson() {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    @Override
     public long getId() {
         return id;
     }

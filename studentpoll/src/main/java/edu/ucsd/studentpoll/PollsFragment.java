@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import edu.ucsd.studentpoll.models.Group;
-import edu.ucsd.studentpoll.models.ModelUtils;
+import edu.ucsd.studentpoll.models.Model;
 import edu.ucsd.studentpoll.models.Poll;
 import edu.ucsd.studentpoll.models.User;
 import edu.ucsd.studentpoll.view.ActionBarHider;
@@ -66,14 +66,14 @@ public class PollsFragment extends Fragment {
                 user.inflate();
 
                 List<Group> groups = user.getGroups();
-                ModelUtils.inflateAll(groups);
+                Model.inflateAll(groups);
 
                 List<Poll> polls = new ArrayList<>();
                 for(Group group : groups) {
                     polls.addAll(group.getPolls());
                 }
 
-                ModelUtils.inflateAll(polls);
+                Model.inflateAll(polls);
 
                 return polls;
             }

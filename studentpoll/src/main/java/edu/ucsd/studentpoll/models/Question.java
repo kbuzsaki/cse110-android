@@ -1,16 +1,18 @@
 package edu.ucsd.studentpoll.models;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 /**
  * Created by kbuzsaki on 5/1/15.
  */
-public interface Question extends Model {
+public abstract class Question extends Model {
 
-    public Poll getPoll();
+    public abstract Poll getPoll();
 
-    public String getTitle();
+    public abstract String getTitle();
 
-    public List<? extends Response> getResponses();
+    public abstract List<? extends Response> getResponses();
 
 }

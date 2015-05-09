@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Created by kbuzsaki on 4/26/15.
  */
-public class Group implements Model {
+public class Group extends Model {
 
     private static final String TAG = "Group";
     private static Map<Long, Group> CACHE = new HashMap<>();
@@ -47,6 +47,7 @@ public class Group implements Model {
         return CACHE.get(id);
     }
 
+    @Override
     public void inflate() {
         if(this.id == UNINITIALIZED) {
             throw new AssertionError("Attempting to inflate uninitialized Model!");
@@ -60,6 +61,7 @@ public class Group implements Model {
         }
     }
 
+    @Override
     Group initFromJson(JSONObject json) {
         try {
             id = json.getLong("id");
@@ -81,6 +83,12 @@ public class Group implements Model {
         return this;
     }
 
+    @Override
+    JSONObject toJson() {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    @Override
     public long getId() {
         return id;
     }

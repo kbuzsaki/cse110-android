@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Created by kbuzsaki on 5/1/15.
  */
-public class User implements Model {
+public class User extends Model {
 
     private static final String TAG = "User";
     private static final Map<Long, User> CACHE = new HashMap<>();
@@ -47,6 +47,7 @@ public class User implements Model {
         return CACHE.get(id);
     }
 
+    @Override
     public void inflate() {
         if(this.id == UNINITIALIZED) {
             throw new AssertionError("Attempting to inflate uninitialized Model!");
@@ -60,6 +61,7 @@ public class User implements Model {
         }
     }
 
+    @Override
     User initFromJson(JSONObject json) {
         try {
             id = json.getLong("id");
@@ -77,6 +79,12 @@ public class User implements Model {
         return this;
     }
 
+    @Override
+    JSONObject toJson() {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    @Override
     public long getId() {
         return id;
     }

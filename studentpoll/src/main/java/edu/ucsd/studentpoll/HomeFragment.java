@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import edu.ucsd.studentpoll.models.Group;
-import edu.ucsd.studentpoll.models.ModelUtils;
+import edu.ucsd.studentpoll.models.Model;
 import edu.ucsd.studentpoll.models.User;
 import edu.ucsd.studentpoll.view.ActionBarHider;
 
@@ -64,7 +64,7 @@ public class HomeFragment extends Fragment {
                 user.inflate();
 
                 List<Group> groups = user.getGroups();
-                ModelUtils.inflateAll(groups);
+                Model.inflateAll(groups);
 
                 return groups;
             }
