@@ -1,6 +1,7 @@
 package edu.ucsd.studentpoll.models;
 
 import android.util.Log;
+import com.google.common.collect.ImmutableMap;
 import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
 import edu.ucsd.studentpoll.rest.RestRouter;
@@ -154,6 +155,13 @@ public class Poll extends Model {
             poll.questions = questions;
             return poll;
         }
+    }
+
+    public static Poll postPoll(Poll poll) {
+        AndrestClient client = new AndrestClient();
+        Map<String, JSONObject> data = ImmutableMap.of("poll", poll.toJson());
+        JSONObject response = client.post(RestRouter.postPoll(), data);
+        return new Poll().initFromJson(response);
     }
 
 }
