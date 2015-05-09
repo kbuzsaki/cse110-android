@@ -22,8 +22,6 @@ public class Poll extends Model {
     private static final String TAG = "Poll";
     private static Map<Long, Poll> CACHE = new HashMap<>();
 
-    private boolean inflated = false;
-
     private Group group;
 
     private User creator;

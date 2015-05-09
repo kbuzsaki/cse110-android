@@ -16,6 +16,8 @@ public abstract class Model {
 
     protected Long id;
 
+    protected boolean inflated;
+
     protected Model() {
         this(UNINITIALIZED);
     }

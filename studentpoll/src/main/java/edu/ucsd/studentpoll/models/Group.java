@@ -21,8 +21,6 @@ public class Group extends Model {
     private static final String TAG = "Group";
     private static Map<Long, Group> CACHE = new HashMap<>();
 
-    private boolean inflated = false;
-
     private String name;
 
     private List<User> members;

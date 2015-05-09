@@ -22,8 +22,6 @@ public class ChoiceQuestion extends Question {
     private static final Map<Long, ChoiceQuestion> CACHE = new HashMap<>();
 
 
-    private boolean inflated = false;
-
     private Poll poll;
 
     private String title;

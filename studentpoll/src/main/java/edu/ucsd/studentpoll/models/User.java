@@ -21,8 +21,6 @@ public class User extends Model {
     private static final String TAG = "User";
     private static final Map<Long, User> CACHE = new HashMap<>();
 
-    private boolean inflated = false;
-
     private String name;
 
     private Drawable avatar;

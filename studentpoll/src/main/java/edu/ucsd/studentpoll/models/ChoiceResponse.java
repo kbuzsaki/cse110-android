@@ -20,8 +20,6 @@ public class ChoiceResponse extends Response {
     private static final String TAG = "ChoiceResponse";
     private static final Map<Long, ChoiceResponse> CACHE = new HashMap<>();
 
-    private boolean inflated = false;
-
     private User responder;
 
     private ChoiceQuestion question;
