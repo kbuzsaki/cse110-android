@@ -1,22 +1,28 @@
 package edu.ucsd.studentpoll.rest;
 
+import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by kbuzsaki on 5/1/15.
  */
 public class JsonUtils {
 
-    private JsonUtils() {
+    private static final String TAG = "JsonUtils";
 
+    private JsonUtils() {
     }
 
     public static List<Long> toListOfLong(JSONArray array) throws JSONException {
+        Log.d(TAG, "Converting to list of longs: " + array);
         if(array == null) {
             return Collections.emptyList();
         }
@@ -31,6 +37,7 @@ public class JsonUtils {
     }
 
     public static List<String> toListOfString(JSONArray array) throws JSONException {
+        Log.d(TAG, "Converting to list of strings: " + array);
         if(array == null) {
             return Collections.emptyList();
         }
@@ -44,4 +51,34 @@ public class JsonUtils {
         return list;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private Map<String, Object> data;
+
+        public Builder() {
+            this.data = new HashMap<>();
+        }
+
+        public Builder put(String key, Object value) {
+            if(value != null) {
+                this.data.put(key, value);
+            }
+            else {
+                this.data.remove(key);
+            }
+
+            return this;
+        }
+
+        public JSONObject build() {
+            JSONObject json = new JSONObject(this.data);
+            Log.d(TAG, "building json: " + json);
+            return json;
+        }
+
+    }
 }
