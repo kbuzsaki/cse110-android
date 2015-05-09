@@ -32,6 +32,11 @@ public abstract class Model {
 
     public abstract void inflate();
 
+    public void refresh() {
+        this.inflated = false;
+        this.inflate();
+    }
+
     abstract <M extends Model> M initFromJson(JSONObject json);
 
     abstract JSONObject toJson();
@@ -39,6 +44,12 @@ public abstract class Model {
     public static void inflateAll(Collection<? extends Model> models) {
         for(Model model : models) {
             model.inflate();
+        }
+    }
+
+    public static void refreshAll(Collection<? extends Model> models) {
+        for(Model model : models) {
+            model.refresh();
         }
     }
 
