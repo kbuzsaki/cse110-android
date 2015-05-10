@@ -31,6 +31,7 @@ import java.util.List;
 public class PollsFragment extends Fragment {
 
     private static final String TAG = "PollsFragment";
+    private static final String SAVED_POLLS_KEY = "polls";
 
     private ViewGroup rootView;
 
@@ -59,9 +60,34 @@ public class PollsFragment extends Fragment {
             }
         });
 
-        refreshPolls();
-
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(pollsAdapter.polls.isEmpty()) {
+            refreshPolls();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        ArrayList<Poll> polls = new ArrayList<>(pollsAdapter.polls);
+        outState.putParcelableArrayList(SAVED_POLLS_KEY, polls);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if(savedInstanceState != null) {
+            List<Poll> polls = savedInstanceState.getParcelableArrayList(SAVED_POLLS_KEY);
+            pollsAdapter.setPolls(polls);
+        }
     }
 
     public void refreshPolls() {

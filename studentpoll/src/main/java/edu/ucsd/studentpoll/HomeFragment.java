@@ -20,6 +20,7 @@ import edu.ucsd.studentpoll.models.User;
 import edu.ucsd.studentpoll.rest.RESTException;
 import edu.ucsd.studentpoll.view.ActionBarHider;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import java.util.List;
 public class HomeFragment extends Fragment {
 
     private static final String TAG = "HomeFragment";
+    private static final String SAVED_GROUPS_KEY = "groups";
 
     private ViewGroup rootView;
 
@@ -55,9 +57,34 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        refreshGroups();
-
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(groupsAdapter.groups.isEmpty()) {
+            refreshGroups();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        ArrayList<Group> groups = new ArrayList<>(groupsAdapter.groups);
+        outState.putParcelableArrayList(SAVED_GROUPS_KEY, groups);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if(savedInstanceState != null) {
+            List<Group> groups = savedInstanceState.getParcelableArrayList(SAVED_GROUPS_KEY);
+            groupsAdapter.setGroups(groups);
+        }
     }
 
     public void refreshGroups() {
