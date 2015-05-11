@@ -1,24 +1,15 @@
 package edu.ucsd.studentpoll;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import edu.ucsd.studentpoll.view.SlidingTabLayout;
 import edu.ucsd.studentpoll.view.VerticalViewPager;
-
-import java.util.ArrayList;
 
 /**
  * Created by kdhuynh on 5/1/15.
@@ -42,7 +33,7 @@ public class PollQuestionFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        rootView = (ViewGroup) inflater.inflate(R.layout.poll_question, container, false);
+        rootView = (ViewGroup) inflater.inflate(R.layout.choice_question_fragment, container, false);
 
 
         // Instantiate a ViewPager and a PagerAdapter.
@@ -71,7 +62,7 @@ public class PollQuestionFragment extends Fragment {
         public Fragment getItem(int position) {
             switch(position) {
                 case 0:
-                    return new ChoiceQuestionFragment();
+                    return new ChoiceResponseFragment();
                 case 1:
                     return new ChoiceResultFragment();
             }

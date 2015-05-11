@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
@@ -37,7 +36,7 @@ public class PollActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.poll);
+        setContentView(R.layout.poll_activity);
 
         Intent intent = getIntent();
         Poll poll = intent.getParcelableExtra("poll");
@@ -74,12 +73,12 @@ public class PollActivity extends ActionBarActivity {
             Question question = poll.getQuestions().get(position);
 
             if(question instanceof ChoiceQuestion) {
-                PollChoiceQuestionFragment pollChoiceQuestionFragment = new PollChoiceQuestionFragment();
+                ChoiceQuestionFragment choiceQuestionFragment = new ChoiceQuestionFragment();
                 Log.i("PollActivity",  "setting question:  " + question.getTitle());
-                pollChoiceQuestionFragment.setQuestion((ChoiceQuestion) question);
+                choiceQuestionFragment.setQuestion((ChoiceQuestion) question);
                 Log.i("PollActivity", "got PollChoiceQuestionFragment for: " + position);
 
-                return pollChoiceQuestionFragment;
+                return choiceQuestionFragment;
             }
 
             return new PollQuestionFragment();

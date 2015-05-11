@@ -2,7 +2,6 @@ package edu.ucsd.studentpoll;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ public class ChoiceResultFragment extends Fragment {
     private ChoiceQuestion choiceQuestion;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = (ViewGroup) inflater.inflate(R.layout.choice_result, container, false);
+        rootView = (ViewGroup) inflater.inflate(R.layout.choice_result_fragment, container, false);
 
         refreshView();
 
