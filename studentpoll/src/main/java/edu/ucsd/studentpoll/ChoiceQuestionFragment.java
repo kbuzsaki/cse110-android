@@ -15,18 +15,12 @@ import edu.ucsd.studentpoll.view.VerticalViewPager;
 /**
  * Created by kdhuynh on 5/8/15.
  */
-public class ChoiceQuestionFragment extends Fragment{
+public class ChoiceQuestionFragment extends Fragment {
+
     private ViewGroup rootView;
 
-    /**
-     * The pager widget, which handles animation and allows swiping horizontally to access previous
-     * and next wizard steps.
-     */
     private VerticalViewPager viewPager;
 
-    /**
-     * The pager adapter, which provides the pages to the view pager widget.
-     */
     private PagerAdapter pagerAdapter;
 
     private SlidingTabLayout slidingTabLayout;
@@ -54,10 +48,6 @@ public class ChoiceQuestionFragment extends Fragment{
         this.question = question;
     }
 
-    /**
-     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
-     * sequence.
-     */
     private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);

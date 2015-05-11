@@ -14,6 +14,7 @@ import java.util.*;
  * Created by kdhuynh on 5/1/15.
  */
 public class ChoiceResultFragment extends Fragment {
+
     private ViewGroup rootView;
 
     private ChoiceQuestion choiceQuestion;

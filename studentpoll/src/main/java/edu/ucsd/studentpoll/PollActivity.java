@@ -18,15 +18,9 @@ import edu.ucsd.studentpoll.view.SlidingTabLayout;
  * Created by kdhuynh on 5/1/15.
  */
 public class PollActivity extends ActionBarActivity {
-    /**
-     * The pager widget, which handles animation and allows swiping horizontally to access previous
-     * and next wizard steps.
-     */
+
     private ViewPager viewPager;
 
-    /**
-     * The pager adapter, which provides the pages to the view pager widget.
-     */
     private PagerAdapter pagerAdapter;
 
     private SlidingTabLayout slidingTabLayout;
@@ -52,7 +46,6 @@ public class PollActivity extends ActionBarActivity {
     public void updateView() {
         setTitle(poll.getName());
 
-        // Instantiate a ViewPager and a PagerAdapter.
         viewPager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
@@ -60,10 +53,10 @@ public class PollActivity extends ActionBarActivity {
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         slidingTabLayout.setDistributeEvenly(true);
         slidingTabLayout.setViewPager(viewPager);
-
     }
 
     private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
+
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }

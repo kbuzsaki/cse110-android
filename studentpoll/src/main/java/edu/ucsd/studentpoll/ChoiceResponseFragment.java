@@ -18,6 +18,7 @@ import java.util.List;
  * Created by kdhuynh on 5/1/15.
  */
 public class ChoiceResponseFragment extends Fragment {
+
     private ViewGroup rootView;
 
     private ChoiceQuestion choiceQuestion;
