@@ -85,6 +85,9 @@ public class AndrestClient {
             HttpResponse response = client.execute(request);
             int statusCode = response.getStatusLine().getStatusCode();
             if(statusCode != 200) {
+                Log.d(TAG, "Got error code: " + statusCode);
+                String body = CharStreams.toString(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+                Log.d(TAG, "With body: " + body);
                 throw new Exception("Error executing GET request! Received error code: " + response.getStatusLine().getStatusCode());
             }
 
@@ -145,6 +148,9 @@ public class AndrestClient {
 
             int statusCode = response.getStatusLine().getStatusCode();
             if(statusCode != 200) {
+                Log.d(TAG, "Got error code: " + statusCode);
+                String body = CharStreams.toString(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+                Log.d(TAG, "With body: " + body);
                 throw new Exception("Error executing PUT request! Received error code: " + response.getStatusLine().getStatusCode());
             }
 
@@ -171,6 +177,9 @@ public class AndrestClient {
 
             int statusCode = response.getStatusLine().getStatusCode();
             if(statusCode != 200) {
+                Log.d(TAG, "Got error code: " + statusCode);
+                String body = CharStreams.toString(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+                Log.d(TAG, "With body: " + body);
                 throw new Exception("Error executing DELETE request! Received error code: " + response.getStatusLine().getStatusCode());
             }
 
