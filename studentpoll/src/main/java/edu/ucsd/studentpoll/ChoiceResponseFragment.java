@@ -62,20 +62,20 @@ public class ChoiceResponseFragment extends ResponseFragment {
 
         optionsGroup.removeAllViews();
 
-        if (choiceQuestion.isSingleAnswer()) {
+        if (choiceQuestion.getAllowMultiple()) {
             for (String option : options) {
-                RadioButton button = new RadioButton(getActivity());
+                CheckBox button = new CheckBox(getActivity());
                 button.setText(option);
                 optionsGroup.addView(button);
             }
         }
         else {
             for (String option : options) {
-                CheckBox button = new CheckBox(getActivity());
+                RadioButton button = new RadioButton(getActivity());
                 button.setText(option);
                 optionsGroup.addView(button);
             }
-
         }
     }
+
 }

@@ -12,7 +12,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +47,9 @@ public class ChoiceQuestion extends Question {
 
     private List<ChoiceResponse> responses;
 
-    private boolean singleAnswer;
+    private boolean allowMultiple;
+
+    private boolean allowCustom;
 
     private ChoiceQuestion() {
     }
@@ -88,6 +89,8 @@ public class ChoiceQuestion extends Question {
 
             JSONObject content = json.getJSONObject("content");
             options = JsonUtils.toListOfString(content.getJSONArray("options"));
+            allowMultiple = content.getBoolean("allow_multiple");
+            allowCustom = content.getBoolean("allow_custom");
             List<Long> responseIds = JsonUtils.toListOfLong(content.optJSONArray("responses"));
             responses = new ArrayList<>(responseIds.size());
             for(Long responseId : responseIds) {
@@ -107,8 +110,12 @@ public class ChoiceQuestion extends Question {
                 .put("poll", getPoll().getId())
                 .put("title", getTitle())
                 .put("type", QUESTION_TYPE)
-                .put("content", JsonUtils.builder().put("options", getOptions()).build())
-                .put("responses", Model.mapIds(responses))
+                .put("content", JsonUtils.builder()
+                    .put("options", getOptions())
+                    .put("allow_multiple", getAllowMultiple())
+                    .put("allow_custom", getAllowCustom())
+                    .put("responses", Model.mapIds(responses))
+                    .build())
                 .build();
     }
 
@@ -117,10 +124,10 @@ public class ChoiceQuestion extends Question {
         return id;
     }
 
-    public ChoiceQuestion(String title, List<String> options, boolean singleAnswer) {
+    public ChoiceQuestion(String title, List<String> options, boolean allowMultiple) {
         this.title = title;
         this.options = options;
-        this.singleAnswer = singleAnswer;
+        this.allowMultiple = allowMultiple;
     }
 
     @Override
@@ -137,8 +144,12 @@ public class ChoiceQuestion extends Question {
         return options;
     }
 
-    public boolean isSingleAnswer() {
-        return singleAnswer;
+    public boolean getAllowMultiple() {
+        return allowMultiple;
+    }
+
+    public boolean getAllowCustom() {
+        return allowCustom;
     }
 
     @Override
