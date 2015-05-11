@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableMap;
 import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
 import edu.ucsd.studentpoll.rest.RestRouter;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -87,7 +88,11 @@ public class ChoiceResponse extends Response {
 
     @Override
     JSONObject toJson() {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return JsonUtils.builder()
+                .put("responder", getResponder().getId())
+                .put("question", getQuestion().getId())
+                .put("choices", new JSONArray(getChoices()))
+                .build();
     }
 
     @Override
@@ -124,4 +129,16 @@ public class ChoiceResponse extends Response {
 
         return aggregate;
     }
+
+    public static ChoiceResponse putResponse(ChoiceQuestion question, List<String> choices) {
+        AndrestClient client = new AndrestClient();
+        ChoiceResponse choiceResponse = new ChoiceResponse();
+        choiceResponse.responder = User.getDeviceUser();
+        choiceResponse.question = question;
+        choiceResponse.choices = choices;
+        Map<String, JSONObject> data = ImmutableMap.of("response", choiceResponse.toJson());
+        JSONObject response = client.post(RestRouter.putResponse(), data);
+        return new ChoiceResponse().initFromJson(response);
+    }
+
 }
