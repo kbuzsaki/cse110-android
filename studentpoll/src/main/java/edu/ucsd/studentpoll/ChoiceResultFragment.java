@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import edu.ucsd.studentpoll.models.ChoiceQuestion;
+import edu.ucsd.studentpoll.models.ChoiceResponse;
 import edu.ucsd.studentpoll.models.Question;
 
 import java.util.*;
@@ -19,6 +20,8 @@ public class ChoiceResultFragment extends ResultFragment {
     private ViewGroup rootView;
 
     private ChoiceQuestion choiceQuestion;
+
+    private Map<String, Integer> results = Collections.emptyMap();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,9 +47,19 @@ public class ChoiceResultFragment extends ResultFragment {
     public void setQuestion(Question question) {
         if(question instanceof ChoiceQuestion) {
             this.choiceQuestion = (ChoiceQuestion) question;
+            this.results = ChoiceResponse.aggregateResponses(choiceQuestion.getResponses());
         }
         else {
             throw new AssertionError("Question is not a choice question: " + question);
+        }
+    }
+
+    private int getCountForOption(String option) {
+        if(results.containsKey(option)) {
+            return results.get(option);
+        }
+        else {
+            return 0;
         }
     }
 
@@ -57,16 +70,13 @@ public class ChoiceResultFragment extends ResultFragment {
         LinearLayout responseList = (LinearLayout) rootView.findViewById(R.id.resultList);
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        Map<String, Integer> responses = ChoiceQuestion.fakeResponses();
-
         int totalCount = 0;
-
-        for(int count : responses.values()) {
+        for(int count : results.values()) {
             totalCount += count;
         }
 
         responseList.removeAllViews();
-        for(String choice : responses.keySet()) {
+        for(String choice : choiceQuestion.getOptions()) {
             LinearLayout option = (LinearLayout) inflater.inflate(R.layout.choice_result_option, null, false);
 
             TextView choiceText = (TextView) option.findViewById(R.id.voteOption);
@@ -75,8 +85,8 @@ public class ChoiceResultFragment extends ResultFragment {
 
             choiceText.setText(choice);
             choiceBar.setMax(totalCount);
-            choiceBar.setProgress(responses.get(choice));
-            choiceCounter.setText(responses.get(choice).toString());
+            choiceBar.setProgress(getCountForOption(choice));
+            choiceCounter.setText("" + getCountForOption(choice));
 
             responseList.addView(option);
         }

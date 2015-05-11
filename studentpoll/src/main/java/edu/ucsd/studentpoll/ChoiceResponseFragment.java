@@ -1,7 +1,6 @@
 package edu.ucsd.studentpoll;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +10,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import edu.ucsd.studentpoll.models.ChoiceQuestion;
+import edu.ucsd.studentpoll.models.ChoiceResponse;
 import edu.ucsd.studentpoll.models.Question;
 
 import java.util.List;
@@ -23,6 +23,8 @@ public class ChoiceResponseFragment extends ResponseFragment {
     private ViewGroup rootView;
 
     private ChoiceQuestion choiceQuestion;
+
+    private ChoiceResponse latestResponse;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -19,6 +19,7 @@ import android.widget.Toast;
 import edu.ucsd.studentpoll.models.Group;
 import edu.ucsd.studentpoll.models.Model;
 import edu.ucsd.studentpoll.models.Poll;
+import edu.ucsd.studentpoll.models.Question;
 import edu.ucsd.studentpoll.models.User;
 import edu.ucsd.studentpoll.rest.RESTException;
 import edu.ucsd.studentpoll.view.ActionBarHider;
@@ -113,6 +114,10 @@ public class PollsFragment extends Fragment {
 
                     for(Poll poll : polls) {
                         Model.refreshAll(poll.getQuestions());
+
+                        for(Question question : poll.getQuestions()) {
+                            Model.refreshAll(question.getResponses());
+                        }
                     }
 
                     return polls;
