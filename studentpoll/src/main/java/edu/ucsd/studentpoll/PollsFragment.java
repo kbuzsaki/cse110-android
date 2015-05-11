@@ -111,6 +111,10 @@ public class PollsFragment extends Fragment {
 
                     Model.refreshAll(polls);
 
+                    for(Poll poll : polls) {
+                        Model.refreshAll(poll.getQuestions());
+                    }
+
                     return polls;
                 }
                 catch (RESTException e) {
@@ -178,7 +182,7 @@ public class PollsFragment extends Fragment {
             this.pollCard = pollCard;
         }
 
-        public void setContent(Poll poll) {
+        public void setContent(final Poll poll) {
             ((TextView) pollCard.findViewById(R.id.title)).setText(poll.getName());
             String timeText = randInt(2, 21) + " minutes ago";
             String voteText = randInt(0, 7) + "/" + randInt(7, 10) + " votes";
@@ -188,8 +192,8 @@ public class PollsFragment extends Fragment {
             pollCard.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     Intent intent = new Intent(context, PollActivity.class);
+                    intent.putExtra("poll", poll);
                     context.startActivity(intent);
                 }
             });
