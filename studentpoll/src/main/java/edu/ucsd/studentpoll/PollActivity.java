@@ -14,18 +14,54 @@ import edu.ucsd.studentpoll.models.Poll;
 import edu.ucsd.studentpoll.models.Question;
 import edu.ucsd.studentpoll.view.SlidingTabLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by kdhuynh on 5/1/15.
  */
 public class PollActivity extends ActionBarActivity {
 
+    private static final String TAG = "PollActivity";
+
     private ViewPager viewPager;
 
-    private PagerAdapter pagerAdapter;
+    private ScreenSlidePagerAdapter pagerAdapter;
 
     private SlidingTabLayout slidingTabLayout;
 
     private Poll poll;
+
+    // keeps our QuestionFragments in vertical sync
+    private ViewPager.OnPageChangeListener pageSynchronizer = new ViewPager.OnPageChangeListener() {
+
+        // the last position change we got
+        private int currentPosition = 0;
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            // pass
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            Log.d(TAG, "page selected: " + position + ", current: " + currentPosition);
+            // only broadcast a position change if it's new
+            // this prevents infinite looping
+            if(position != currentPosition) {
+                currentPosition = position;
+                for(ChoiceQuestionFragment fragment : pagerAdapter.questionFragments) {
+                    Log.d(TAG, "setting position " + position + " for fragment: " + fragment);
+                    fragment.setViewingPage(position);
+                }
+            }
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+            // pass
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,24 +93,32 @@ public class PollActivity extends ActionBarActivity {
 
     private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
 
+        private List<ChoiceQuestionFragment> questionFragments;
+
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
+
+            questionFragments = new ArrayList<>(poll.getQuestions().size());
+            for(Question question : poll.getQuestions()) {
+                if(question instanceof ChoiceQuestion) {
+                    ChoiceQuestionFragment choiceQuestionFragment = new ChoiceQuestionFragment();
+                    Log.i("PollActivity", "setting question:  " + question.getTitle());
+                    choiceQuestionFragment.setQuestion((ChoiceQuestion) question);
+                    choiceQuestionFragment.setPageSynchronizer(pageSynchronizer);
+
+                    questionFragments.add(choiceQuestionFragment);
+                }
+                else {
+                    throw new AssertionError("Don't know how to create fragment for question: " + question);
+                }
+            }
         }
 
         @Override
         public Fragment getItem(int position) {
-            Question question = poll.getQuestions().get(position);
-
-            if(question instanceof ChoiceQuestion) {
-                ChoiceQuestionFragment choiceQuestionFragment = new ChoiceQuestionFragment();
-                Log.i("PollActivity",  "setting question:  " + question.getTitle());
-                choiceQuestionFragment.setQuestion((ChoiceQuestion) question);
-                Log.i("PollActivity", "got PollChoiceQuestionFragment for: " + position);
-
-                return choiceQuestionFragment;
-            }
-
-            return new PollQuestionFragment();
+            ChoiceQuestionFragment fragment = questionFragments.get(position);
+            Log.i("PollActivity", "got PollChoiceQuestionFragment for: " + position);
+            return fragment;
         }
 
         @Override
