@@ -11,18 +11,20 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import edu.ucsd.studentpoll.models.ChoiceQuestion;
+import edu.ucsd.studentpoll.models.Question;
 
 import java.util.List;
 
 /**
  * Created by kdhuynh on 5/1/15.
  */
-public class ChoiceResponseFragment extends Fragment {
+public class ChoiceResponseFragment extends ResponseFragment {
 
     private ViewGroup rootView;
 
     private ChoiceQuestion choiceQuestion;
 
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(R.layout.choice_response_fragment, container, false);
 
@@ -31,8 +33,19 @@ public class ChoiceResponseFragment extends Fragment {
         return rootView;
     }
 
-    public void setQuestion(ChoiceQuestion choiceQuestion) {
-        this.choiceQuestion = choiceQuestion;
+    @Override
+    public Question getQuestion() {
+        return choiceQuestion;
+    }
+
+    @Override
+    public void setQuestion(Question question) {
+        if(question instanceof ChoiceQuestion) {
+            this.choiceQuestion = (ChoiceQuestion) question;
+        }
+        else {
+            throw new IllegalArgumentException("Question is not a choice question: " + question);
+        }
     }
 
     public void refreshView() {

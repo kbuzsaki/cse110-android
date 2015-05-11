@@ -33,7 +33,7 @@ public class PollQuestionFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        rootView = (ViewGroup) inflater.inflate(R.layout.choice_question_fragment, container, false);
+        rootView = (ViewGroup) inflater.inflate(R.layout.question_fragment, container, false);
 
 
         // Instantiate a ViewPager and a PagerAdapter.

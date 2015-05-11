@@ -7,18 +7,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import edu.ucsd.studentpoll.models.ChoiceQuestion;
+import edu.ucsd.studentpoll.models.Question;
 
 import java.util.*;
 
 /**
  * Created by kdhuynh on 5/1/15.
  */
-public class ChoiceResultFragment extends Fragment {
+public class ChoiceResultFragment extends ResultFragment {
 
     private ViewGroup rootView;
 
     private ChoiceQuestion choiceQuestion;
 
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(R.layout.choice_result_fragment, container, false);
 
@@ -33,8 +35,19 @@ public class ChoiceResultFragment extends Fragment {
         refreshView();
     }
 
-    public void setQuestion(ChoiceQuestion choiceQuestion) {
-        this.choiceQuestion = choiceQuestion;
+    @Override
+    public Question getQuestion() {
+        return choiceQuestion;
+    }
+
+    @Override
+    public void setQuestion(Question question) {
+        if(question instanceof ChoiceQuestion) {
+            this.choiceQuestion = (ChoiceQuestion) question;
+        }
+        else {
+            throw new AssertionError("Question is not a choice question: " + question);
+        }
     }
 
     public void refreshView() {
