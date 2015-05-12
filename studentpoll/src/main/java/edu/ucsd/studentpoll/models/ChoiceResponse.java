@@ -137,7 +137,7 @@ public class ChoiceResponse extends Response {
         choiceResponse.question = question;
         choiceResponse.choices = choices;
         Map<String, JSONObject> data = ImmutableMap.of("response", choiceResponse.toJson());
-        JSONObject response = client.post(RestRouter.putResponse(), data);
+        JSONObject response = client.put(RestRouter.putResponse(), data);
         return new ChoiceResponse().initFromJson(response);
     }
 
