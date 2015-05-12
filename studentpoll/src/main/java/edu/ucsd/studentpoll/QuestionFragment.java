@@ -55,6 +55,7 @@ public abstract class QuestionFragment extends Fragment {
 
         viewPager.setCurrentItem(currentItem);
         // have to do this in onResume, otherwise it gets eaten somehow
+        // this would have happened if tabLayout was still being used. TabLayout overwrites the current page listener - kyle h
         Log.d(TAG, "Setting page synchronizer: " + pageSynchronizer);
         viewPager.setOnPageChangeListener(pageSynchronizer);
     }

@@ -2,6 +2,7 @@ package edu.ucsd.studentpoll;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -9,9 +10,11 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import edu.ucsd.studentpoll.models.ChoiceQuestion;
 import edu.ucsd.studentpoll.models.Poll;
 import edu.ucsd.studentpoll.models.Question;
+import edu.ucsd.studentpoll.view.QuestionViewPager;
 import edu.ucsd.studentpoll.view.SlidingTabLayout;
 
 import java.util.ArrayList;
@@ -24,7 +27,7 @@ public class PollActivity extends ActionBarActivity {
 
     private static final String TAG = "PollActivity";
 
-    private ViewPager viewPager;
+    private QuestionViewPager viewPager;
 
     private ScreenSlidePagerAdapter pagerAdapter;
 
@@ -82,7 +85,7 @@ public class PollActivity extends ActionBarActivity {
     public void updateView() {
         setTitle(poll.getName());
 
-        viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager = (QuestionViewPager) findViewById(R.id.pager);
         pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
 
