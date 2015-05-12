@@ -27,7 +27,7 @@ public class ChoiceResponseFragment extends ResponseFragment {
 
     private static final String TAG = "ChoiceResponseFragment";
 
-    private ViewGroup rootView;
+    View responseContent;
 
     private ChoiceQuestion choiceQuestion;
 
@@ -37,11 +37,12 @@ public class ChoiceResponseFragment extends ResponseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = (ViewGroup) inflater.inflate(R.layout.choice_response_fragment, container, false);
+        View superView = super.onCreateView(inflater, container, savedInstanceState);
 
-        refreshView();
+        responseContent = inflater.inflate(R.layout.choice_response_content, getContentContainer(), false);
+        getContentContainer().addView(responseContent);
 
-        return rootView;
+        return superView;
     }
 
     @Override

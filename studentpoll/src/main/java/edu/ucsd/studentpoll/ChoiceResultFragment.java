@@ -1,7 +1,6 @@
 package edu.ucsd.studentpoll;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,7 @@ import java.util.*;
  */
 public class ChoiceResultFragment extends ResultFragment {
 
-    private ViewGroup rootView;
+    private LinearLayout resultList;
 
     private ChoiceQuestion choiceQuestion;
 
@@ -25,17 +24,12 @@ public class ChoiceResultFragment extends ResultFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = (ViewGroup) inflater.inflate(R.layout.choice_result_fragment, container, false);
+        View superView = super.onCreateView(inflater, container, savedInstanceState);
 
-        refreshView();
+        resultList = (LinearLayout) inflater.inflate(R.layout.choice_result_content, getContentContainer(), false);
+        getContentContainer().addView(resultList);
 
-        return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        refreshView();
+        return superView;
     }
 
     @Override
@@ -67,7 +61,6 @@ public class ChoiceResultFragment extends ResultFragment {
         TextView pollTitle = (TextView) rootView.findViewById(R.id.pollTitle);
         pollTitle.setText(choiceQuestion.getTitle());
 
-        LinearLayout responseList = (LinearLayout) rootView.findViewById(R.id.resultList);
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         int totalCount = 0;
@@ -75,7 +68,7 @@ public class ChoiceResultFragment extends ResultFragment {
             totalCount += count;
         }
 
-        responseList.removeAllViews();
+        resultList.removeAllViews();
         for(String choice : choiceQuestion.getOptions()) {
             LinearLayout option = (LinearLayout) inflater.inflate(R.layout.choice_result_option, null, false);
 
@@ -88,7 +81,7 @@ public class ChoiceResultFragment extends ResultFragment {
             choiceBar.setProgress(getCountForOption(choice));
             choiceCounter.setText("" + getCountForOption(choice));
 
-            responseList.addView(option);
+            resultList.addView(option);
         }
     }
 }

@@ -58,6 +58,19 @@ public abstract class QuestionFragment extends Fragment {
         // this would have happened if tabLayout was still being used. TabLayout overwrites the current page listener - kyle h
         Log.d(TAG, "Setting page synchronizer: " + pageSynchronizer);
         viewPager.setOnPageChangeListener(pageSynchronizer);
+
+        getResponseFragment().setSeeResultsListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(QUESTION_RESULTS_INDEX);
+            }
+        });
+        getResultFragment().setSeeResponseListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(QUESTION_RESPONSE_INDEX);
+            }
+        });
     }
 
     public void setViewingPage(int position) {
