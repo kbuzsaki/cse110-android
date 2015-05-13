@@ -61,6 +61,11 @@ public class ChoiceResponseFragment extends ResponseFragment {
     }
 
     public void refreshView() {
+        if(rootView == null) {
+            Log.w(TAG, "rootView null!");
+            return;
+        }
+
         responseListener = new ResponseListener();
         List<String> options = choiceQuestion.getOptions();
 
@@ -105,6 +110,11 @@ public class ChoiceResponseFragment extends ResponseFragment {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             RadioButton checkedButton = (RadioButton) group.findViewById(checkedId);
+            if(checkedButton == null) {
+                Log.w(TAG, "Checked button null!");
+                return;
+            }
+
             String choice = checkedButton.getText().toString();
             updateResponse(Collections.singletonList(choice));
         }
@@ -112,6 +122,10 @@ public class ChoiceResponseFragment extends ResponseFragment {
         // callback for checkboxes (multiple selection)
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if(buttonView == null) {
+                Log.w(TAG, "ButtonView null!");
+            }
+
             List<String> choices = new ArrayList<>(previousChoices);
 
             String choice = buttonView.getText().toString();

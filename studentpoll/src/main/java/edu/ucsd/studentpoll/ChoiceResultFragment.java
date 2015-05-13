@@ -1,6 +1,7 @@
 package edu.ucsd.studentpoll;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import java.util.*;
  * Created by kdhuynh on 5/1/15.
  */
 public class ChoiceResultFragment extends ResultFragment {
+
+    private static final String TAG = "ChoiceResultFragment";
 
     private LinearLayout resultList;
 
@@ -58,6 +61,11 @@ public class ChoiceResultFragment extends ResultFragment {
     }
 
     public void refreshView() {
+        if(rootView == null) {
+            Log.w(TAG, "rootView null!");
+            return;
+        }
+
         if(choiceQuestion != null) {
             this.results = ChoiceResponse.aggregateResponses(choiceQuestion.getResponses());
         }
