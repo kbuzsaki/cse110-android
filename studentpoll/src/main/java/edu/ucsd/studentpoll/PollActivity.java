@@ -66,20 +66,7 @@ public class PollActivity extends ActionBarActivity {
             final QuestionFragment currentQuestionFragment = pagerAdapter.getItem(position);
             final Question currentQuestion = currentQuestionFragment.getQuestion();
             Log.d(TAG, "Selected page: " + position + ", title: " + currentQuestion.getTitle());
-
-            new AsyncTask<Object, Object, Question>() {
-                @Override
-                protected Question doInBackground(Object... params) {
-                    currentQuestion.refresh();
-                    Model.refreshAll(currentQuestion.getResponses());
-                    return currentQuestion;
-                }
-
-                @Override
-                protected void onPostExecute(Question question) {
-                    currentQuestionFragment.refreshView();
-                }
-            }.execute();
+            currentQuestionFragment.refreshContent();
         }
     };
 

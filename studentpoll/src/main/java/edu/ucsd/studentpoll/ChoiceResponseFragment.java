@@ -132,8 +132,8 @@ public class ChoiceResponseFragment extends ResponseFragment {
                 @Override
                 protected void onPostExecute(ChoiceResponse choiceResponse) {
                     super.onPostExecute(choiceResponse);
-
                     latestResponse = choiceResponse;
+                    onPutResponseListener.onResponsePut(latestResponse);
                 }
             }.execute();
         }

@@ -1,5 +1,6 @@
 package edu.ucsd.studentpoll;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,8 +11,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import edu.ucsd.studentpoll.models.ChoiceQuestion;
+import edu.ucsd.studentpoll.models.Model;
 import edu.ucsd.studentpoll.models.Question;
+import edu.ucsd.studentpoll.models.Response;
 import edu.ucsd.studentpoll.view.VerticalViewPager;
 
 /**
@@ -59,6 +61,12 @@ public abstract class QuestionFragment extends Fragment {
         Log.d(TAG, "Setting page synchronizer: " + pageSynchronizer);
         viewPager.setOnPageChangeListener(pageSynchronizer);
 
+        getResponseFragment().setOnPutResponseListener(new ResponseFragment.OnPutResponseListener() {
+            @Override
+            public void onResponsePut(Response response) {
+                refreshResults();
+            }
+        });
         getResponseFragment().setSeeResultsListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,6 +99,38 @@ public abstract class QuestionFragment extends Fragment {
     public abstract ResponseFragment getResponseFragment();
 
     public abstract ResultFragment getResultFragment();
+
+    public void refreshContent() {
+        new AsyncTask<Object, Object, Question>() {
+            @Override
+            protected Question doInBackground(Object... params) {
+                getQuestion().refresh();
+                Model.refreshAll(getQuestion().getResponses());
+                return getQuestion();
+            }
+
+            @Override
+            protected void onPostExecute(Question question) {
+                refreshView();
+            }
+        }.execute();
+    }
+
+    public void refreshResults() {
+        new AsyncTask<Object, Object, Question>() {
+            @Override
+            protected Question doInBackground(Object... params) {
+                getQuestion().refresh();
+                Model.refreshAll(getQuestion().getResponses());
+                return getQuestion();
+            }
+
+            @Override
+            protected void onPostExecute(Question question) {
+                getResultFragment().refreshView();
+            }
+        }.execute();
+    }
 
     public void refreshView() {
         getResponseFragment().refreshView();

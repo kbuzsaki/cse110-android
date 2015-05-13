@@ -13,6 +13,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import edu.ucsd.studentpoll.models.ChoiceQuestion;
 import edu.ucsd.studentpoll.models.Question;
+import edu.ucsd.studentpoll.models.Response;
 
 import java.util.List;
 
@@ -24,6 +25,8 @@ public abstract class ResponseFragment extends Fragment {
     protected ViewGroup rootView;
 
     private View.OnClickListener resultsListener;
+
+    protected OnPutResponseListener onPutResponseListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,6 +55,10 @@ public abstract class ResponseFragment extends Fragment {
 
     public abstract void refreshView();
 
+    public void setOnPutResponseListener(OnPutResponseListener onPutResponseListener) {
+        this.onPutResponseListener = onPutResponseListener;
+    }
+
     public void setSeeResultsListener(View.OnClickListener resultsListener) {
         this.resultsListener = resultsListener;
 
@@ -59,6 +66,10 @@ public abstract class ResponseFragment extends Fragment {
             Button seeResultsButton = (Button) rootView.findViewById(R.id.resultsButton);
             seeResultsButton.setOnClickListener(resultsListener);
         }
+    }
+
+    public interface OnPutResponseListener {
+        void onResponsePut(Response response);
     }
 
 }
