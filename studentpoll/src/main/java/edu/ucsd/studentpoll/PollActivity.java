@@ -1,6 +1,7 @@
 package edu.ucsd.studentpoll;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
@@ -11,9 +12,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.ViewGroup;
 import edu.ucsd.studentpoll.models.ChoiceQuestion;
+import edu.ucsd.studentpoll.models.Model;
 import edu.ucsd.studentpoll.models.Poll;
 import edu.ucsd.studentpoll.models.Question;
+import edu.ucsd.studentpoll.view.CompositeOnPageChangeListener;
 import edu.ucsd.studentpoll.view.QuestionViewPager;
 import edu.ucsd.studentpoll.view.SlidingTabLayout;
 
@@ -36,15 +40,10 @@ public class PollActivity extends ActionBarActivity {
     private Poll poll;
 
     // keeps our QuestionFragments in vertical sync
-    private ViewPager.OnPageChangeListener pageSynchronizer = new ViewPager.OnPageChangeListener() {
+    private ViewPager.OnPageChangeListener pageSynchronizer = new ViewPager.SimpleOnPageChangeListener() {
 
         // the last position change we got
         private int currentPosition = 0;
-
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            // pass
-        }
 
         @Override
         public void onPageSelected(int position) {
@@ -59,10 +58,28 @@ public class PollActivity extends ActionBarActivity {
                 }
             }
         }
+    };
 
+    private ViewPager.OnPageChangeListener pageRefresher = new ViewPager.SimpleOnPageChangeListener() {
         @Override
-        public void onPageScrollStateChanged(int state) {
-            // pass
+        public void onPageSelected(int position) {
+            final QuestionFragment currentQuestionFragment = pagerAdapter.getItem(position);
+            final Question currentQuestion = currentQuestionFragment.getQuestion();
+            Log.d(TAG, "Selected page: " + position + ", title: " + currentQuestion.getTitle());
+
+            new AsyncTask<Object, Object, Question>() {
+                @Override
+                protected Question doInBackground(Object... params) {
+                    currentQuestion.refresh();
+                    Model.refreshAll(currentQuestion.getResponses());
+                    return currentQuestion;
+                }
+
+                @Override
+                protected void onPostExecute(Question question) {
+                    currentQuestionFragment.refreshView();
+                }
+            }.execute();
         }
     };
 
@@ -92,6 +109,8 @@ public class PollActivity extends ActionBarActivity {
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         slidingTabLayout.setDistributeEvenly(true);
         slidingTabLayout.setViewPager(viewPager);
+
+        viewPager.setOnPageChangeListener(new CompositeOnPageChangeListener(pageRefresher, slidingTabLayout.getViewPagerListener()));
     }
 
     private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
@@ -118,7 +137,7 @@ public class PollActivity extends ActionBarActivity {
         }
 
         @Override
-        public Fragment getItem(int position) {
+        public QuestionFragment getItem(int position) {
             ChoiceQuestionFragment fragment = questionFragments.get(position);
             Log.i("PollActivity", "got PollChoiceQuestionFragment for: " + position);
             return fragment;

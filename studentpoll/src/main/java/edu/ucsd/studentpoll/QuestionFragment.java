@@ -92,6 +92,11 @@ public abstract class QuestionFragment extends Fragment {
 
     public abstract ResultFragment getResultFragment();
 
+    public void refreshView() {
+        getResponseFragment().refreshView();
+        getResultFragment().refreshView();
+    }
+
     private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);

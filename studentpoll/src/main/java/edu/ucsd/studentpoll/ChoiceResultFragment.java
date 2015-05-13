@@ -58,6 +58,10 @@ public class ChoiceResultFragment extends ResultFragment {
     }
 
     public void refreshView() {
+        if(choiceQuestion != null) {
+            this.results = ChoiceResponse.aggregateResponses(choiceQuestion.getResponses());
+        }
+
         TextView pollTitle = (TextView) rootView.findViewById(R.id.pollTitle);
         pollTitle.setText(choiceQuestion.getTitle());
 
