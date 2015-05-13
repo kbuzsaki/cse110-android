@@ -77,6 +77,9 @@ public class ChoiceResponseFragment extends ResponseFragment {
             for (String option : options) {
                 CheckBox button = new CheckBox(getActivity());
                 button.setText(option);
+                if(latestResponse != null && latestResponse.getChoices().contains(option)) {
+                    button.setChecked(true);
+                }
                 button.setOnCheckedChangeListener(responseListener);
                 optionsGroup.addView(button);
             }
@@ -85,6 +88,9 @@ public class ChoiceResponseFragment extends ResponseFragment {
             optionsGroup.setOnCheckedChangeListener(responseListener);
             for (String option : options) {
                 RadioButton button = new RadioButton(getActivity());
+                if(latestResponse != null && latestResponse.getChoices().contains(option)) {
+                    button.setChecked(true);
+                }
                 button.setText(option);
                 optionsGroup.addView(button);
             }
