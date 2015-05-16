@@ -32,6 +32,10 @@ public abstract class Model implements Parcelable {
         return id;
     }
 
+    public boolean isInitialized() {
+        return this.id != UNINITIALIZED;
+    }
+
     public abstract void inflate();
 
     public void refresh() {
