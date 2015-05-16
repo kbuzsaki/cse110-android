@@ -6,16 +6,25 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+import edu.ucsd.studentpoll.models.ChoiceQuestion;
+import edu.ucsd.studentpoll.models.ChoiceResponse;
 import edu.ucsd.studentpoll.models.Poll;
 import edu.ucsd.studentpoll.models.Question;
 import edu.ucsd.studentpoll.rest.RESTException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,8 +34,8 @@ public class CreatePollActivity extends ActionBarActivity {
 
     private static final String TAG = "CreatePollActivity";
 
-    private static final String[] QUESTION_TYPES = {"Multiple Choice (Single Answer)",
-                                                    "Multiple Choice (Multi Answer)",
+    private static final String[] QUESTION_TYPES = {"Multiple Choice (Choose One)",
+                                                    "Multiple Choice (Choose Many)",
                                                     "Rank",
                                                     "Schedule" };
 
@@ -34,7 +43,7 @@ public class CreatePollActivity extends ActionBarActivity {
 
     private RecyclerView questionsView;
 
-//    private QuestionsAdapter questionsAdapter;
+    private QuestionsAdapter questionsAdapter;
 
     private List<Question> questions;
 
@@ -44,12 +53,13 @@ public class CreatePollActivity extends ActionBarActivity {
         setContentView(R.layout.create_poll_activity);
         questions = new ArrayList<>();
 
-//        questionsView = (RecyclerView) findViewById(R.id.questionsView);
-//        questionsView.setLayoutManager(new LinearLayoutManager(this));
-//
-//        questionsAdapter = new QuestionsAdapter(Collections.<Question>emptyList());
-//        questionsView.setAdapter(questionsAdapter);
+        questionsView = (RecyclerView) findViewById(R.id.questionsView);
+        questionsView.setLayoutManager(new LinearLayoutManager(this));
 
+        questionsAdapter = new QuestionsAdapter(Collections.<Question>emptyList());
+        questionsView.setAdapter(questionsAdapter);
+
+        addQuestion(null);
     }
 
     public void addQuestion(View view) {
@@ -87,26 +97,21 @@ public class CreatePollActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultStatus, Intent data) {
-
         if (requestCode == REQ_CODE_ADD_QUESTION) {
             if(resultStatus == RESULT_OK){
                 Question question = data.getParcelableExtra("question");
                 questions.add(question);
+                questionsAdapter.setQuestions(questions);
+
+                if(questions.size() == 1 && ((EditText)findViewById(R.id.pollName)).getText().toString().equals("")) {
+                    ((EditText)findViewById(R.id.pollName)).setText(question.getTitle());
+                }
             }
-//            // what to do if the activity was cancelled
-//            if (resultStatus == RESULT_CANCELED) {
-//                // no op?
-//            }
         }
     }
 
     public void createPoll(View view) {
         String name = ((EditText)findViewById(R.id.pollName)).getText().toString();
-
-        // if no name is provided, use name of first question
-        if(name == "") {
-            name = questions.get(0).getTitle();
-        }
 
         final Poll poll = new Poll.Builder().withTitle(name).withQuestions(questions).build();
 
@@ -153,58 +158,89 @@ public class CreatePollActivity extends ActionBarActivity {
         startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
     }
 
-//    private static class QuestionsAdapter extends RecyclerView.Adapter<QuestionsViewHolder> {
-//
-//        private List<Question> questions;
-//
-//        public QuestionsAdapter(List<Question> question) {
-//            this.questions = question;
-//        }
-//
-//        public void setQuestions(List<Question> question) {
-//            this.questions = questions;
-//            this.notifyDataSetChanged();
-//        }
-//
-//        @Override
-//        public QuestionsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//            CardView groupCard = (CardView) LayoutInflater.from(parent.getContext())
-//                    .inflate(R.layout.create_poll_question, parent, false);
-//            QuestionsViewHolder viewHolder = new QuestionsViewHolder(groupCard);
-//            // you don't have to set the content here before you return the viewHolder
-//            // onBindViewHolder will get called next and set the content for us
-//            // so just make and return an empty view
-//            return viewHolder;
-//        }
-//
-//        @Override
-//        public void onBindViewHolder(QuestionsViewHolder holder, int position) {
-//            holder.setContent(questions.get(position));
-//        }
-//
-//        @Override
-//        public int getItemCount() {
-//            return questions.size();
-//        }
-//    }
-//
-//    private static class QuestionsViewHolder extends RecyclerView.ViewHolder {
-//
-//        private CardView questionCard;
-//
-//        public QuestionsViewHolder(CardView questionCard) {
-//            super(questionCard);
-//            this.questionCard = questionCard;
-//        }
-//
-//        public void setContent(Question question) {
-////            ((TextView)questionCard.findViewById(R.id.title)).setText(group.getName());
-////            String timeText = randInt(2, 21) + " minutes ago";
-////            String voteText = randInt(0, 7) + "/" + randInt(7, 10) + " votes";
-////            ((TextView)questionCard.findViewById(R.id.time)).setText(timeText);
-////            ((TextView)questionCard.findViewById(R.id.votes)).setText(voteText);
-//        }
-//    }
+    private static class QuestionsAdapter extends RecyclerView.Adapter<QuestionsViewHolder> {
+
+        private List<Question> questions;
+
+        public QuestionsAdapter(List<Question> questions) {
+            this.questions = questions;
+        }
+
+        public void setQuestions(List<Question> questions) {
+            this.questions = questions;
+            this.notifyDataSetChanged();
+        }
+
+        @Override
+        public QuestionsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            CardView groupCard = (CardView) LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.create_poll_question, parent, false);
+            QuestionsViewHolder viewHolder = new QuestionsViewHolder(groupCard);
+            // you don't have to set the content here before you return the viewHolder
+            // onBindViewHolder will get called next and set the content for us
+            // so just make and return an empty view
+            return viewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(QuestionsViewHolder holder, int position) {
+            holder.setContent(questions.get(position));
+        }
+
+        @Override
+        public int getItemCount() {
+            return questions.size();
+        }
+    }
+
+    private static class QuestionsViewHolder extends RecyclerView.ViewHolder {
+
+        private CardView questionCard;
+
+        public QuestionsViewHolder(CardView questionCard) {
+            super(questionCard);
+            this.questionCard = questionCard;
+        }
+
+        public void setContent(Question question) {
+            ((TextView)questionCard.findViewById(R.id.questionTitle)).setText(question.getTitle());
+
+            LinearLayout settingsList = (LinearLayout) questionCard.findViewById(R.id.settingsList);
+            LinearLayout choicesList = (LinearLayout) questionCard.findViewById(R.id.choicesList);
+
+            choicesList.removeAllViews();
+            settingsList.removeAllViews();
+
+            if(question instanceof ChoiceQuestion) {
+                ChoiceQuestion choiceQuestion = (ChoiceQuestion) question;
+                for(String option: choiceQuestion.getOptions() ) {
+                    TextView textView = new TextView(questionCard.getContext());
+                    textView.setText(option);
+                    choicesList.addView(textView);
+                }
+
+                TextView questionType = new TextView(questionCard.getContext());
+                questionType.setText("Multiple Choice");
+                settingsList.addView(questionType);
+
+                if(choiceQuestion.getAllowCustom()) {
+                    TextView customAllowed = new TextView(questionCard.getContext());
+                    customAllowed.setText("Custom Allowed");
+                    settingsList.addView(customAllowed);
+                }
+
+                if(choiceQuestion.getAllowMultiple()) {
+                    TextView textView = new TextView(questionCard.getContext());
+                    textView.setText("Choose Many");
+                    settingsList.addView(textView);
+                } else {
+                    TextView textView = new TextView(questionCard.getContext());
+                    textView.setText("Choose One");
+                    settingsList.addView(textView);
+                }
+            }
+        }
+    }
 
 
 }

@@ -43,7 +43,7 @@
                 <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="fill_parent"
-                        android:layout_height="fill_parent" android:paddingLeft="8dp">
+                        android:layout_height="fill_parent" android:paddingLeft="8dp" android:id="@+id/choicesList">
                     <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -74,7 +74,8 @@
                           android:textAppearance="?android:attr/textAppearanceMedium" android:text="Settings:"
                           android:id="@+id/textView18"/>
                 <LinearLayout android:orientation="vertical" android:layout_width="fill_parent"
-                              android:layout_height="fill_parent" android:paddingLeft="8dp">
+                              android:layout_height="fill_parent" android:paddingLeft="8dp"
+                              android:id="@+id/settingsList">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                               android:textAppearance="?android:attr/textAppearanceSmall" android:text="Multiple Choice"
                               android:id="@+id/textView19"/>
