@@ -168,6 +168,19 @@ public class Poll extends Model {
             return this;
         }
 
+        public Builder withQuestions(List<Question> newQuestions) {
+            for(Question question : newQuestions) {
+                if(question instanceof ChoiceQuestion) {
+                    questions.add(ChoiceQuestion.makeQuestion(poll, (ChoiceQuestion)question));
+                }
+                else {
+                    throw new IllegalArgumentException("Question is not a valid question type: " + question);
+                }
+            }
+
+            return this;
+        }
+
         public Poll build() {
             if(poll.group == null) {
                 poll.group = Group.getOrStub(UNINITIALIZED);
@@ -183,17 +196,6 @@ public class Poll extends Model {
         Map<String, JSONObject> data = ImmutableMap.of("poll", poll.toJson());
         JSONObject response = client.post(RestRouter.postPoll(), data);
         return new Poll().initFromJson(response);
-    }
-
-    public static Poll fakePollOne() {
-        List<Question> questions = new ArrayList<>();
-        questions.add(ChoiceQuestion.fakeChoiceQuestionOne());
-        questions.add(ChoiceQuestion.fakeChoiceQuestionTwo());
-        questions.add(ChoiceQuestion.fakeChoiceQuestionThree());
-        questions.add(ChoiceQuestion.fakeChoiceQuestionOne());
-
-        Poll poll = new Poll("Pet Poll", questions);
-        return poll;
     }
 
 }
