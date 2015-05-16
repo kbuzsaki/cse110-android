@@ -8,7 +8,7 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:orientation="vertical"
-        tools:context="edu.ucsd.studentpoll.CreateChoicePoll">
+        tools:context="edu.ucsd.studentpoll.CreateChoiceQuestionActivity">
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -73,8 +73,8 @@
             <Button
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:text="Create"
-                    android:id="@+id/button5" android:onClick="submitPoll"/>
+                    android:text="Add"
+                    android:id="@+id/button5" android:onClick="addQuestion"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

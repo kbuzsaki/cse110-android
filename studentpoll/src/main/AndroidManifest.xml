@@ -31,7 +31,7 @@
         </activity>
         <activity android:name=".SingleChoicePoll" />
         <activity
-            android:name=".CreateChoicePoll"
+            android:name=".CreateChoiceQuestionActivity"
             android:label="@string/title_activity_create_choice_poll"
             android:windowSoftInputMode="stateHidden" />
         <activity

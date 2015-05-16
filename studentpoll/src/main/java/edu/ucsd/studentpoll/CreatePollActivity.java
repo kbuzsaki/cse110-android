@@ -137,13 +137,13 @@ public class CreatePollActivity extends ActionBarActivity {
     }
 
     public void createSingleChoiceQuestion() {
-        Intent intent = new Intent(this, CreateChoicePoll.class);
+        Intent intent = new Intent(this, CreateChoiceQuestionActivity.class);
         intent.putExtra("allowMultiple", false);
         startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
     }
 
     public void createMultipleChoiceQuestion() {
-        Intent intent = new Intent(this, CreateChoicePoll.class);
+        Intent intent = new Intent(this, CreateChoiceQuestionActivity.class);
         intent.putExtra("allowMultiple", true);
         startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
     }

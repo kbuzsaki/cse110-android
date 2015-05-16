@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CreateChoicePoll extends Activity {
+public class CreateChoiceQuestionActivity extends Activity {
 
-    private static final String TAG = "CreateChoicePoll";
+    private static final String TAG = "CreateChoiceQuestion";
 
     private static final String SAVED_TITLE = "savedTitle";
     private static final String SAVED_OPTIONS = "savedOptions";
@@ -33,7 +33,7 @@ public class CreateChoicePoll extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.create_choice_poll);
+        setContentView(R.layout.create_choice_question);
 
         Intent intent = getIntent();
 
@@ -94,7 +94,7 @@ public class CreateChoicePoll extends Activity {
                 addButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        removePollOption(view);
+                        removeOption(view);
                     }
                 });
             }
@@ -107,14 +107,14 @@ public class CreateChoicePoll extends Activity {
         ((CheckBox)findViewById(R.id.allow_custom_checkbox)).setChecked(allowCustom);
     }
 
-    public void addPollOption(View view) {
+    public void addOption(View view) {
         LinearLayout clickedOptionContainer = (LinearLayout)view.getParent();
         Button addButton = (Button)clickedOptionContainer.findViewById(R.id.optionAdd);
         addButton.setText("x");
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                removePollOption(view);
+                removeOption(view);
             }
         });
 
@@ -124,13 +124,13 @@ public class CreateChoicePoll extends Activity {
         optionsContainer.addView(newPollOption);
     }
 
-    public void removePollOption(View view) {
+    public void removeOption(View view) {
         LinearLayout clickedOptionContainer = (LinearLayout)view.getParent();
         LinearLayout optionsContainer = (LinearLayout)clickedOptionContainer.getParent();
         optionsContainer.removeView(clickedOptionContainer);
     }
 
-    public void submitPoll(View view) {
+    public void addQuestion(View view) {
         String name = getQuestionTitle();
         List<String> options = getQuestionOptions();
         Boolean allowCustom = getAllowCustom();

@@ -48,13 +48,13 @@ public class CreatePollChooseType extends Fragment {
     }
 
     public void createSingleChoicePoll(View view) {
-        Intent intent = new Intent(getActivity(), CreateChoicePoll.class);
+        Intent intent = new Intent(getActivity(), CreateChoiceQuestionActivity.class);
         intent.putExtra("allowMultiple", false);
         startActivity(intent);
     }
 
     public void createMultipleChoicePoll(View view) {
-        Intent intent = new Intent(getActivity(), CreateChoicePoll.class);
+        Intent intent = new Intent(getActivity(), CreateChoiceQuestionActivity.class);
         intent.putExtra("allowMultiple", true);
         startActivity(intent);
     }
