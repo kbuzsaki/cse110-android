@@ -31,7 +31,7 @@ public class MainActivity extends ActionBarActivity {
     /**
      * The number of pages (wizard steps) to show in this demo.
      */
-    private static final int NUM_PAGES = 3;
+    private static final int NUM_PAGES = 2;
 
     /**
      * The pager widget, which handles animation and allows swiping horizontally to access previous
@@ -207,9 +207,6 @@ public class MainActivity extends ActionBarActivity {
                 case 1:
                     Log.d(TAG, "Creating Home Fragment");
                     return new HomeFragment();
-                case 2:
-                    Log.d(TAG, "Creating Create Poll Fragment");
-                    return new CreatePollChooseType();
             }
             return new HomeFragment();
         }
@@ -221,8 +218,6 @@ public class MainActivity extends ActionBarActivity {
                     return "Polls";
                 case 1:
                     return "Groups";
-                case 2:
-                    return "Create";
             }
             return "wat";
         }
