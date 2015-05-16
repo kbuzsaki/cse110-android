@@ -82,9 +82,17 @@ public class MainActivity extends ActionBarActivity {
                 return true;
             case R.id.action_search:
                 return true;
+            case R.id.action_create:
+                createPoll();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void createPoll() {
+        Intent intent = new Intent(this, CreatePollActivity.class);
+        startActivity(intent);
     }
 
     private void joinPollDialog() {
