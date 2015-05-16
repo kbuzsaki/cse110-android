@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -97,6 +98,13 @@ public class Poll extends Model {
             questions = localQuestions;
         } catch (JSONException e) {
             Log.wtf(TAG, e);
+        }
+
+        if(CACHE.containsKey(id) && CACHE.get(id) != this) {
+            Log.w(TAG, "Initializing a poll that is already cached!");
+        }
+        else {
+            CACHE.put(id, this);
         }
 
         return this;
@@ -195,6 +203,12 @@ public class Poll extends Model {
         AndrestClient client = new AndrestClient();
         Map<String, JSONObject> data = ImmutableMap.of("poll", poll.toJson());
         JSONObject response = client.post(RestRouter.postPoll(), data);
+        return new Poll().initFromJson(response);
+    }
+
+    public static Poll joinPoll(String accessCode) {
+        AndrestClient client = new AndrestClient();
+        JSONObject response = client.put(RestRouter.joinPoll(accessCode), Collections.<String, JSONObject>emptyMap());
         return new Poll().initFromJson(response);
     }
 

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +19,12 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.Toast;
+import edu.ucsd.studentpoll.models.Model;
+import edu.ucsd.studentpoll.models.Poll;
+import edu.ucsd.studentpoll.models.Question;
+import edu.ucsd.studentpoll.models.User;
+import edu.ucsd.studentpoll.rest.RESTException;
 import edu.ucsd.studentpoll.view.SlidingTabLayout;
 
 import java.util.ArrayList;
@@ -129,28 +136,53 @@ public class MainActivity extends ActionBarActivity {
         focusKeyboardOn(accessCodeInput);
     }
 
-    private void handleAccessCode(String accessCode) {
-        if (accessCode.equalsIgnoreCase("redpanda")) {
-            Intent intent = new Intent(this, SingleChoicePoll.class);
-            ArrayList<String> options = new ArrayList<>();
-            options.addAll(Arrays.asList("Cheese", "Pepperoni", "Sausage", "Mushroom", "Onion"));
-            intent.putExtra("options", options);
-            startActivity(intent);
-        }
-        else {
-            AlertDialog errorDialog = new AlertDialog.Builder(this)
-                    .setTitle("Join Failed")
-                    .setMessage("We couldn't find a poll for \"" + accessCode + "\". Did you enter it correctly?")
-                    .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            joinPollDialog();
-                        }
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .create();
-            errorDialog.show();
-        }
+    private void handleAccessCode(final String accessCode) {
+        new AsyncTask<Object, Object, Poll>() {
+            @Override
+            protected Poll doInBackground(Object... params) {
+                try {
+                    Poll poll = Poll.joinPoll(accessCode);
+
+                    User.getDeviceUser().refresh();
+                    poll.getGroup().refresh();
+
+                    Model.refreshAll(poll.getQuestions());
+                    for(Question question : poll.getQuestions()) {
+                        Model.refreshAll(question.getResponses());
+                    }
+
+                    return poll;
+                } catch(RESTException e) {
+                    Log.e(TAG, "Failed to join poll: ", e);
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Poll poll) {
+                super.onPostExecute(poll);
+
+                if(poll == null) {
+                    AlertDialog errorDialog = new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("Join Failed")
+                            .setMessage("We couldn't find a poll for \"" + accessCode + "\". Did you enter it correctly?")
+                            .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    joinPollDialog();
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .create();
+                    errorDialog.show();
+                }
+                else {
+                    Intent intent = new Intent(MainActivity.this, PollActivity.class);
+                    intent.putExtra("poll", poll);
+                    startActivity(intent);
+                }
+            }
+        }.execute();
     }
 
     private void focusKeyboardOn(View view) {
