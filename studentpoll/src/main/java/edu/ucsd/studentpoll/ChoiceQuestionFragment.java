@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import edu.ucsd.studentpoll.models.ChoiceQuestion;
+import edu.ucsd.studentpoll.models.ChoiceResponse;
 import edu.ucsd.studentpoll.models.Question;
 
 /**
@@ -13,6 +14,8 @@ import edu.ucsd.studentpoll.models.Question;
 public class ChoiceQuestionFragment extends QuestionFragment {
 
     private static final String TAG = "ChoiceQuestionFragment";
+
+    private static final String SAVED_QUESTION = TAG + ".question";
 
     private ChoiceResponseFragment responseFragment;
 
@@ -27,15 +30,33 @@ public class ChoiceQuestionFragment extends QuestionFragment {
         responseFragment = new ChoiceResponseFragment();
         resultFragment = new ChoiceResultFragment();
 
+        if(question != null) {
+            responseFragment.setQuestion(question);
+            resultFragment.setQuestion(question);
+        }
+
         return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+    }
 
-        responseFragment.setQuestion(question);
-        resultFragment.setQuestion(question);
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(SAVED_QUESTION, question);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if(savedInstanceState != null) {
+            question = savedInstanceState.getParcelable(SAVED_QUESTION);
+        }
     }
 
     @Override
@@ -47,6 +68,13 @@ public class ChoiceQuestionFragment extends QuestionFragment {
     public void setQuestion(Question question) {
         if(question instanceof ChoiceQuestion) {
             this.question = (ChoiceQuestion) question;
+
+            if(responseFragment != null) {
+                responseFragment.setQuestion(question);
+            }
+            if(resultFragment != null) {
+                resultFragment.setQuestion(question);
+            }
         }
         else {
             throw new IllegalArgumentException("Question is not a ChoiceQuestion: " + question);

@@ -19,6 +19,8 @@ public class ChoiceResultFragment extends ResultFragment {
 
     private static final String TAG = "ChoiceResultFragment";
 
+    private static final String SAVED_QUESTION = TAG + ".question";
+
     private LinearLayout resultList;
 
     private ChoiceQuestion choiceQuestion;
@@ -36,13 +38,33 @@ public class ChoiceResultFragment extends ResultFragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(SAVED_QUESTION, choiceQuestion);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if(savedInstanceState != null) {
+            choiceQuestion = savedInstanceState.getParcelable(SAVED_QUESTION);
+            results = ChoiceResponse.aggregateResponses(choiceQuestion.getResponses());
+        }
+    }
+
+    @Override
     public Question getQuestion() {
         return choiceQuestion;
     }
 
     @Override
     public void setQuestion(Question question) {
-        if(question instanceof ChoiceQuestion) {
+        if(question == null) {
+            Log.w(TAG, "Setting a null question!");
+        }
+        else if(question instanceof ChoiceQuestion) {
             this.choiceQuestion = (ChoiceQuestion) question;
             this.results = ChoiceResponse.aggregateResponses(choiceQuestion.getResponses());
         }

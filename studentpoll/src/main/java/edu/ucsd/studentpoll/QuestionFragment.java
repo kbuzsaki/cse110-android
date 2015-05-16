@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -133,11 +134,15 @@ public abstract class QuestionFragment extends Fragment {
     }
 
     public void refreshView() {
-        getResponseFragment().refreshView();
-        getResultFragment().refreshView();
+        if(getResponseFragment() != null) {
+            getResponseFragment().refreshView();
+        }
+        if(getResultFragment() != null) {
+            getResultFragment().refreshView();
+        }
     }
 
-    private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
+    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }

@@ -27,6 +27,8 @@ public class ChoiceResponseFragment extends ResponseFragment {
 
     private static final String TAG = "ChoiceResponseFragment";
 
+    private static final String SAVED_QUESTION = TAG + ".question";
+
     View responseContent;
 
     private ChoiceQuestion choiceQuestion;
@@ -46,13 +48,32 @@ public class ChoiceResponseFragment extends ResponseFragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(SAVED_QUESTION, choiceQuestion);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if(savedInstanceState != null) {
+            choiceQuestion = savedInstanceState.getParcelable(SAVED_QUESTION);
+        }
+    }
+
+    @Override
     public Question getQuestion() {
         return choiceQuestion;
     }
 
     @Override
     public void setQuestion(Question question) {
-        if(question instanceof ChoiceQuestion) {
+        if(question == null) {
+            Log.w(TAG, "Setting a null question!");
+        }
+        else if(question instanceof ChoiceQuestion) {
             this.choiceQuestion = (ChoiceQuestion) question;
         }
         else {
