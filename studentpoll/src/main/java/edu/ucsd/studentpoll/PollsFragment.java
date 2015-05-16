@@ -33,12 +33,15 @@ public class PollsFragment extends Fragment {
 
     private static final String TAG = "PollsFragment";
     private static final String SAVED_POLLS_KEY = "polls";
+    private static final String SAVED_GROUP = TAG + ".group";
 
     private ViewGroup rootView;
 
     private RecyclerView pollsView;
 
     private PollsAdapter pollsAdapter;
+
+    private Group group;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,6 +80,8 @@ public class PollsFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        outState.putParcelable(SAVED_GROUP, group);
+
         ArrayList<Poll> polls = new ArrayList<>(pollsAdapter.polls);
         outState.putParcelableArrayList(SAVED_POLLS_KEY, polls);
     }
@@ -86,24 +91,39 @@ public class PollsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         if(savedInstanceState != null) {
+            group = savedInstanceState.getParcelable(SAVED_GROUP);
+
             List<Poll> polls = savedInstanceState.getParcelableArrayList(SAVED_POLLS_KEY);
             pollsAdapter.setPolls(polls);
         }
     }
 
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
     public void refreshPolls() {
+        final Group refreshGroup = group;
+
         new AsyncTask<Object, Object, List<Poll>>() {
 
             @Override
             protected List<Poll> doInBackground(Object... params) {
                 try {
-                    User user = User.getDeviceUser();
-                    user.inflate();
+                    List<Group> groups;
 
+                    User user = User.getDeviceUser();
+                    user.refresh();
                     Log.d(TAG, "Loading polls for user: " + user);
 
-                    List<Group> groups = user.getGroups();
-                    Model.inflateAll(groups);
+                    if(refreshGroup != null) {
+                        groups = Collections.singletonList(refreshGroup);
+                    }
+                    else {
+                        groups = user.getGroups();
+                    }
+
+                    Model.refreshAll(groups);
 
                     List<Poll> polls = new ArrayList<>();
                     for(Group group : groups) {
@@ -141,7 +161,9 @@ public class PollsFragment extends Fragment {
     }
 
     private static class PollsAdapter extends RecyclerView.Adapter<PollsViewHolder> {
+
         private final Context context;
+
         private List<Poll> polls;
 
         public PollsAdapter(Context context, List<Poll> polls) {

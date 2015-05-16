@@ -35,17 +35,21 @@
             android:label="@string/title_activity_create_choice_poll"
             android:windowSoftInputMode="stateHidden" />
         <activity
-                android:name=".CreateSchedulePoll"
-                android:label="@string/title_activity_create_schedule_poll"
-                android:windowSoftInputMode="stateHidden" />
+            android:name=".CreateSchedulePoll"
+            android:label="@string/title_activity_create_schedule_poll"
+            android:windowSoftInputMode="stateHidden" />
         <activity
-                android:name=".PollActivity"
-                android:label="@string/title_poll_activity"
-                android:windowSoftInputMode="stateHidden" />
+            android:name=".PollActivity"
+            android:label="@string/title_poll_activity"
+            android:windowSoftInputMode="stateHidden" />
         <activity
-                android:name=".CreatePollActivity"
-                android:label="@string/title_create_poll_activity"
-                android:windowSoftInputMode="stateHidden" />
+            android:name=".CreatePollActivity"
+            android:label="@string/title_create_poll_activity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".GroupActivity"
+            android:label="@string/title_activity_group" >
+        </activity>
     </application>
 
 </manifest>

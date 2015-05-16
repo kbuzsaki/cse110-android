@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 import edu.ucsd.studentpoll.models.Model;
 import edu.ucsd.studentpoll.models.Poll;
 import edu.ucsd.studentpoll.models.Question;
@@ -27,28 +26,13 @@ import edu.ucsd.studentpoll.models.User;
 import edu.ucsd.studentpoll.rest.RESTException;
 import edu.ucsd.studentpoll.view.SlidingTabLayout;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 
 public class MainActivity extends ActionBarActivity {
 
     private static final String TAG = "MainActivity";
 
-    /**
-     * The number of pages (wizard steps) to show in this demo.
-     */
-    private static final int NUM_PAGES = 2;
-
-    /**
-     * The pager widget, which handles animation and allows swiping horizontally to access previous
-     * and next wizard steps.
-     */
     private ViewPager viewPager;
 
-    /**
-     * The pager adapter, which provides the pages to the view pager widget.
-     */
     private PagerAdapter pagerAdapter;
 
     private SlidingTabLayout slidingTabLayout;
@@ -60,7 +44,7 @@ public class MainActivity extends ActionBarActivity {
 
         // Instantiate a ViewPager and a PagerAdapter.
         viewPager = (ViewPager) findViewById(R.id.pager);
-        pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+        pagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(1);
 
@@ -221,12 +205,11 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    /**
-     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
-     * sequence.
-     */
-    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
-        public ScreenSlidePagerAdapter(FragmentManager fm) {
+    private class MainPagerAdapter extends FragmentStatePagerAdapter {
+
+        private static final int NUM_PAGES = 2;
+
+        public MainPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -240,7 +223,7 @@ public class MainActivity extends ActionBarActivity {
                     Log.d(TAG, "Creating Home Fragment");
                     return new HomeFragment();
             }
-            return new HomeFragment();
+            throw new AssertionError("Can't find item for index: " + position);
         }
 
         @Override
@@ -251,7 +234,7 @@ public class MainActivity extends ActionBarActivity {
                 case 1:
                     return "Groups";
             }
-            return "wat";
+            throw new AssertionError("Can't find title for index: " + position);
         }
 
         @Override

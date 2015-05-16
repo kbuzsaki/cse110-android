@@ -12,4 +12,5 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_poll_activity">PollActivity</string>
     <string name="title_create_poll_activity">Create Poll</string>
+    <string name="title_activity_group">GroupActivity</string>
 </resources>
