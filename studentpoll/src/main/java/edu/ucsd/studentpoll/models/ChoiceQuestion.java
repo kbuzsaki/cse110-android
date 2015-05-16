@@ -21,11 +21,27 @@ import java.util.Map;
  */
 public class ChoiceQuestion extends Question {
 
+    private static final byte TRUE_BYTE = 1;
+    private static final byte FALSE_BYTE = 0;
+
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator<ChoiceQuestion>() {
         @Override
         public ChoiceQuestion createFromParcel(Parcel source) {
-            Long id = source.readLong();
-            return ChoiceQuestion.getOrStub(id);
+            byte INITIALIZED_BYTE = source.readByte();
+            
+            if(INITIALIZED_BYTE == TRUE_BYTE) {
+                Long id = source.readLong();
+                return ChoiceQuestion.getOrStub(id);
+            }
+            else {
+                ChoiceQuestion question = new ChoiceQuestion();
+                question.title = source.readString();
+                question.options = new ArrayList<>();
+                source.readStringList(question.options);
+                question.allowMultiple = source.readByte() == TRUE_BYTE;
+                question.allowCustom = source.readByte() == TRUE_BYTE;
+                return question;
+            }
         }
 
         @Override
@@ -117,6 +133,21 @@ public class ChoiceQuestion extends Question {
                     .put("responses", Model.mapIds(responses))
                     .build())
                 .build();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(isInitialized() ? TRUE_BYTE : FALSE_BYTE);
+
+        if(isInitialized()) {
+            dest.writeLong(getId());
+        }
+        else {
+            dest.writeString(title);
+            dest.writeStringList(options);
+            dest.writeByte(allowMultiple ? TRUE_BYTE : FALSE_BYTE);
+            dest.writeByte(allowCustom   ? TRUE_BYTE : FALSE_BYTE);
+        }
     }
 
     @Override
