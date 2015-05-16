@@ -111,6 +111,11 @@ public class CreatePollActivity extends ActionBarActivity {
     }
 
     public void createPoll(View view) {
+        if(questions.isEmpty()) {
+            Toast.makeText(getApplicationContext(), "No Questions Added.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String name = ((EditText)findViewById(R.id.pollName)).getText().toString();
 
         final Poll poll = new Poll.Builder().withTitle(name).withQuestions(questions).build();
