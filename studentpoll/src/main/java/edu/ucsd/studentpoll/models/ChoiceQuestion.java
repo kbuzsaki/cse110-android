@@ -155,12 +155,6 @@ public class ChoiceQuestion extends Question {
         return id;
     }
 
-    public ChoiceQuestion(String title, List<String> options, boolean allowMultiple) {
-        this.title = title;
-        this.options = options;
-        this.allowMultiple = allowMultiple;
-    }
-
     @Override
     public Poll getPoll() {
         return poll;
@@ -197,49 +191,25 @@ public class ChoiceQuestion extends Question {
         return question;
     }
 
-    public static ChoiceQuestion fakeChoiceQuestionOne() {
-        List<String> options = new ArrayList<>();
-        options.add("Cat");
-        options.add("Dog");
-        ChoiceQuestion choiceQuestion = new ChoiceQuestion("Favorite Pet?", options, true);
-
-        return choiceQuestion;
+    public static ChoiceQuestion makeTemporaryQuestion(String title, List<String> options, boolean allowMultiple, boolean allowCustom) {
+        ChoiceQuestion question = new ChoiceQuestion();
+        question.title = title;
+        question.options = options;
+        question.responses = Collections.emptyList();
+        question.allowMultiple = allowMultiple;
+        question.allowCustom = allowCustom;
+        return question;
     }
 
-    public static ChoiceQuestion fakeChoiceQuestionTwo() {
-        List<String> options = new ArrayList<>();
-        options.add("Pelican");
-        options.add("Platypus");
-        options.add("Polar Bear");
-        options.add("Pig");
-        ChoiceQuestion choiceQuestion = new ChoiceQuestion("Best Animal?", options, false);
-
-        return choiceQuestion;
-    }
-
-    public static ChoiceQuestion fakeChoiceQuestionThree() {
-        List<String> options = new ArrayList<>();
-        options.add("No Fun");
-        options.add("Fun");
-        options.add("Double No Fun");
-        options.add("Double Fun");
-        options.add("Mega Fun");
-        options.add("Mega No Fun");
-        ChoiceQuestion choiceQuestion = new ChoiceQuestion("Fun or no Fun?", options, true);
-
-        return choiceQuestion;
-    }
-
-    public static Map<String, Integer> fakeResponses() {
-
-        Map<String, Integer> responses = new HashMap<>();
-        responses.put("CatMan", 2);
-        responses.put("BatMan", 4);
-        responses.put("RatMan", 1);
-        responses.put("HatMan", 6);
-        responses.put("WatMan", 0);
-
-        return responses;
+    public static ChoiceQuestion makeQuestion(Poll poll, ChoiceQuestion question) {
+        ChoiceQuestion newQuestion = new ChoiceQuestion();
+        newQuestion.poll = poll;
+        newQuestion.title = question.title;
+        newQuestion.options = question.options;
+        newQuestion.responses = Collections.emptyList();
+        newQuestion.allowMultiple = question.allowMultiple;
+        newQuestion.allowCustom = question.allowCustom;
+        return newQuestion;
     }
 
 }
