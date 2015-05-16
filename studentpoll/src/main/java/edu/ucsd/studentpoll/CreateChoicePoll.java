@@ -2,7 +2,6 @@ package edu.ucsd.studentpoll;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -16,9 +15,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import edu.ucsd.studentpoll.models.Poll;
-import edu.ucsd.studentpoll.rest.RESTException;
+import edu.ucsd.studentpoll.models.ChoiceQuestion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,43 +131,19 @@ public class CreateChoicePoll extends Activity {
     }
 
     public void submitPoll(View view) {
-        String name = ((EditText)findViewById(R.id.titleBox)).getText().toString();
-
-        LinearLayout optionsLayout = (LinearLayout) findViewById(R.id.optionsLayout);
-        List<String> options = new ArrayList<>();
-        for(int childIndex = 0; childIndex < optionsLayout.getChildCount(); childIndex++) {
-            View child =optionsLayout.getChildAt(childIndex);
-            String option = ((EditText) child.findViewById(R.id.optionField)).getText().toString();
-            options.add(option);
-        }
+        String name = getQuestionTitle();
+        List<String> options = getQuestionOptions();
+        Boolean allowCustom = getAllowCustom();
+        Boolean allowMultiple = getAllowMultiple();
 
         Log.d(TAG, "name: " + name);
         Log.d(TAG, "options: " + options);
 
-        final Poll poll = new Poll.Builder().withTitle("My Title").withChoiceQuestion(name, options).build();
+        Intent returnIntent = new Intent();
+        ChoiceQuestion question = ChoiceQuestion.makeTemporaryQuestion(name, options, allowCustom, allowMultiple);
 
-        new AsyncTask<Object, Object, Poll>() {
-            @Override
-            protected Poll doInBackground(Object[] params) {
-                try {
-                    return Poll.postPoll(poll);
-                }
-                catch (RESTException e) {
-                    Log.w(TAG, "Failed to post poll", e);
-                    return null;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(Poll poll) {
-                if(poll == null) {
-                    Toast.makeText(getApplicationContext(), "Failed to make poll.", Toast.LENGTH_SHORT).show();
-                }
-                else {
-
-                }
-            }
-        }.execute();
+        returnIntent.putExtra("question", question);
+        setResult(RESULT_OK, returnIntent);
 
         finish();
     }

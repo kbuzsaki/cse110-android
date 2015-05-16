@@ -22,7 +22,7 @@
         <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Title"
+                android:hint="Title (Optional)"
                 android:id="@+id/pollName" android:layout_weight="1"/>
     </LinearLayout>
     <LinearLayout
@@ -64,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:text="Create"
-                    android:id="@+id/button5" android:onClick="submitPoll" android:layout_gravity="center_horizontal|right"/>
+                    android:id="@+id/button5" android:onClick="createPoll" android:layout_gravity="center_horizontal|right"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

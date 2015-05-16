@@ -6,22 +6,16 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
-import edu.ucsd.studentpoll.models.Group;
-import edu.ucsd.studentpoll.models.Model;
+import edu.ucsd.studentpoll.models.Poll;
 import edu.ucsd.studentpoll.models.Question;
-import edu.ucsd.studentpoll.models.User;
 import edu.ucsd.studentpoll.rest.RESTException;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,10 +23,14 @@ import java.util.List;
  */
 public class CreatePollActivity extends ActionBarActivity {
 
+    private static final String TAG = "CreatePollActivity";
+
     private static final String[] QUESTION_TYPES = {"Multiple Choice (Single Answer)",
                                                     "Multiple Choice (Multi Answer)",
                                                     "Rank",
                                                     "Schedule" };
+
+    private static final int REQ_CODE_ADD_QUESTION = 1;
 
     private RecyclerView questionsView;
 
@@ -44,6 +42,7 @@ public class CreatePollActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_poll_activity);
+        questions = new ArrayList<>();
 
 //        questionsView = (RecyclerView) findViewById(R.id.questionsView);
 //        questionsView.setLayoutManager(new LinearLayoutManager(this));
@@ -65,18 +64,18 @@ public class CreatePollActivity extends ActionBarActivity {
         });
 
         builder.setItems(QUESTION_TYPES, new DialogInterface.OnClickListener() {
-            public void onClick (DialogInterface dialog,int which){
+            public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case 0:
-                        createSingleChoicePoll();
+                        createSingleChoiceQuestion();
                         break;
                     case 1:
-                        createMultipleChoicePoll();
+                        createMultipleChoiceQuestion();
                         break;
                     case 2:
                         break;
                     case 3:
-                        createScheduleChoicePoll();
+                        createScheduleQuestion();
                         break;
                 }
             }
@@ -86,21 +85,72 @@ public class CreatePollActivity extends ActionBarActivity {
         dialog.show();
     }
 
-    public void createSingleChoicePoll() {
+    @Override
+    protected void onActivityResult(int requestCode, int resultStatus, Intent data) {
+
+        if (requestCode == REQ_CODE_ADD_QUESTION) {
+            if(resultStatus == RESULT_OK){
+                Question question = data.getParcelableExtra("question");
+                questions.add(question);
+            }
+//            // what to do if the activity was cancelled
+//            if (resultStatus == RESULT_CANCELED) {
+//                // no op?
+//            }
+        }
+    }
+
+    public void createPoll(View view) {
+        String name = ((EditText)findViewById(R.id.pollName)).getText().toString();
+
+        // if no name is provided, use name of first question
+        if(name == "") {
+            name = questions.get(0).getTitle();
+        }
+
+        final Poll poll = new Poll.Builder().withTitle(name).withQuestions(questions).build();
+
+        new AsyncTask<Object, Object, Poll>() {
+            @Override
+            protected Poll doInBackground(Object[] params) {
+                try {
+                    return Poll.postPoll(poll);
+                }
+                catch (RESTException e) {
+                    Log.w(TAG, "Failed to post poll", e);
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Poll poll) {
+                if(poll == null) {
+                    Toast.makeText(getApplicationContext(), "Failed to make poll.", Toast.LENGTH_SHORT).show();
+                }
+                else {
+
+                }
+            }
+        }.execute();
+
+        finish();
+    }
+
+    public void createSingleChoiceQuestion() {
         Intent intent = new Intent(this, CreateChoicePoll.class);
         intent.putExtra("allowMultiple", false);
-        startActivity(intent);
+        startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
     }
 
-    public void createMultipleChoicePoll() {
+    public void createMultipleChoiceQuestion() {
         Intent intent = new Intent(this, CreateChoicePoll.class);
         intent.putExtra("allowMultiple", true);
-        startActivity(intent);
+        startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
     }
 
-    public void createScheduleChoicePoll() {
+    public void createScheduleQuestion() {
         Intent intent = new Intent(this, CreateSchedulePoll.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
     }
 
 //    private static class QuestionsAdapter extends RecyclerView.Adapter<QuestionsViewHolder> {
