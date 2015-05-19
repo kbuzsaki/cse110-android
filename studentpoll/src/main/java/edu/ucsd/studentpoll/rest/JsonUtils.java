@@ -51,6 +51,36 @@ public class JsonUtils {
         return list;
     }
 
+    public static Long ripId(Object object) throws JSONException {
+        if(object instanceof Long) {
+            return (Long) object;
+        }
+        else if(object instanceof Integer) {
+            return (long) ((Integer) object);
+        }
+        else if(object instanceof JSONObject) {
+            JSONObject json = (JSONObject) object;
+            return json.getLong("id");
+        }
+        else {
+            throw new IllegalArgumentException("object is neither a long nor a json object: " + object);
+        }
+    }
+
+    public static List<Long> ripIdList(JSONArray array) throws JSONException {
+        if(array == null || array.length() == 0) {
+            return Collections.emptyList();
+        }
+
+        List<Long> list = new ArrayList<>(array.length());
+
+        for(int i = 0; i < array.length(); i++) {
+            list.add(ripId(array.get(i)));
+        }
+
+        return list;
+    }
+
     public static Builder builder() {
         return new Builder();
     }

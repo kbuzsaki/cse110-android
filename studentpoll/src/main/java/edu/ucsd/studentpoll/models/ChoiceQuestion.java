@@ -100,14 +100,14 @@ public class ChoiceQuestion extends Question {
     ChoiceQuestion initFromJson(JSONObject json) {
         try {
             id = json.getLong("id");
-            poll = Poll.getOrStub(json.getLong("poll"));
+            poll = Poll.getOrStub(JsonUtils.ripId(json.get("poll")));
             title = json.getString("title");
 
             JSONObject content = json.getJSONObject("content");
             options = JsonUtils.toListOfString(content.getJSONArray("options"));
             allowMultiple = content.getBoolean("allow_multiple");
             allowCustom = content.getBoolean("allow_custom");
-            List<Long> responseIds = JsonUtils.toListOfLong(content.optJSONArray("responses"));
+            List<Long> responseIds = JsonUtils.ripIdList(content.optJSONArray("responses"));
             responses = new ArrayList<>(responseIds.size());
             for(Long responseId : responseIds) {
                 responses.add(ChoiceResponse.getOrStub(responseId));

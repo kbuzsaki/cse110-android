@@ -76,12 +76,12 @@ public class Group extends Model {
         try {
             id = json.getLong("id");
             name = json.getString("name");
-            List<Long> memberIds = JsonUtils.toListOfLong(json.optJSONArray("members"));
+            List<Long> memberIds = JsonUtils.ripIdList(json.optJSONArray("members"));
             members = new ArrayList<>(memberIds.size());
             for(Long memberId : memberIds) {
                 members.add(User.getOrStub(memberId));
             }
-            List<Long> pollIds = JsonUtils.toListOfLong(json.optJSONArray("polls"));
+            List<Long> pollIds = JsonUtils.ripIdList(json.optJSONArray("polls"));
             polls = new ArrayList<>(pollIds.size());
             for(Long pollId : pollIds) {
                 polls.add(Poll.getOrStub(pollId));

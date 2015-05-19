@@ -82,13 +82,13 @@ public class Poll extends Model {
     Poll initFromJson(JSONObject json) {
         try {
             id = json.getLong("id");
-            group = Group.getOrStub(json.getLong("group"));
-            creator = User.getOrStub(json.getLong("creator"));
+            group = Group.getOrStub(JsonUtils.ripId(json.get("group")));
+            creator = User.getOrStub(JsonUtils.ripId(json.get("creator")));
             creationTime = null;
             name = json.getString("name");
 
             // extra crap to make wildcards work properly
-            List<Long> questionIds = JsonUtils.toListOfLong(json.optJSONArray("questions"));
+            List<Long> questionIds = JsonUtils.ripIdList(json.optJSONArray("questions"));
             List<Question> localQuestions = new ArrayList<>();
             for(Long questionId : questionIds) {
                 // TODO: make this work for any type of question

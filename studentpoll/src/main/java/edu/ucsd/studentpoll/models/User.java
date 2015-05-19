@@ -77,7 +77,7 @@ public class User extends Model {
             id = json.getLong("id");
             name = json.getString("name");
             avatar = null;
-            List<Long> groupIds = JsonUtils.toListOfLong(json.optJSONArray("groups"));
+            List<Long> groupIds = JsonUtils.ripIdList(json.optJSONArray("groups"));
             groups = new ArrayList<>(groupIds.size());
             for(Long groupId : groupIds) {
                 groups.add(Group.getOrStub(groupId));

@@ -76,8 +76,8 @@ public class ChoiceResponse extends Response {
     ChoiceResponse initFromJson(JSONObject json) {
         try {
             id = json.getLong("id");
-            responder = User.getOrStub(json.getLong("responder"));
-            question = ChoiceQuestion.getOrStub(json.getLong("question"));
+            responder = User.getOrStub(JsonUtils.ripId(json.get("responder")));
+            question = ChoiceQuestion.getOrStub(JsonUtils.ripId(json.get("question")));
             choices = JsonUtils.toListOfString(json.getJSONArray("choices"));
         } catch (JSONException e) {
             Log.wtf(TAG, e);
