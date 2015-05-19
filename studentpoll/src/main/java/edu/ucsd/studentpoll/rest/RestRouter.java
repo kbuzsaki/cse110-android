@@ -5,8 +5,8 @@ package edu.ucsd.studentpoll.rest;
  */
 public class RestRouter {
 
-    private static String URL_BASE = "http://128.54.180.125";
-    private static String PORT = ":5000";
+    private static String URL_BASE = "http://kbuzsaki.ddns.net";
+    private static String PORT = "";
     private static String API_URL = URL_BASE + PORT + "/api";
 
     private RestRouter() {
