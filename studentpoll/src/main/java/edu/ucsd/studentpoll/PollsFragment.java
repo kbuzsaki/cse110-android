@@ -212,7 +212,7 @@ public class PollsFragment extends Fragment {
         public void setContent(final Poll poll) {
             ((TextView) pollCard.findViewById(R.id.title)).setText(poll.getName());
             String timeText = randInt(2, 21) + " minutes ago";
-            String voteText = randInt(0, 7) + "/" + randInt(7, 10) + " votes";
+            String voteText = poll.getQuestions().size() + " questions";
             ((TextView) pollCard.findViewById(R.id.time)).setText(timeText);
             ((TextView) pollCard.findViewById(R.id.votes)).setText(voteText);
 

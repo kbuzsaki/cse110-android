@@ -174,7 +174,7 @@ public class HomeFragment extends Fragment {
         public void setContent(final Group group) {
             ((TextView)groupCard.findViewById(R.id.title)).setText(group.getName());
             String timeText = randInt(2, 21) + " minutes ago";
-            String voteText = randInt(0, 7) + "/" + randInt(7, 10) + " votes";
+            String voteText = group.getMembers().size() + " members";
             ((TextView)groupCard.findViewById(R.id.time)).setText(timeText);
             ((TextView)groupCard.findViewById(R.id.votes)).setText(voteText);
 
