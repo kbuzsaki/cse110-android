@@ -140,7 +140,7 @@ public class CreateChoiceQuestionActivity extends Activity {
         Log.d(TAG, "options: " + options);
 
         Intent returnIntent = new Intent();
-        ChoiceQuestion question = ChoiceQuestion.makeTemporaryQuestion(name, options, allowCustom, allowMultiple);
+        ChoiceQuestion question = ChoiceQuestion.makeTemporaryQuestion(name, options, allowMultiple, allowCustom);
 
         returnIntent.putExtra("question", question);
         setResult(RESULT_OK, returnIntent);
