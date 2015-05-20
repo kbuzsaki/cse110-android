@@ -32,8 +32,12 @@
         <activity android:name=".SingleChoicePoll" />
         <activity
             android:name=".CreateChoiceQuestionActivity"
-            android:label="@string/title_activity_create_choice_poll"
+            android:label="@string/title_activity_create_choice_question"
             android:windowSoftInputMode="stateHidden" />
+        <activity
+                android:name=".CreateRankQuestionActivity"
+                android:label="@string/title_activity_create_rank_question"
+                android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".CreateSchedulePoll"
             android:label="@string/title_activity_create_schedule_poll"

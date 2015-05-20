@@ -83,6 +83,7 @@ public class CreatePollActivity extends ActionBarActivity {
                         createMultipleChoiceQuestion();
                         break;
                     case 2:
+                        createRankQuestion();
                         break;
                     case 3:
                         createScheduleQuestion();
@@ -155,6 +156,11 @@ public class CreatePollActivity extends ActionBarActivity {
     public void createMultipleChoiceQuestion() {
         Intent intent = new Intent(this, CreateChoiceQuestionActivity.class);
         intent.putExtra("allowMultiple", true);
+        startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
+    }
+
+    public void createRankQuestion() {
+        Intent intent = new Intent(this, CreateRankQuestionActivity.class);
         startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
     }
 
