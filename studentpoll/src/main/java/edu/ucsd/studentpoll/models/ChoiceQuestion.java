@@ -110,7 +110,7 @@ public class ChoiceQuestion extends Question {
             List<Long> responseIds = JsonUtils.ripIdList(content.optJSONArray("responses"));
             responses = new ArrayList<>(responseIds.size());
             for(Long responseId : responseIds) {
-                responses.add(ChoiceResponse.getOrStub(responseId));
+                responses.add(ChoiceResponse.getOrStubHack(this, responseId));
             }
         } catch (JSONException e) {
             Log.wtf(TAG, e);

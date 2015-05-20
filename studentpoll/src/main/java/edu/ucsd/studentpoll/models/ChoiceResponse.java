@@ -58,6 +58,12 @@ public class ChoiceResponse extends Response {
         return CACHE.get(id);
     }
 
+    public static ChoiceResponse getOrStubHack(ChoiceQuestion question, Long id) {
+        ChoiceResponse response = getOrStub(id);
+        response.question = question;
+        return response;
+    }
+
     @Override
     public void inflate() {
         if(this.id == UNINITIALIZED) {
@@ -66,7 +72,7 @@ public class ChoiceResponse extends Response {
 
         if(!inflated) {
             AndrestClient client = new AndrestClient();
-            JSONObject response = client.get(RestRouter.getResponse(id));
+            JSONObject response = client.get(RestRouter.getResponse(question.getId(), id));
             initFromJson(response);
             inflated = true;
         }
