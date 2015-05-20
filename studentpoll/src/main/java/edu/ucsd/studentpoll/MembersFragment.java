@@ -72,6 +72,7 @@ public class MembersFragment extends Fragment {
         super.onResume();
 
         if(membersAdapter.members.isEmpty()) {
+            inflateMembers();
             refreshMembers();
         }
     }
@@ -102,8 +103,20 @@ public class MembersFragment extends Fragment {
         this.group = group;
     }
 
-    public void refreshMembers() {
+    private void inflateMembers() {
+        loadMembers(false);
+    }
+
+    private void refreshMembers() {
+        loadMembers(true);
+    }
+
+    private void loadMembers(final boolean forceRefresh) {
         final Group refreshGroup = group;
+
+        if(forceRefresh && group != null && group.getMembers() != null) {
+            membersAdapter.setMembers(group.getMembers());
+        }
 
         new AsyncTask<Object, Object, List<User>>() {
 

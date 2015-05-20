@@ -72,6 +72,7 @@ public class PollsFragment extends Fragment {
         super.onResume();
 
         if(pollsAdapter.polls.isEmpty()) {
+            inflatePolls();
             refreshPolls();
         }
     }
@@ -102,7 +103,20 @@ public class PollsFragment extends Fragment {
         this.group = group;
     }
 
-    public void refreshPolls() {
+    private void inflatePolls() {
+        loadPolls(false);
+    }
+
+    private void refreshPolls() {
+        loadPolls(true);
+    }
+
+    private void loadPolls(final boolean forceRefresh) {
+        if(!forceRefresh && group != null && group.getMembers() != null) {
+            pollsAdapter.setPolls(group.getPolls());
+        }
+
+
         final Group refreshGroup = group;
 
         new AsyncTask<Object, Object, List<Poll>>() {
