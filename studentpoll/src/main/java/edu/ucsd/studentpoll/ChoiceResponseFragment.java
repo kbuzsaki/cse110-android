@@ -11,10 +11,12 @@ import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import edu.ucsd.studentpoll.models.ChoiceQuestion;
 import edu.ucsd.studentpoll.models.ChoiceResponse;
 import edu.ucsd.studentpoll.models.Question;
 import edu.ucsd.studentpoll.models.Response;
+import edu.ucsd.studentpoll.rest.RESTException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -167,14 +169,26 @@ public class ChoiceResponseFragment extends ResponseFragment {
             new AsyncTask<Object, Object, ChoiceResponse>() {
                 @Override
                 protected ChoiceResponse doInBackground(Object[] params) {
-                    return ChoiceResponse.putResponse(choiceQuestion, choices);
+                    try {
+                        return ChoiceResponse.putResponse(choiceQuestion, choices);
+                    }
+                    catch(RESTException e) {
+                        Log.e(TAG, "Failed to send response", e);
+                        return null;
+                    }
                 }
 
                 @Override
                 protected void onPostExecute(ChoiceResponse choiceResponse) {
                     super.onPostExecute(choiceResponse);
-                    latestResponse = choiceResponse;
-                    onPutResponseListener.onResponsePut(latestResponse);
+
+                    if(choiceResponse == null) {
+                        Toast.makeText(getActivity(), "Failed to send vote.", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        latestResponse = choiceResponse;
+                        onPutResponseListener.onResponsePut(latestResponse);
+                    }
                 }
             }.execute();
         }
