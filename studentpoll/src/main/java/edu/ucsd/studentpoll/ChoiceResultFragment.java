@@ -95,6 +95,11 @@ public class ChoiceResultFragment extends ResultFragment {
         TextView pollTitle = (TextView) rootView.findViewById(R.id.pollTitle);
         pollTitle.setText(choiceQuestion.getTitle());
 
+        if(getActivity() == null) {
+            Log.w(TAG, "detached fragment!");
+            return;
+        }
+
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         int totalCount = 0;
