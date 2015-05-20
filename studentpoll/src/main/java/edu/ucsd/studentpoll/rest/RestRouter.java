@@ -41,8 +41,8 @@ public class RestRouter {
         return API_URL + "/response/" + responseId;
     }
 
-    public static String putResponse() {
-        return API_URL + "/response/create";
+    public static String putResponse(long questionId) {
+        return API_URL + "/question/" + questionId + "/response/create";
     }
 
 }
