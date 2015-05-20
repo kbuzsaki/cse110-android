@@ -147,7 +147,7 @@ public class AndrestClient {
             HttpResponse response = client.execute(request);
 
             int statusCode = response.getStatusLine().getStatusCode();
-            if(statusCode != 200) {
+            if(statusCode != 200 && statusCode != 201) {
                 Log.d(TAG, "Got error code: " + statusCode);
                 String body = CharStreams.toString(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
                 Log.d(TAG, "With body: " + body);
