@@ -196,10 +196,9 @@ public class MembersFragment extends Fragment {
 
         public void setContent(final User member) {
             ((TextView) memberCard.findViewById(R.id.title)).setText(member.getName());
-            String timeText = randInt(2, 21) + " minutes ago";
-            String voteText = randInt(0, 7) + "/" + randInt(7, 10) + " votes";
-            ((TextView) memberCard.findViewById(R.id.time)).setText(timeText);
-            ((TextView) memberCard.findViewById(R.id.votes)).setText(voteText);
+            ((TextView) memberCard.findViewById(R.id.cardContent)).setText("");
+            ((TextView) memberCard.findViewById(R.id.time)).setText("");
+            ((TextView) memberCard.findViewById(R.id.votes)).setText("");
 
             memberCard.setOnClickListener(new View.OnClickListener() {
                 @Override

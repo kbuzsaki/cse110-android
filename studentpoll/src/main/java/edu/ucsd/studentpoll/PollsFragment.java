@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -225,8 +226,10 @@ public class PollsFragment extends Fragment {
 
         public void setContent(final Poll poll) {
             ((TextView) pollCard.findViewById(R.id.title)).setText(poll.getName());
+            String questionNames = TextUtils.join("\n", getQuestionTitles(poll));
             String timeText = randInt(2, 21) + " minutes ago";
             String voteText = poll.getQuestions().size() + " questions";
+            ((TextView) pollCard.findViewById(R.id.cardContent)).setText(questionNames);
             ((TextView) pollCard.findViewById(R.id.time)).setText(timeText);
             ((TextView) pollCard.findViewById(R.id.votes)).setText(voteText);
 
@@ -238,6 +241,14 @@ public class PollsFragment extends Fragment {
                     context.startActivity(intent);
                 }
             });
+        }
+
+        private static List<String> getQuestionTitles(Poll poll) {
+            List<String> titles = new ArrayList<>(poll.getQuestions().size());
+            for(Question question : poll.getQuestions()) {
+                titles.add(question.getTitle());
+            }
+            return titles;
         }
     }
 
