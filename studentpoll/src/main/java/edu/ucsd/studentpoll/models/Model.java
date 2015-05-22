@@ -2,6 +2,10 @@ package edu.ucsd.studentpoll.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.SystemClock;
+import edu.ucsd.studentpoll.rest.JsonUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -20,6 +24,8 @@ public abstract class Model implements Parcelable {
 
     protected boolean inflated;
 
+    protected long timeRefreshed;
+
     protected Model() {
         this(UNINITIALIZED);
     }
@@ -36,11 +42,22 @@ public abstract class Model implements Parcelable {
         return this.id != UNINITIALIZED;
     }
 
+    protected void markRefreshed() {
+        inflated = true;
+        timeRefreshed = SystemClock.uptimeMillis();
+    }
+
     public abstract void inflate();
 
     public void refresh() {
         this.inflated = false;
         this.inflate();
+    }
+
+    public void refreshIfOlder(long thresholdTime) {
+        if (timeRefreshed < thresholdTime) {
+            refresh();
+        }
     }
 
     abstract <M extends Model> M initFromJson(JSONObject json);
@@ -74,6 +91,12 @@ public abstract class Model implements Parcelable {
         }
     }
 
+    public static void refreshAllIfOlder(Collection<? extends Model> models, long thresholdTime) {
+        for(Model model : models) {
+            model.refreshIfOlder(thresholdTime);
+        }
+    }
+
     public static List<Long> mapIds(List<? extends Model> models) {
         if(models == null) {
             return Collections.emptyList();
@@ -100,6 +123,37 @@ public abstract class Model implements Parcelable {
         }
 
         return jsons;
+    }
+
+    public static <M extends Model> M ripModel(Object object, ModelInstantiator<M> instantiator) throws JSONException {
+        if(object instanceof Number) {
+            return instantiator.fromId(((Number)object).longValue());
+        }
+        else if(object instanceof JSONObject) {
+            return instantiator.fromJson((JSONObject)object);
+        }
+        else {
+            throw new IllegalArgumentException("object is neither a long nor a json object: " + object);
+        }
+    }
+
+    public static <M extends Model> List<M> ripModelList(JSONArray array, ModelInstantiator<M> instantiator) throws JSONException {
+        if(array == null || array.length() == 0) {
+            return Collections.emptyList();
+        }
+
+        List<M> models = new ArrayList<>(array.length());
+
+        for(int i = 0; i < array.length(); i++) {
+            models.add(ripModel(array.get(i), instantiator));
+        }
+
+        return models;
+    }
+
+    public interface ModelInstantiator<M extends Model> {
+        M fromId(Long id);
+        M fromJson(JSONObject object) throws JSONException;
     }
 
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -134,28 +135,30 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
             @Override
             protected List<Poll> doInBackground(Object... params) {
                 try {
+                    final long thresholdTime = SystemClock.uptimeMillis();
+
                     User user = User.getDeviceUser();
-                    user.refresh();
+                    user.refreshIfOlder(thresholdTime);
                     Log.d(TAG, "Loading polls for user: " + user);
 
                     List<Group> groups = user.getGroups();
-                    Model.refreshAll(groups);
+                    Model.refreshAllIfOlder(groups, thresholdTime);
 
                     List<Poll> polls = new ArrayList<>();
                     for(Group group : groups) {
                         polls.addAll(group.getPolls());
                     }
 
-                    Model.refreshAll(polls);
+                    Model.refreshAllIfOlder(polls, thresholdTime);
 
                     // publish groups after refreshing polls so that we have poll names
                     publishProgress(groups);
 
                     for(Poll poll : polls) {
-                        Model.refreshAll(poll.getQuestions());
+                        Model.refreshAllIfOlder(poll.getQuestions(), thresholdTime);
 
                         for(Question question : poll.getQuestions()) {
-                            Model.refreshAll(question.getResponses());
+                            Model.refreshAllIfOlder(question.getResponses(), thresholdTime);
                         }
                     }
 
@@ -234,14 +237,16 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
             @Override
             protected Poll doInBackground(Object... params) {
                 try {
+                    final long thresholdTime = SystemClock.uptimeMillis();
+
                     Poll poll = Poll.joinPoll(accessCode);
 
-                    User.getDeviceUser().refresh();
-                    poll.getGroup().refresh();
+                    User.getDeviceUser().refreshIfOlder(thresholdTime);
+                    poll.getGroup().refreshIfOlder(thresholdTime);
 
-                    Model.refreshAll(poll.getQuestions());
+                    Model.refreshAllIfOlder(poll.getQuestions(), thresholdTime);
                     for(Question question : poll.getQuestions()) {
-                        Model.refreshAll(question.getResponses());
+                        Model.refreshAllIfOlder(question.getResponses(), thresholdTime);
                     }
 
                     return poll;

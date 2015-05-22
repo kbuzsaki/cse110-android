@@ -52,11 +52,8 @@ public class JsonUtils {
     }
 
     public static Long ripId(Object object) throws JSONException {
-        if(object instanceof Long) {
-            return (Long) object;
-        }
-        else if(object instanceof Integer) {
-            return (long) ((Integer) object);
+        if(object instanceof Number) {
+            return ((Number)object).longValue();
         }
         else if(object instanceof JSONObject) {
             JSONObject json = (JSONObject) object;

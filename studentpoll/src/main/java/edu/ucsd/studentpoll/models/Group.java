@@ -32,6 +32,17 @@ public class Group extends Model {
             return new Group[size];
         }
     };
+    public static final ModelInstantiator<Group> INSTANTIATOR = new ModelInstantiator<Group>() {
+        @Override
+        public Group fromId(Long id) {
+            return Group.getOrStub(id);
+        }
+
+        @Override
+        public Group fromJson(JSONObject object) throws JSONException {
+            return Group.getOrStub(JsonUtils.ripId(object)).initFromJson(object);
+        }
+    };
 
     private static final String TAG = "Group";
     private static Map<Long, Group> CACHE = new HashMap<>();
@@ -67,7 +78,6 @@ public class Group extends Model {
             AndrestClient client = new AndrestClient();
             JSONObject response = client.get(RestRouter.getGroup(id));
             initFromJson(response);
-            inflated = true;
         }
     }
 
@@ -76,16 +86,10 @@ public class Group extends Model {
         try {
             id = json.getLong("id");
             name = json.getString("name");
-            List<Long> memberIds = JsonUtils.ripIdList(json.optJSONArray("members"));
-            members = new ArrayList<>(memberIds.size());
-            for(Long memberId : memberIds) {
-                members.add(User.getOrStub(memberId));
-            }
-            List<Long> pollIds = JsonUtils.ripIdList(json.optJSONArray("polls"));
-            polls = new ArrayList<>(pollIds.size());
-            for(Long pollId : pollIds) {
-                polls.add(Poll.getOrStub(pollId));
-            }
+            members = Model.ripModelList(json.optJSONArray("members"), User.INSTANTIATOR);
+            polls = Model.ripModelList(json.optJSONArray("polls"), Poll.INSTANTIATOR);
+
+            markRefreshed();
         } catch (JSONException e) {
             Log.wtf(TAG, e);
         }

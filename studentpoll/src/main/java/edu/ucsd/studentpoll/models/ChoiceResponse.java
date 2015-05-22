@@ -33,6 +33,17 @@ public class ChoiceResponse extends Response {
             return new ChoiceResponse[size];
         }
     };
+    public static final ModelInstantiator<ChoiceResponse> INSTANTIATOR = new ModelInstantiator<ChoiceResponse>() {
+        @Override
+        public ChoiceResponse fromId(Long id) {
+            return ChoiceResponse.getOrStub(id);
+        }
+
+        @Override
+        public ChoiceResponse fromJson(JSONObject object) throws JSONException {
+            return ChoiceResponse.getOrStub(JsonUtils.ripId(object)).initFromJson(object);
+        }
+    };
 
     private static final String TAG = "ChoiceResponse";
     private static final Map<Long, ChoiceResponse> CACHE = new HashMap<>();
@@ -74,7 +85,6 @@ public class ChoiceResponse extends Response {
             AndrestClient client = new AndrestClient();
             JSONObject response = client.get(RestRouter.getResponse(question.getId(), id));
             initFromJson(response);
-            inflated = true;
         }
     }
 
@@ -82,9 +92,11 @@ public class ChoiceResponse extends Response {
     ChoiceResponse initFromJson(JSONObject json) {
         try {
             id = json.getLong("id");
-            responder = User.getOrStub(JsonUtils.ripId(json.get("responder")));
-            question = ChoiceQuestion.getOrStub(JsonUtils.ripId(json.get("question")));
+            responder = Model.ripModel(json.get("responder"), User.INSTANTIATOR);
+            question = Model.ripModel(json.get("question"), ChoiceQuestion.INSTANTIATOR);
             choices = JsonUtils.toListOfString(json.getJSONArray("choices"));
+
+            markRefreshed();
         } catch (JSONException e) {
             Log.wtf(TAG, e);
         }

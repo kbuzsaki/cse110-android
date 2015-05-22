@@ -49,6 +49,17 @@ public class ChoiceQuestion extends Question {
             return new ChoiceQuestion[size];
         }
     };
+    public static final ModelInstantiator<ChoiceQuestion> INSTANTIATOR = new ModelInstantiator<ChoiceQuestion>() {
+        @Override
+        public ChoiceQuestion fromId(Long id) {
+            return ChoiceQuestion.getOrStub(id);
+        }
+
+        @Override
+        public ChoiceQuestion fromJson(JSONObject object) throws JSONException {
+            return ChoiceQuestion.getOrStub(JsonUtils.ripId(object)).initFromJson(object);
+        }
+    };
 
     private static final String TAG = "ChoiceQuestion";
     private static final Map<Long, ChoiceQuestion> CACHE = new HashMap<>();
@@ -92,7 +103,6 @@ public class ChoiceQuestion extends Question {
             AndrestClient client = new AndrestClient();
             JSONObject response = client.get(RestRouter.getQuestion(id));
             initFromJson(response);
-            inflated = true;
         }
     }
 
@@ -100,18 +110,16 @@ public class ChoiceQuestion extends Question {
     ChoiceQuestion initFromJson(JSONObject json) {
         try {
             id = json.getLong("id");
-            poll = Poll.getOrStub(JsonUtils.ripId(json.get("poll")));
+            poll = Model.ripModel(json.get("poll"), Poll.INSTANTIATOR);
             title = json.getString("title");
 
             JSONObject content = json.getJSONObject("content");
             options = JsonUtils.toListOfString(content.getJSONArray("options"));
             allowMultiple = content.getBoolean("allow_multiple");
             allowCustom = content.getBoolean("allow_custom");
-            List<Long> responseIds = JsonUtils.ripIdList(content.optJSONArray("responses"));
-            responses = new ArrayList<>(responseIds.size());
-            for(Long responseId : responseIds) {
-                responses.add(ChoiceResponse.getOrStubHack(this, responseId));
-            }
+            responses = Model.ripModelList(content.optJSONArray("responses"), ChoiceResponse.INSTANTIATOR);
+
+            markRefreshed();
         } catch (JSONException e) {
             Log.wtf(TAG, e);
         }

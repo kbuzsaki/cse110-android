@@ -2,6 +2,7 @@ package edu.ucsd.studentpoll;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -105,8 +106,9 @@ public abstract class QuestionFragment extends Fragment {
         new AsyncTask<Object, Object, Question>() {
             @Override
             protected Question doInBackground(Object... params) {
-                getQuestion().refresh();
-                Model.refreshAll(getQuestion().getResponses());
+                final long thresholdTime = SystemClock.uptimeMillis();
+                getQuestion().refreshIfOlder(thresholdTime);
+                Model.refreshAllIfOlder(getQuestion().getResponses(), thresholdTime);
                 return getQuestion();
             }
 
@@ -121,8 +123,9 @@ public abstract class QuestionFragment extends Fragment {
         new AsyncTask<Object, Object, Question>() {
             @Override
             protected Question doInBackground(Object... params) {
-                getQuestion().refresh();
-                Model.refreshAll(getQuestion().getResponses());
+                long thresholdTime = SystemClock.uptimeMillis();
+                getQuestion().refreshIfOlder(thresholdTime);
+                Model.refreshAllIfOlder(getQuestion().getResponses(), thresholdTime);
                 return getQuestion();
             }
 

@@ -15,6 +15,7 @@ import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
 import edu.ucsd.studentpoll.rest.RESTException;
 import edu.ucsd.studentpoll.rest.RestRouter;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,6 +42,18 @@ public class User extends Model {
         @Override
         public User[] newArray(int size) {
             return new User[size];
+        }
+    };
+
+    public static final ModelInstantiator<User> INSTANTIATOR = new ModelInstantiator<User>() {
+        @Override
+        public User fromId(Long id) {
+            return User.getOrStub(id);
+        }
+
+        @Override
+        public User fromJson(JSONObject object) throws JSONException {
+            return User.getOrStub(JsonUtils.ripId(object)).initFromJson(object);
         }
     };
 
@@ -81,7 +94,6 @@ public class User extends Model {
             AndrestClient client = new AndrestClient();
             JSONObject response = client.get(RestRouter.getUser(id));
             initFromJson(response);
-            inflated = true;
         }
     }
 
@@ -91,11 +103,9 @@ public class User extends Model {
             id = json.getLong("id");
             name = json.getString("name");
             avatar = null;
-            List<Long> groupIds = JsonUtils.ripIdList(json.optJSONArray("groups"));
-            groups = new ArrayList<>(groupIds.size());
-            for(Long groupId : groupIds) {
-                groups.add(Group.getOrStub(groupId));
-            }
+            groups = Model.ripModelList(json.optJSONArray("groups"), Group.INSTANTIATOR);
+
+            markRefreshed();
         } catch (JSONException e) {
             Log.wtf(TAG, e);
         }

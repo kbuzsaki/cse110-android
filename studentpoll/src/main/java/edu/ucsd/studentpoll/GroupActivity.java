@@ -2,6 +2,7 @@ package edu.ucsd.studentpoll;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -119,18 +120,20 @@ public class GroupActivity extends ActionBarActivity implements RefreshRequestLi
             @Override
             protected List<Poll> doInBackground(Object... params) {
                 try {
-                    group.refresh();
+                    final long thresholdTime = SystemClock.uptimeMillis();
 
-                    Model.refreshAll(group.getMembers());
+                    group.refreshIfOlder(thresholdTime);
+
+                    Model.refreshAllIfOlder(group.getMembers(), thresholdTime);
                     publishProgress(group.getMembers());
 
                     List<Poll> polls = group.getPolls();
-                    Model.refreshAll(polls);
+                    Model.refreshAllIfOlder(polls, thresholdTime);
                     for(Poll poll : polls) {
-                        Model.refreshAll(poll.getQuestions());
+                        Model.refreshAllIfOlder(poll.getQuestions(), thresholdTime);
 
                         for(Question question : poll.getQuestions()) {
-                            Model.refreshAll(question.getResponses());
+                            Model.refreshAllIfOlder(question.getResponses(), thresholdTime);
                         }
                     }
 

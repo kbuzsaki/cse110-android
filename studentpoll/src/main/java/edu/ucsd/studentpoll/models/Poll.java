@@ -35,6 +35,17 @@ public class Poll extends Model {
             return new Poll[size];
         }
     };
+    public static final ModelInstantiator<Poll> INSTANTIATOR = new ModelInstantiator<Poll>() {
+        @Override
+        public Poll fromId(Long id) {
+            return Poll.getOrStub(id);
+        }
+
+        @Override
+        public Poll fromJson(JSONObject object) throws JSONException {
+            return Poll.getOrStub(JsonUtils.ripId(object)).initFromJson(object);
+        }
+    };
 
     private static final String TAG = "Poll";
     private static Map<Long, Poll> CACHE = new HashMap<>();
@@ -74,7 +85,6 @@ public class Poll extends Model {
             AndrestClient client = new AndrestClient();
             JSONObject response = client.get(RestRouter.getPoll(id));
             initFromJson(response);
-            inflated = true;
         }
     }
 
@@ -82,20 +92,15 @@ public class Poll extends Model {
     Poll initFromJson(JSONObject json) {
         try {
             id = json.getLong("id");
-            group = Group.getOrStub(JsonUtils.ripId(json.get("group")));
-            creator = User.getOrStub(JsonUtils.ripId(json.get("creator")));
+            group = Model.ripModel(json.get("group"), Group.INSTANTIATOR);
+            creator = Model.ripModel(json.get("creator"), User.INSTANTIATOR);
             creationTime = null;
             name = json.getString("name");
 
-            // extra crap to make wildcards work properly
-            List<Long> questionIds = JsonUtils.ripIdList(json.optJSONArray("questions"));
-            List<Question> localQuestions = new ArrayList<>();
-            for(Long questionId : questionIds) {
-                // TODO: make this work for any type of question
-                Question question = (Question)ChoiceQuestion.getOrStub(questionId);
-                localQuestions.add(question);
-            }
+            List<ChoiceQuestion> localQuestions = Model.ripModelList(json.optJSONArray("questions"), ChoiceQuestion.INSTANTIATOR);
             questions = localQuestions;
+
+            markRefreshed();
         } catch (JSONException e) {
             Log.wtf(TAG, e);
         }
