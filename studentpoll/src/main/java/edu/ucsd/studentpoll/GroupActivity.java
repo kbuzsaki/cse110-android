@@ -1,6 +1,7 @@
 package edu.ucsd.studentpoll;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -11,18 +12,27 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 import edu.ucsd.studentpoll.models.Group;
+import edu.ucsd.studentpoll.models.Model;
 import edu.ucsd.studentpoll.models.Poll;
+import edu.ucsd.studentpoll.models.Question;
+import edu.ucsd.studentpoll.models.User;
+import edu.ucsd.studentpoll.rest.RESTException;
+import edu.ucsd.studentpoll.view.RefreshRequestListener;
 import edu.ucsd.studentpoll.view.SlidingTabLayout;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class GroupActivity extends ActionBarActivity {
+
+public class GroupActivity extends ActionBarActivity implements RefreshRequestListener {
 
     private static final String TAG = "GroupActivity";
 
     private ViewPager viewPager;
 
-    private PagerAdapter pagerAdapter;
+    private GroupPagerAdapter pagerAdapter;
 
     private SlidingTabLayout slidingTabLayout;
 
@@ -48,6 +58,19 @@ public class GroupActivity extends ActionBarActivity {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // FIXME: race condition! child fragments are not ready to be inflated at this step
+        new android.os.Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                inflateContent();
+            }
+        }, 50);
+        refreshContent(null);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_group, menu);
@@ -70,6 +93,76 @@ public class GroupActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRefreshRequested(Runnable callback) {
+        refreshContent(callback);
+    }
+
+    private void inflateContent() {
+        if(group != null && group.isInitialized()) {
+            List<User> members = group.getMembers();
+            if(members != null && !members.isEmpty() && members.get(members.size() - 1).isInitialized()) {
+                pagerAdapter.membersFragment.updateMembers(group.getMembers());
+            }
+
+            List<Poll> polls = group.getPolls();
+            if(polls != null && !polls.isEmpty() && polls.get(polls.size() - 1).isInitialized()) {
+                pagerAdapter.pollsFragment.updatePolls(group.getPolls());
+            }
+        }
+    }
+
+    private void refreshContent(final Runnable callback) {
+        new AsyncTask<Object, List<User>, List<Poll>>() {
+            @Override
+            protected List<Poll> doInBackground(Object... params) {
+                try {
+                    group.refresh();
+
+                    Model.refreshAll(group.getMembers());
+                    publishProgress(group.getMembers());
+
+                    List<Poll> polls = group.getPolls();
+                    Model.refreshAll(polls);
+                    for(Poll poll : polls) {
+                        Model.refreshAll(poll.getQuestions());
+
+                        for(Question question : poll.getQuestions()) {
+                            Model.refreshAll(question.getResponses());
+                        }
+                    }
+
+                    return polls;
+                }
+                catch (RESTException e) {
+                    Log.e(TAG, "Failed to reload polls", e);
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(List<Poll> polls) {
+                super.onPostExecute(polls);
+                if(polls != null) {
+                    pagerAdapter.pollsFragment.updatePolls(polls);
+                }
+                else {
+                    Log.w(TAG, "Failed to refresh polls...");
+                    Toast.makeText(GroupActivity.this, "Failed Refresh", Toast.LENGTH_SHORT);
+                }
+                if(callback != null) {
+                    callback.run();
+                }
+            }
+
+            @Override
+            protected void onProgressUpdate(List<User>... values) {
+                List<User> members = values[0];
+                pagerAdapter.membersFragment.updateMembers(members);
+            }
+        }.execute();
     }
 
     private void createPoll() {

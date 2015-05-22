@@ -1,5 +1,6 @@
 package edu.ucsd.studentpoll;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -23,11 +24,11 @@ import edu.ucsd.studentpoll.models.Question;
 import edu.ucsd.studentpoll.models.User;
 import edu.ucsd.studentpoll.rest.RESTException;
 import edu.ucsd.studentpoll.view.ActionBarHider;
+import edu.ucsd.studentpoll.view.RefreshRequestListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 
 public class MembersFragment extends Fragment {
 
@@ -55,26 +56,25 @@ public class MembersFragment extends Fragment {
 
         membersView.setOnScrollListener(new ActionBarHider(((ActionBarActivity) getActivity()).getSupportActionBar()));
 
-        final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.pollsRefreshLayout);
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshMembers();
-                refreshLayout.setRefreshing(false);
-            }
-        });
+
+        Activity parent = getActivity();
+        if(parent instanceof RefreshRequestListener) {
+            final RefreshRequestListener refreshRequestListener = (RefreshRequestListener) parent;
+            final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.pollsRefreshLayout);
+            refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    refreshRequestListener.onRefreshRequested(new Runnable() {
+                        @Override
+                        public void run() {
+                            refreshLayout.setRefreshing(false);
+                        }
+                    });
+                }
+            });
+        }
 
         return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if(membersAdapter.members.isEmpty()) {
-            inflateMembers();
-            refreshMembers();
-        }
     }
 
     @Override
@@ -103,46 +103,8 @@ public class MembersFragment extends Fragment {
         this.group = group;
     }
 
-    private void inflateMembers() {
-        loadMembers(false);
-    }
-
-    private void refreshMembers() {
-        loadMembers(true);
-    }
-
-    private void loadMembers(final boolean forceRefresh) {
-        final Group refreshGroup = group;
-
-        if(forceRefresh && group != null && group.getMembers() != null) {
-            membersAdapter.setMembers(group.getMembers());
-        }
-
-        new AsyncTask<Object, Object, List<User>>() {
-
-            @Override
-            protected List<User> doInBackground(Object... params) {
-                try {
-                    group.refresh();
-                    Model.refreshAll(group.getMembers());
-                    return group.getMembers();
-                }
-                catch (RESTException e) {
-                    Log.e(TAG, "Failed to reload members", e);
-                    return null;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(List<User> members) {
-                if(members == null) {
-                    Toast.makeText(getActivity(), "Failed to load members.", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    membersAdapter.setMembers(members);
-                }
-            }
-        }.execute();
+    public void updateMembers(List<User> members) {
+        membersAdapter.setMembers(members);
     }
 
     private static class MembersAdapter extends RecyclerView.Adapter<MembersViewHolder> {

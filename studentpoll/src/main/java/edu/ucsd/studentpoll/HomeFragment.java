@@ -1,8 +1,8 @@
 package edu.ucsd.studentpoll;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -11,19 +11,14 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import edu.ucsd.studentpoll.models.Group;
-import edu.ucsd.studentpoll.models.Model;
 import edu.ucsd.studentpoll.models.Poll;
-import edu.ucsd.studentpoll.models.Question;
-import edu.ucsd.studentpoll.models.User;
-import edu.ucsd.studentpoll.rest.RESTException;
 import edu.ucsd.studentpoll.view.ActionBarHider;
+import edu.ucsd.studentpoll.view.RefreshRequestListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,25 +48,24 @@ public class HomeFragment extends Fragment {
 
         groupsView.setOnScrollListener(new ActionBarHider(((ActionBarActivity) getActivity()).getSupportActionBar()));
 
-        final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.groupsRefreshLayout);
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshGroups();
-                refreshLayout.setRefreshing(false);
-            }
-        });
+        Activity parent = getActivity();
+        if(parent instanceof RefreshRequestListener) {
+            final RefreshRequestListener refreshRequestListener = (RefreshRequestListener) parent;
+            final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.groupsRefreshLayout);
+            refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    refreshRequestListener.onRefreshRequested(new Runnable() {
+                        @Override
+                        public void run() {
+                            refreshLayout.setRefreshing(false);
+                        }
+                    });
+                }
+            });
+        }
 
         return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if(groupsAdapter.groups.isEmpty()) {
-            refreshGroups();
-        }
     }
 
     @Override
@@ -92,36 +86,8 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    public void refreshGroups() {
-        new AsyncTask<Object, Object, List<Group>>() {
-
-            @Override
-            protected List<Group> doInBackground(Object[] params) {
-                try {
-                    User user = User.getDeviceUser();
-                    user.refresh();
-
-                    List<Group> groups = user.getGroups();
-                    Model.refreshAll(groups);
-
-                    return groups;
-                }
-                catch(RESTException e) {
-                    Log.e(TAG, "Failed to reload groups", e);
-                    return null;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(List<Group> groups) {
-                if(groups == null) {
-                    Toast.makeText(getActivity(), "Failed to load groups.", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    groupsAdapter.setGroups(groups);
-                }
-            }
-        }.execute();
+    public void updateGroups(List<Group> groups) {
+        groupsAdapter.setGroups(groups);
     }
 
     private static class GroupsAdapter extends RecyclerView.Adapter<GroupsViewHolder> {

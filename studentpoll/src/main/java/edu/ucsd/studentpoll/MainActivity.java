@@ -13,21 +13,30 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.Toast;
+import com.google.common.util.concurrent.FutureCallback;
+import edu.ucsd.studentpoll.models.Group;
 import edu.ucsd.studentpoll.models.Model;
 import edu.ucsd.studentpoll.models.Poll;
 import edu.ucsd.studentpoll.models.Question;
 import edu.ucsd.studentpoll.models.User;
 import edu.ucsd.studentpoll.rest.RESTException;
+import edu.ucsd.studentpoll.view.RefreshRequestListener;
 import edu.ucsd.studentpoll.view.SlidingTabLayout;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-public class MainActivity extends ActionBarActivity {
+
+public class MainActivity extends ActionBarActivity implements RefreshRequestListener {
 
     private static Context globalContext;
 
@@ -35,7 +44,7 @@ public class MainActivity extends ActionBarActivity {
 
     private ViewPager viewPager;
 
-    private PagerAdapter pagerAdapter;
+    private MainPagerAdapter pagerAdapter;
 
     private SlidingTabLayout slidingTabLayout;
 
@@ -65,6 +74,12 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        refreshContent(null);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -90,6 +105,72 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRefreshRequested(Runnable callback) {
+        refreshContent(callback);
+    }
+
+    private void refreshContent(final Runnable callback) {
+        new AsyncTask<Object, List<Group>, List<Poll>>() {
+            @Override
+            protected List<Poll> doInBackground(Object... params) {
+                try {
+                    User user = User.getDeviceUser();
+                    user.refresh();
+                    Log.d(TAG, "Loading polls for user: " + user);
+
+                    List<Group> groups = user.getGroups();
+                    Model.refreshAll(groups);
+
+                    List<Poll> polls = new ArrayList<>();
+                    for(Group group : groups) {
+                        polls.addAll(group.getPolls());
+                    }
+
+                    Model.refreshAll(polls);
+
+                    // publish groups after refreshing polls so that we have poll names
+                    publishProgress(groups);
+
+                    for(Poll poll : polls) {
+                        Model.refreshAll(poll.getQuestions());
+
+                        for(Question question : poll.getQuestions()) {
+                            Model.refreshAll(question.getResponses());
+                        }
+                    }
+
+                    return polls;
+                }
+                catch (RESTException e) {
+                    Log.e(TAG, "Failed to reload polls", e);
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(List<Poll> polls) {
+                super.onPostExecute(polls);
+                if(polls != null) {
+                    pagerAdapter.pollsFragment.updatePolls(polls);
+                }
+                else {
+                    Log.w(TAG, "Failed to refresh polls...");
+                    Toast.makeText(MainActivity.this, "Failed Refresh", Toast.LENGTH_SHORT);
+                }
+                if(callback != null) {
+                    callback.run();
+                }
+            }
+
+            @Override
+            protected void onProgressUpdate(List<Group>... values) {
+                List<Group> groups = values[0];
+                pagerAdapter.homeFragment.updateGroups(groups);
+            }
+        }.execute();
     }
 
     private void createPoll() {
@@ -220,19 +301,22 @@ public class MainActivity extends ActionBarActivity {
 
         private static final int NUM_PAGES = 2;
 
+        private PollsFragment pollsFragment;
+        private HomeFragment homeFragment;
+
         public MainPagerAdapter(FragmentManager fm) {
             super(fm);
+            pollsFragment = new PollsFragment();
+            homeFragment = new HomeFragment();
         }
 
         @Override
         public Fragment getItem(int position) {
             switch(position) {
                 case 0:
-                    Log.d(TAG, "Creating Polls Fragment");
-                    return new PollsFragment();
+                    return pollsFragment;
                 case 1:
-                    Log.d(TAG, "Creating Home Fragment");
-                    return new HomeFragment();
+                    return homeFragment;
             }
             throw new AssertionError("Can't find item for index: " + position);
         }

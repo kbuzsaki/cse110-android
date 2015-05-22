@@ -1,8 +1,8 @@
 package edu.ucsd.studentpoll;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -11,24 +11,19 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import edu.ucsd.studentpoll.models.Group;
-import edu.ucsd.studentpoll.models.Model;
 import edu.ucsd.studentpoll.models.Poll;
 import edu.ucsd.studentpoll.models.Question;
-import edu.ucsd.studentpoll.models.User;
-import edu.ucsd.studentpoll.rest.RESTException;
 import edu.ucsd.studentpoll.view.ActionBarHider;
+import edu.ucsd.studentpoll.view.RefreshRequestListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 
 public class PollsFragment extends Fragment {
 
@@ -56,26 +51,24 @@ public class PollsFragment extends Fragment {
 
         pollsView.setOnScrollListener(new ActionBarHider(((ActionBarActivity) getActivity()).getSupportActionBar()));
 
-        final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.pollsRefreshLayout);
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshPolls();
-                refreshLayout.setRefreshing(false);
-            }
-        });
+        Activity parent = getActivity();
+        if(parent instanceof RefreshRequestListener) {
+            final RefreshRequestListener refreshRequestListener = (RefreshRequestListener) parent;
+            final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.pollsRefreshLayout);
+            refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    refreshRequestListener.onRefreshRequested(new Runnable() {
+                        @Override
+                        public void run() {
+                            refreshLayout.setRefreshing(false);
+                        }
+                    });
+                }
+            });
+        }
 
         return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if(pollsAdapter.polls.isEmpty()) {
-            inflatePolls();
-            refreshPolls();
-        }
     }
 
     @Override
@@ -104,75 +97,8 @@ public class PollsFragment extends Fragment {
         this.group = group;
     }
 
-    private void inflatePolls() {
-        loadPolls(false);
-    }
-
-    private void refreshPolls() {
-        loadPolls(true);
-    }
-
-    private void loadPolls(final boolean forceRefresh) {
-        if(!forceRefresh && group != null && group.getMembers() != null) {
-            pollsAdapter.setPolls(group.getPolls());
-        }
-
-
-        final Group refreshGroup = group;
-
-        new AsyncTask<Object, Object, List<Poll>>() {
-
-            @Override
-            protected List<Poll> doInBackground(Object... params) {
-                try {
-                    List<Group> groups;
-
-                    User user = User.getDeviceUser();
-                    user.refresh();
-                    Log.d(TAG, "Loading polls for user: " + user);
-
-                    if(refreshGroup != null) {
-                        groups = Collections.singletonList(refreshGroup);
-                    }
-                    else {
-                        groups = user.getGroups();
-                    }
-
-                    Model.refreshAll(groups);
-
-                    List<Poll> polls = new ArrayList<>();
-                    for(Group group : groups) {
-                        polls.addAll(group.getPolls());
-                    }
-
-                    Model.refreshAll(polls);
-
-                    for(Poll poll : polls) {
-                        Model.refreshAll(poll.getQuestions());
-
-                        for(Question question : poll.getQuestions()) {
-                            Model.refreshAll(question.getResponses());
-                        }
-                    }
-
-                    return polls;
-                }
-                catch (RESTException e) {
-                    Log.e(TAG, "Failed to reload polls", e);
-                    return null;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(List<Poll> polls) {
-                if(polls == null) {
-                    Toast.makeText(getActivity(), "Failed to load polls.", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    pollsAdapter.setPolls(polls);
-                }
-            }
-        }.execute();
+    public void updatePolls(List<Poll> polls) {
+        pollsAdapter.setPolls(polls);
     }
 
     private static class PollsAdapter extends RecyclerView.Adapter<PollsViewHolder> {
