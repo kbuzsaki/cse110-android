@@ -71,6 +71,23 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         slidingTabLayout.setDistributeEvenly(true);
         slidingTabLayout.setViewPager(viewPager);
+
+        if(User.isDeviceUserInitialized()) {
+            refreshContent(null);
+        }
+        else {
+            User.createDeviceUser("NewUserName", new FutureCallback<User>() {
+                @Override
+                public void onSuccess(User result) {
+                    Toast.makeText(MainActivity.this, "Hi, " + result.getName() + "!", Toast.LENGTH_LONG);
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    Toast.makeText(MainActivity.this, "Failed to create user :(", Toast.LENGTH_LONG);
+                }
+            });
+        }
     }
 
     @Override
