@@ -29,6 +29,8 @@ import edu.ucsd.studentpoll.view.SlidingTabLayout;
 
 public class MainActivity extends ActionBarActivity {
 
+    private static Context globalContext;
+
     private static final String TAG = "MainActivity";
 
     private ViewPager viewPager;
@@ -37,10 +39,19 @@ public class MainActivity extends ActionBarActivity {
 
     private SlidingTabLayout slidingTabLayout;
 
+    public static Context getGlobalContext() {
+        return globalContext;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        if(globalContext != null) {
+            Log.w(TAG, "Overwriting global context that is not null!");
+        }
+        globalContext = this;
 
         // Instantiate a ViewPager and a PagerAdapter.
         viewPager = (ViewPager) findViewById(R.id.pager);
