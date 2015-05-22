@@ -5,9 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import android.text.TextUtils;
 import android.util.Log;
 import com.google.common.io.CharStreams;
 import org.apache.http.HttpResponse;
@@ -190,6 +194,18 @@ public class AndrestClient {
             Log.e(TAG, "error deleting url: " + url, e);
             throw new RESTException(e);
         }
+    }
+
+    public static String escapeParameters(Map<String, String> parameters) throws UnsupportedEncodingException {
+        List<String> escaped = new ArrayList<>(parameters.size());
+
+        for(String key : parameters.keySet()) {
+            String encodedKey = URLEncoder.encode(key, "UTF-8");
+            String encodedValue = URLEncoder.encode(parameters.get(key), "UTF-8");
+            escaped.add(encodedKey + "=" + encodedValue);
+        }
+
+        return "?" + TextUtils.join("&", escaped);
     }
 
     /**

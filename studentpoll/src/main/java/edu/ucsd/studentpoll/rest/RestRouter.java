@@ -25,6 +25,10 @@ public class RestRouter {
         return API_URL + "/user/" + userId;
     }
 
+    public static String postUser() {
+        return API_URL + "/user/create";
+    }
+
     public static String getPoll(long pollId) {
         return API_URL + "/poll/" + pollId;
     }
