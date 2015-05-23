@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.common.collect.ImmutableMap;
 import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
+import edu.ucsd.studentpoll.rest.RESTException;
 import edu.ucsd.studentpoll.rest.RestRouter;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -206,13 +207,25 @@ public class Poll extends Model {
         AndrestClient client = new AndrestClient();
         Map<String, JSONObject> data = ImmutableMap.of("poll", poll.toJson());
         JSONObject response = client.post(RestRouter.postPoll(), data);
-        return new Poll().initFromJson(response);
+        try {
+            return Poll.INSTANTIATOR.fromJson(response);
+        }
+        catch (JSONException e) {
+            Log.wtf(TAG, e);
+            throw new RESTException(e);
+        }
     }
 
     public static Poll joinPoll(String accessCode) {
         AndrestClient client = new AndrestClient();
         JSONObject response = client.put(RestRouter.joinPoll(accessCode), Collections.<String, JSONObject>emptyMap());
-        return new Poll().initFromJson(response);
+        try {
+            return Poll.INSTANTIATOR.fromJson(response);
+        }
+        catch (JSONException e) {
+            Log.wtf(TAG, e);
+            throw new RESTException(e);
+        }
     }
 
 }

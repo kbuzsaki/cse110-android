@@ -144,7 +144,13 @@ public class User extends Model {
                     ImmutableMap<String, String> data = ImmutableMap.of("name", name);
                     String url = RestRouter.postUser() + AndrestClient.escapeParameters(data);
                     JSONObject response = client.post(url, Collections.<String, JSONObject>emptyMap());
-                    return new User().initFromJson(response);
+                    try {
+                        return User.INSTANTIATOR.fromJson(response);
+                    }
+                    catch (JSONException e) {
+                        Log.wtf(TAG, e);
+                        throw new RESTException(e);
+                    }
                 }
                 catch (RESTException|UnsupportedEncodingException e) {
                     Log.e(TAG, "Failed to post user!", e);

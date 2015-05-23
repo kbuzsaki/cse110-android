@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.common.collect.ImmutableMap;
 import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
+import edu.ucsd.studentpoll.rest.RESTException;
 import edu.ucsd.studentpoll.rest.RestRouter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -156,7 +157,13 @@ public class ChoiceResponse extends Response {
         choiceResponse.choices = choices;
         Map<String, JSONObject> data = ImmutableMap.of("response", choiceResponse.toJson());
         JSONObject response = client.put(RestRouter.putResponse(question.getId()), data);
-        return new ChoiceResponse().initFromJson(response);
+        try {
+            return ChoiceResponse.INSTANTIATOR.fromJson(response);
+        }
+        catch (JSONException e) {
+            Log.wtf(TAG, e);
+            throw new RESTException(e);
+        }
     }
 
 }
