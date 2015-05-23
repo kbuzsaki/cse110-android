@@ -1,6 +1,8 @@
 package edu.ucsd.studentpoll;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -40,6 +42,7 @@ public class CreatePollActivity extends ActionBarActivity {
                                                     "Schedule" };
 
     private static final int REQ_CODE_ADD_QUESTION = 1;
+    private static final int REQ_CODE_EDIT_QUESTION = 2;
 
     private RecyclerView questionsView;
 
@@ -96,19 +99,57 @@ public class CreatePollActivity extends ActionBarActivity {
         dialog.show();
     }
 
+    public void createSingleChoiceQuestion() {
+        Intent intent = new Intent(this, CreateChoiceQuestionActivity.class);
+        intent.putExtra("allowMultiple", false);
+        startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
+    }
+
+    public void createMultipleChoiceQuestion() {
+        Intent intent = new Intent(this, CreateChoiceQuestionActivity.class);
+        intent.putExtra("allowMultiple", true);
+        startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
+    }
+
+    public void createRankQuestion() {
+        Intent intent = new Intent(this, CreateRankQuestionActivity.class);
+        startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
+    }
+
+    public void createScheduleQuestion() {
+        Intent intent = new Intent(this, CreateSchedulePoll.class);
+        startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultStatus, Intent data) {
-        if (requestCode == REQ_CODE_ADD_QUESTION) {
-            if(resultStatus == RESULT_OK){
-                Question question = data.getParcelableExtra("question");
-                questions.add(question);
-                questionsAdapter.setQuestions(questions);
 
-                if(questions.size() == 1 && ((EditText)findViewById(R.id.pollName)).getText().toString().equals("")) {
-                    ((EditText)findViewById(R.id.pollName)).setText(question.getTitle());
-                }
+        if(resultStatus == RESULT_OK) {
+            Question question = data.getParcelableExtra("question");
+
+            if (requestCode == REQ_CODE_ADD_QUESTION) {
+                questions.add(question);
+
+            } else if (requestCode == REQ_CODE_EDIT_QUESTION) {
+                int index = data.getIntExtra("index", 0);
+                questions.set(index, question);
+
+            }
+
+            questionsAdapter.setQuestions(questions);
+
+            if (questions.size() == 1 && getPollTitle().equals("") ) {
+                setPollTitle(question.getTitle());
             }
         }
+    }
+
+    public void setPollTitle(String title) {
+        ((EditText) findViewById(R.id.pollName)).setText(title);
+    }
+
+    public String getPollTitle() {
+        return ((EditText) findViewById(R.id.pollName)).getText().toString();
     }
 
     public void createPoll(View view) {
@@ -117,8 +158,7 @@ public class CreatePollActivity extends ActionBarActivity {
             return;
         }
 
-        String name = ((EditText)findViewById(R.id.pollName)).getText().toString();
-
+        String name = getPollTitle();
         final Poll poll = new Poll.Builder().withTitle(name).withQuestions(questions).build();
 
         new AsyncTask<Object, Object, Poll>() {
@@ -147,28 +187,6 @@ public class CreatePollActivity extends ActionBarActivity {
         finish();
     }
 
-    public void createSingleChoiceQuestion() {
-        Intent intent = new Intent(this, CreateChoiceQuestionActivity.class);
-        intent.putExtra("allowMultiple", false);
-        startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
-    }
-
-    public void createMultipleChoiceQuestion() {
-        Intent intent = new Intent(this, CreateChoiceQuestionActivity.class);
-        intent.putExtra("allowMultiple", true);
-        startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
-    }
-
-    public void createRankQuestion() {
-        Intent intent = new Intent(this, CreateRankQuestionActivity.class);
-        startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
-    }
-
-    public void createScheduleQuestion() {
-        Intent intent = new Intent(this, CreateSchedulePoll.class);
-        startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
-    }
-
     private static class QuestionsAdapter extends RecyclerView.Adapter<QuestionsViewHolder> {
 
         private List<Question> questions;
@@ -195,7 +213,7 @@ public class CreatePollActivity extends ActionBarActivity {
 
         @Override
         public void onBindViewHolder(QuestionsViewHolder holder, int position) {
-            holder.setContent(questions.get(position));
+            holder.setContent(questions.get(position), position);
         }
 
         @Override
@@ -207,13 +225,15 @@ public class CreatePollActivity extends ActionBarActivity {
     private static class QuestionsViewHolder extends RecyclerView.ViewHolder {
 
         private CardView questionCard;
+        private Context context;
 
         public QuestionsViewHolder(CardView questionCard) {
             super(questionCard);
             this.questionCard = questionCard;
+            this.context = questionCard.getContext();
         }
 
-        public void setContent(Question question) {
+        public void setContent(final Question question, final int position) {
             ((TextView)questionCard.findViewById(R.id.questionTitle)).setText(question.getTitle());
 
             LinearLayout settingsList = (LinearLayout) questionCard.findViewById(R.id.settingsList);
@@ -223,33 +243,53 @@ public class CreatePollActivity extends ActionBarActivity {
             settingsList.removeAllViews();
 
             if(question instanceof ChoiceQuestion) {
+                // Populate the options
                 ChoiceQuestion choiceQuestion = (ChoiceQuestion) question;
                 for(String option: choiceQuestion.getOptions() ) {
-                    TextView textView = new TextView(questionCard.getContext());
+                    TextView textView = new TextView(context);
                     textView.setText(option);
                     choicesList.addView(textView);
                 }
 
-                TextView questionType = new TextView(questionCard.getContext());
+                // Populate the settings
+                TextView questionType = new TextView(context);
                 questionType.setText("Multiple Choice");
                 settingsList.addView(questionType);
 
                 if(choiceQuestion.getAllowCustom()) {
-                    TextView customAllowed = new TextView(questionCard.getContext());
+                    TextView customAllowed = new TextView(context);
                     customAllowed.setText("Custom Allowed");
                     settingsList.addView(customAllowed);
                 }
 
                 if(choiceQuestion.getAllowMultiple()) {
-                    TextView textView = new TextView(questionCard.getContext());
+                    TextView textView = new TextView(context);
                     textView.setText("Choose Many");
                     settingsList.addView(textView);
                 } else {
-                    TextView textView = new TextView(questionCard.getContext());
+                    TextView textView = new TextView(context);
                     textView.setText("Choose One");
                     settingsList.addView(textView);
                 }
             }
+
+            // clicking on a question card lets you edit the question
+            questionCard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = null;
+
+                    if(question instanceof ChoiceQuestion) {
+                        intent = new Intent(context, CreateChoiceQuestionActivity.class);
+                        intent.putExtra("question", question);
+                        intent.putExtra("index", position);
+                    } else {
+
+                    }
+
+                    ((Activity)context).startActivityForResult(intent, REQ_CODE_EDIT_QUESTION);
+                }
+            });
         }
     }
 

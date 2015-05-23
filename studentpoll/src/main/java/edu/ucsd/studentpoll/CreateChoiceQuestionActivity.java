@@ -3,6 +3,7 @@ package edu.ucsd.studentpoll;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CreateChoiceQuestionActivity extends Activity {
+public class CreateChoiceQuestionActivity extends ActionBarActivity {
 
     private static final String TAG = "CreateChoiceQuestion";
 
@@ -37,14 +38,63 @@ public class CreateChoiceQuestionActivity extends Activity {
 
         Intent intent = getIntent();
 
-        boolean allowMultiple = intent.getBooleanExtra("allowMultiple", false);
-        boolean allowCustom = intent.getBooleanExtra("allowCustom", false);
+        if(intent.hasExtra("question")) {
+            loadExistingQuestion(intent);
+        } else {
+            // check for any config options passed in
+            boolean allowMultiple = intent.getBooleanExtra("allowMultiple", false);
+            boolean allowCustom = intent.getBooleanExtra("allowCustom", false);
+            ((CheckBox)findViewById(R.id.allow_multiple_checkbox)).setChecked(allowMultiple);
+            ((CheckBox)findViewById(R.id.allow_custom_checkbox)).setChecked(allowCustom);
 
+            EditText optionField = (EditText) findViewById(R.id.optionField);
+            addOptionFieldEnterListener((LinearLayout) optionField.getParent());
+        }
+
+    }
+
+    public void loadExistingQuestion(Intent intent) {
+        ChoiceQuestion choiceQuestion = intent.getParcelableExtra("question");
+
+        // load title
+        EditText titleBox = (EditText) findViewById(R.id.titleBox);
+        titleBox.setText(choiceQuestion.getTitle());
+
+        // load boolean options
+        boolean allowMultiple = choiceQuestion.getAllowMultiple();
+        boolean allowCustom = choiceQuestion.getAllowCustom();
         ((CheckBox)findViewById(R.id.allow_multiple_checkbox)).setChecked(allowMultiple);
         ((CheckBox)findViewById(R.id.allow_custom_checkbox)).setChecked(allowCustom);
 
-        EditText optionField = (EditText) findViewById(R.id.optionField);
-        addOptionFieldEnterListener((LinearLayout) optionField.getParent());
+        // load question options
+        LinearLayout optionsContainer = (LinearLayout)findViewById(R.id.optionsLayout);
+        optionsContainer.removeAllViews();
+        for(String option : choiceQuestion.getOptions()) {
+            if(option.equals("")) {
+                continue;
+            }
+
+            View newPollOption = LayoutInflater.from(this).inflate(R.layout.create_choice_poll_option, null);
+            addOptionFieldEnterListener((LinearLayout)newPollOption);
+            optionsContainer.addView(newPollOption);
+
+            EditText optionField = (EditText)newPollOption.findViewById(R.id.optionField);
+            optionField.setText(option);
+
+            Button addButton = (Button)newPollOption.findViewById(R.id.optionAdd);
+            addButton.setText("x");
+            addButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    removeOption(view);
+                }
+            });
+        }
+
+        View newPollOption = LayoutInflater.from(this).inflate(R.layout.create_choice_poll_option, null);
+        addOptionFieldEnterListener((LinearLayout)newPollOption);
+        optionsContainer.addView(newPollOption);
+        addOptionFieldEnterListener((LinearLayout) newPollOption);
     }
 
     @Override
@@ -143,6 +193,7 @@ public class CreateChoiceQuestionActivity extends Activity {
         ChoiceQuestion question = ChoiceQuestion.makeTemporaryQuestion(name, options, allowMultiple, allowCustom);
 
         returnIntent.putExtra("question", question);
+        returnIntent.putExtra("index", getIntent().getParcelableExtra("index"));
         setResult(RESULT_OK, returnIntent);
 
         finish();
