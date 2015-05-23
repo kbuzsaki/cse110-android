@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="OscillatorAnimatedView">
+        <attr name="centerImage" format="reference" />
+        <attr name="oscillatorImage" format="reference" />
+        <attr name="oscillatorInterval" format="integer" />
+        <attr name="oscillatorMaxExtend" format="float" />
+    </declare-styleable>
+</resources>

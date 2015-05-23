@@ -43,6 +43,10 @@
             android:label="@string/title_activity_create_schedule_poll"
             android:windowSoftInputMode="stateHidden" />
         <activity
+                android:name=".BroadcastPollActivity"
+                android:label="@string/title_broadcast_poll"
+                android:windowSoftInputMode="stateHidden" />
+        <activity
             android:name=".PollActivity"
             android:label="@string/title_poll_activity"
             android:windowSoftInputMode="stateHidden" />

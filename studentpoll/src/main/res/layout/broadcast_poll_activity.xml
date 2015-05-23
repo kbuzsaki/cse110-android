@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:custom="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Broadcasting:"
+            android:id="@+id/textView15" android:layout_gravity="center_horizontal" android:layout_margin="8dp"
+            />
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="What is the best animal?"
+            android:id="@+id/pollTitle" android:layout_gravity="center_horizontal" android:layout_margin="8dp"
+            android:textSize="30dp" android:phoneNumber="true" android:gravity="center"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="with Access Code:"
+            android:id="@+id/textView22" android:layout_gravity="center_horizontal" android:gravity="center"
+            android:layout_margin="5dp"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="redpanda"
+            android:id="@+id/accessCode" android:layout_gravity="center_horizontal" android:textSize="50dp"
+            android:gravity="center" android:singleLine="false" android:layout_margin="5dp"/>
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center_vertical">
+        <edu.ucsd.studentpoll.view.OscillatorAnimatedView
+                android:id="@+id/oscillator"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_centerInParent="true"
+                android:repeatMode="reverse"
+                custom:centerImage="@drawable/circle"
+                custom:oscillatorImage="@drawable/ring" android:gravity="center"
+                android:layout_gravity="center_horizontal"/>
+    </LinearLayout>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop Broadcasting"
+            android:id="@+id/stopBroadcasting" android:layout_gravity="center_horizontal" android:layout_margin="8dp"
+            android:onClick="stopBroadcast"/>
+</LinearLayout>
