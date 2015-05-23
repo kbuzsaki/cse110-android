@@ -90,20 +90,21 @@ public class RankResultFragment extends ResultFragment {
             Log.w(TAG, "rootView null!");
             return;
         }
-
-        if(rankQuestion != null) {
-            this.results = RankResponse.aggregateResponses(rankQuestion.getResponses());
-        }
-
-        TextView pollTitle = (TextView) rootView.findViewById(R.id.pollTitle);
-        pollTitle.setText(rankQuestion.getTitle());
-
         if(getActivity() == null) {
             Log.w(TAG, "detached fragment!");
             return;
         }
+        if(rankQuestion == null) {
+            Log.w(TAG, "attempting to render null fragment");
+            return;
+        }
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        this.results = RankResponse.aggregateResponses(rankQuestion.getResponses());
+
+        TextView pollTitle = (TextView) rootView.findViewById(R.id.pollTitle);
+        pollTitle.setText(rankQuestion.getTitle());
 
         int totalCount = 0;
         for(int count : results.values()) {

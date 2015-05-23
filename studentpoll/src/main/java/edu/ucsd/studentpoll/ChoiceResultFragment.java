@@ -87,20 +87,21 @@ public class ChoiceResultFragment extends ResultFragment {
             Log.w(TAG, "rootView null!");
             return;
         }
-
-        if(choiceQuestion != null) {
-            this.results = ChoiceResponse.aggregateResponses(choiceQuestion.getResponses());
-        }
-
-        TextView pollTitle = (TextView) rootView.findViewById(R.id.pollTitle);
-        pollTitle.setText(choiceQuestion.getTitle());
-
         if(getActivity() == null) {
             Log.w(TAG, "detached fragment!");
             return;
         }
+        if(choiceQuestion == null) {
+            Log.w(TAG, "attempting to render ");
+            return;
+        }
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        this.results = ChoiceResponse.aggregateResponses(choiceQuestion.getResponses());
+
+        TextView pollTitle = (TextView) rootView.findViewById(R.id.pollTitle);
+        pollTitle.setText(choiceQuestion.getTitle());
 
         int totalCount = 0;
         for(int count : results.values()) {
