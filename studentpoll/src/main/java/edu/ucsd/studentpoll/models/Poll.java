@@ -185,6 +185,9 @@ public class Poll extends Model {
                 if(question instanceof ChoiceQuestion) {
                     questions.add(ChoiceQuestion.makeQuestion(poll, (ChoiceQuestion)question));
                 }
+                else if(question instanceof RankQuestion) {
+                    questions.add(RankQuestion.makeQuestion(poll, (RankQuestion)question));
+                }
                 else {
                     throw new IllegalArgumentException("Question is not a valid question type: " + question);
                 }

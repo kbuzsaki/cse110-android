@@ -19,10 +19,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import edu.ucsd.studentpoll.models.ChoiceQuestion;
-import edu.ucsd.studentpoll.models.ChoiceResponse;
-import edu.ucsd.studentpoll.models.Poll;
-import edu.ucsd.studentpoll.models.Question;
+import edu.ucsd.studentpoll.models.*;
 import edu.ucsd.studentpoll.rest.RESTException;
 
 import java.util.ArrayList;
@@ -273,6 +270,21 @@ public class CreatePollActivity extends ActionBarActivity {
                 }
             }
 
+            else if (question instanceof RankQuestion) {
+                // Populate the options
+                RankQuestion choiceQuestion = (RankQuestion) question;
+                for(String option: choiceQuestion.getOptions() ) {
+                    TextView textView = new TextView(context);
+                    textView.setText(option);
+                    choicesList.addView(textView);
+                }
+
+                // Populate the settings
+                TextView questionType = new TextView(context);
+                questionType.setText("Rank Choices");
+                settingsList.addView(questionType);
+            }
+
             // clicking on a question card lets you edit the question
             questionCard.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -283,11 +295,17 @@ public class CreatePollActivity extends ActionBarActivity {
                         intent = new Intent(context, CreateChoiceQuestionActivity.class);
                         intent.putExtra("question", question);
                         intent.putExtra("index", position);
-                    } else {
+                    }
+                    else if(question instanceof RankQuestion) {
+                        intent = new Intent(context, CreateRankQuestionActivity.class);
+                        intent.putExtra("question", question);
+                        intent.putExtra("index", position);
+                    }
+                    else {
 
                     }
 
-                    ((Activity)context).startActivityForResult(intent, REQ_CODE_EDIT_QUESTION);
+                    ((Activity) context).startActivityForResult(intent, REQ_CODE_EDIT_QUESTION);
                 }
             });
         }

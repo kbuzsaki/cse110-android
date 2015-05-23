@@ -169,4 +169,21 @@ public class RankQuestion extends Question {
         return responses;
     }
 
+    public static RankQuestion makeTemporaryQuestion(String title, List<String> options) {
+        RankQuestion question = new RankQuestion();
+        question.title = title;
+        question.options = options;
+        question.responses = Collections.emptyList();
+        return question;
+    }
+
+    public static RankQuestion makeQuestion(Poll poll, RankQuestion question) {
+        RankQuestion newQuestion = new RankQuestion();
+        newQuestion.poll = poll;
+        newQuestion.title = question.title;
+        newQuestion.options = question.options;
+        newQuestion.responses = Collections.emptyList();
+        return newQuestion;
+    }
+
 }

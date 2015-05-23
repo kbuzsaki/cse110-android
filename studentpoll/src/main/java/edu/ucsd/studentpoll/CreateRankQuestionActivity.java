@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
-import edu.ucsd.studentpoll.models.ChoiceQuestion;
+import edu.ucsd.studentpoll.models.RankQuestion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +20,6 @@ public class CreateRankQuestionActivity extends ActionBarActivity {
 
     private static final String SAVED_TITLE = "savedTitle";
     private static final String SAVED_OPTIONS = "savedOptions";
-    private static final String SAVED_ALLOW_MULTIPLE = "savedAllowMultiple";
-    private static final String SAVED_ALLOW_CUSTOM = "savedAllowCustom";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,16 +39,16 @@ public class CreateRankQuestionActivity extends ActionBarActivity {
     }
 
     public void loadExistingQuestion(Intent intent) {
-        ChoiceQuestion choiceQuestion = intent.getParcelableExtra("question");
+        RankQuestion rankQuestion = intent.getParcelableExtra("question");
 
         // load title
         EditText titleBox = (EditText) findViewById(R.id.titleBox);
-        titleBox.setText(choiceQuestion.getTitle());
+        titleBox.setText(rankQuestion.getTitle());
 
         // load question options
         LinearLayout optionsContainer = (LinearLayout)findViewById(R.id.optionsLayout);
         optionsContainer.removeAllViews();
-        for(String option : choiceQuestion.getOptions()) {
+        for(String option : rankQuestion.getOptions()) {
             if(option.equals("")) {
                 continue;
             }
@@ -73,7 +71,7 @@ public class CreateRankQuestionActivity extends ActionBarActivity {
         }
 
         View newPollOption = LayoutInflater.from(this).inflate(R.layout.create_choice_poll_option, null);
-        addOptionFieldEnterListener((LinearLayout)newPollOption);
+        addOptionFieldEnterListener((LinearLayout) newPollOption);
         optionsContainer.addView(newPollOption);
         addOptionFieldEnterListener((LinearLayout) newPollOption);
     }
@@ -98,8 +96,6 @@ public class CreateRankQuestionActivity extends ActionBarActivity {
 
         String title = savedInstanceState.getString(SAVED_TITLE);
         List<String> options = savedInstanceState.getStringArrayList(SAVED_OPTIONS);
-        boolean allowMultiple = savedInstanceState.getBoolean(SAVED_ALLOW_MULTIPLE);
-        boolean allowCustom = savedInstanceState.getBoolean(SAVED_ALLOW_CUSTOM);
 
         EditText titleBox = (EditText) findViewById(R.id.titleBox);
         titleBox.setText(title);
@@ -128,9 +124,6 @@ public class CreateRankQuestionActivity extends ActionBarActivity {
             addOptionFieldEnterListener((LinearLayout) optionEntry);
             optionsLayout.addView(optionEntry);
         }
-
-        ((CheckBox)findViewById(R.id.allow_multiple_checkbox)).setChecked(allowMultiple);
-        ((CheckBox)findViewById(R.id.allow_custom_checkbox)).setChecked(allowCustom);
     }
 
     public void addOption(View view) {
@@ -156,21 +149,21 @@ public class CreateRankQuestionActivity extends ActionBarActivity {
         optionsContainer.removeView(clickedOptionContainer);
     }
 
-//    public void addQuestion(View view) {
-//        String name = getQuestionTitle();
-//        List<String> options = getQuestionOptions();
-//
-//        Log.d(TAG, "name: " + name);
-//        Log.d(TAG, "options: " + options);
-//
-//        Intent returnIntent = new Intent();
-//        ChoiceQuestion question = ChoiceQuestion.makeTemporaryQuestion(name, options, allowMultiple, allowCustom);
-//
-//        returnIntent.putExtra("question", question);
-//        setResult(RESULT_OK, returnIntent);
-//
-//        finish();
-//    }
+    public void addQuestion(View view) {
+        String name = getQuestionTitle();
+        List<String> options = getQuestionOptions();
+
+        Log.d(TAG, "name: " + name);
+        Log.d(TAG, "options: " + options);
+
+        Intent returnIntent = new Intent();
+        RankQuestion question = RankQuestion.makeTemporaryQuestion(name, options);
+
+        returnIntent.putExtra("question", question);
+        setResult(RESULT_OK, returnIntent);
+
+        finish();
+    }
 
     private void addOptionFieldEnterListener(LinearLayout optionFieldLayout) {
         EditText optionField = (EditText) optionFieldLayout.findViewById(R.id.optionField);
