@@ -1,23 +1,16 @@
 package edu.ucsd.studentpoll;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.ViewGroup;
 import edu.ucsd.studentpoll.models.ChoiceQuestion;
-import edu.ucsd.studentpoll.models.Model;
 import edu.ucsd.studentpoll.models.Poll;
 import edu.ucsd.studentpoll.models.Question;
+import edu.ucsd.studentpoll.models.RankQuestion;
 import edu.ucsd.studentpoll.view.CompositeOnPageChangeListener;
 import edu.ucsd.studentpoll.view.QuestionViewPager;
 import edu.ucsd.studentpoll.view.SlidingTabLayout;
@@ -53,7 +46,7 @@ public class PollActivity extends ActionBarActivity {
             // this prevents infinite looping
             if(position != currentPosition) {
                 currentPosition = position;
-                for(ChoiceQuestionFragment fragment : pagerAdapter.questionFragments) {
+                for(QuestionFragment fragment : pagerAdapter.questionFragments) {
                     Log.d(TAG, "setting position " + position + " for fragment: " + fragment);
                     fragment.setViewingPage(position);
                 }
@@ -103,7 +96,7 @@ public class PollActivity extends ActionBarActivity {
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 
-        private List<ChoiceQuestionFragment> questionFragments;
+        private List<QuestionFragment> questionFragments;
 
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -112,11 +105,19 @@ public class PollActivity extends ActionBarActivity {
             for(Question question : poll.getQuestions()) {
                 if(question instanceof ChoiceQuestion) {
                     ChoiceQuestionFragment choiceQuestionFragment = new ChoiceQuestionFragment();
-                    Log.i("PollActivity", "setting question:  " + question.getTitle());
-                    choiceQuestionFragment.setQuestion((ChoiceQuestion) question);
+                    Log.i(TAG, "setting question:  " + question.getTitle());
+                    choiceQuestionFragment.setQuestion(question);
                     choiceQuestionFragment.setPageSynchronizer(pageSynchronizer);
 
                     questionFragments.add(choiceQuestionFragment);
+                }
+                else if(question instanceof RankQuestion) {
+                    RankQuestionFragment rankQuestionFragment = new RankQuestionFragment();
+                    Log.i(TAG, "setting question:  " + question.getTitle());
+                    rankQuestionFragment.setQuestion(question);
+                    rankQuestionFragment.setPageSynchronizer(pageSynchronizer);
+
+                    questionFragments.add(rankQuestionFragment);
                 }
                 else {
                     throw new AssertionError("Don't know how to create fragment for question: " + question);
@@ -126,8 +127,8 @@ public class PollActivity extends ActionBarActivity {
 
         @Override
         public QuestionFragment getItem(int position) {
-            ChoiceQuestionFragment fragment = questionFragments.get(position);
-            Log.i("PollActivity", "got PollChoiceQuestionFragment for: " + position);
+            QuestionFragment fragment = questionFragments.get(position);
+            Log.i(TAG, "got QuestionFragment for: " + position);
             return fragment;
         }
 
