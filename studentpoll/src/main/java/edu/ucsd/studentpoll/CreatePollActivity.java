@@ -149,6 +149,10 @@ public class CreatePollActivity extends ActionBarActivity {
         return ((EditText) findViewById(R.id.pollName)).getText().toString();
     }
 
+    public Group getGroup() {
+        return getIntent().getParcelableExtra("group");
+    }
+
     public void createPoll(View view) {
         if(questions.isEmpty()) {
             Toast.makeText(getApplicationContext(), "No Questions Added.", Toast.LENGTH_SHORT).show();
@@ -156,7 +160,9 @@ public class CreatePollActivity extends ActionBarActivity {
         }
 
         String name = getPollTitle();
-        final Poll poll = new Poll.Builder().withTitle(name).withQuestions(questions).build();
+        Group group = getGroup();
+
+        final Poll poll = new Poll.Builder().withTitle(name).withQuestions(questions).withGroup(group).build();
 
         new AsyncTask<Object, Object, Poll>() {
             @Override
