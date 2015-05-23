@@ -28,6 +28,7 @@ public abstract class Question extends Model {
                 case "choice":
                     return ChoiceQuestion.INSTANTIATOR.fromJson(object);
                 case "rank":
+                    return RankQuestion.INSTANTIATOR.fromJson(object);
                 case "schedule":
                 default:
                     throw new IllegalArgumentException("Unknown question type: " + type);
