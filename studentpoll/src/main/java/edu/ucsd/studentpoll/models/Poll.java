@@ -96,9 +96,7 @@ public class Poll extends Model {
             creator = Model.ripModel(json.get("creator"), User.INSTANTIATOR);
             creationTime = null;
             name = json.getString("name");
-
-            List<ChoiceQuestion> localQuestions = Model.ripModelList(json.optJSONArray("questions"), ChoiceQuestion.INSTANTIATOR);
-            questions = localQuestions;
+            questions = Model.ripModelList(json.optJSONArray("questions"), Question.INSTANTIATOR);
 
             markRefreshed();
         } catch (JSONException e) {
