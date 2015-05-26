@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="What is the best animal?"
-            android:id="@+id/pollTitle" android:layout_gravity="center_horizontal" android:layout_margin="8dp"
+            android:id="@+id/pollName" android:layout_gravity="center_horizontal" android:layout_margin="8dp"
             android:textSize="30dp" android:phoneNumber="true" android:gravity="center"/>
     <TextView
             android:layout_width="wrap_content"
