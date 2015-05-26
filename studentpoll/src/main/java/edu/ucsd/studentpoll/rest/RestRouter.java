@@ -49,4 +49,7 @@ public class RestRouter {
         return API_URL + "/question/" + questionId + "/response/create";
     }
 
+    public static String startBroadcast() {
+        return API_URL + "/accesscode/create";
+    }
 }

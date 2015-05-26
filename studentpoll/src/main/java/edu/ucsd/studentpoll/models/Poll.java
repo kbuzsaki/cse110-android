@@ -12,6 +12,7 @@ import edu.ucsd.studentpoll.rest.RestRouter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -231,4 +232,20 @@ public class Poll extends Model {
         }
     }
 
+    public static String startBroadcast(Poll poll) {
+            AndrestClient client = new AndrestClient();
+            Map<String, String> data = ImmutableMap.of("poll", "" + poll.getId(), "user", "" + User.getDeviceUser().getId());
+        try {
+            String url = RestRouter.startBroadcast() + AndrestClient.escapeParameters(data);
+            JSONObject response = client.post(url, Collections.<String, JSONObject>emptyMap());
+            return response.getString("code");
+        } catch(RESTException|UnsupportedEncodingException|JSONException e) {
+            Log.e(TAG, "Failed to start broadcast", e);
+            throw new RESTException(e);
+        }
+    }
+
+    public static void stopBroadcast(Poll poll) {
+        Log.w(TAG, "stopping a broadcast is stubbed out!");
+    }
 }
