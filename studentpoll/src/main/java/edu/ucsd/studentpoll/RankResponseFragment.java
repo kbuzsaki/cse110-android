@@ -1,12 +1,17 @@
 package edu.ucsd.studentpoll;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -15,6 +20,7 @@ import edu.ucsd.studentpoll.models.Question;
 import edu.ucsd.studentpoll.models.RankQuestion;
 import edu.ucsd.studentpoll.models.RankResponse;
 import edu.ucsd.studentpoll.rest.RESTException;
+import edu.ucsd.studentpoll.view.DragSortRecycler;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +35,13 @@ public class RankResponseFragment extends ResponseFragment {
 
     private static final String SAVED_QUESTION = TAG + ".question";
 
-    View responseContent;
+    private View hiddenView;
+
+    private RecyclerView optionsView;
+
+    private RankOptionAdapter rankOptionAdapter;
+
+    private DragSortRecycler dragSortRecycler;
 
     private RankQuestion rankQuestion;
 
@@ -40,9 +52,37 @@ public class RankResponseFragment extends ResponseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View superView = super.onCreateView(inflater, container, savedInstanceState);
+        LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.rank_response_content, getContentContainer(), false);
 
-        responseContent = inflater.inflate(R.layout.rank_response_content, getContentContainer(), false);
-        getContentContainer().addView(responseContent);
+        hiddenView = layout.findViewById(R.id.hiddenView);
+
+        optionsView = (RecyclerView) layout.findViewById(R.id.rank_content_view);
+        getContentContainer().addView(layout);
+
+        rankOptionAdapter = new RankOptionAdapter(getActivity());
+        optionsView.setAdapter(rankOptionAdapter);
+        optionsView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        optionsView.setItemAnimator(null);
+
+        dragSortRecycler = new DragSortRecycler();
+        dragSortRecycler.setViewHandleId(R.id.rankOptionElement); //View you wish to use as the handle
+
+        dragSortRecycler.setOnItemMovedListener(new DragSortRecycler.OnItemMovedListener() {
+            @Override
+            public void onItemMoved(int from, int to) {
+                String fromOption = rankOptionAdapter.options.get(from);
+                String toOption = rankOptionAdapter.options.get(to);
+                rankOptionAdapter.options.set(from, toOption);
+                rankOptionAdapter.options.set(to, fromOption);
+                rankOptionAdapter.notifyDataSetChanged();
+            }
+        });
+
+        optionsView.addItemDecoration(dragSortRecycler);
+        optionsView.addOnItemTouchListener(dragSortRecycler);
+        optionsView.setOnScrollListener(dragSortRecycler.getScrollListener());
+
+        hiddenView.requestFocus();
 
         return superView;
     }
@@ -81,23 +121,66 @@ public class RankResponseFragment extends ResponseFragment {
         }
     }
 
+    @Override
     public void refreshView() {
-        if(rootView == null) {
-            Log.w(TAG, "rootView null!");
-            return;
+        ((TextView)rootView.findViewById(R.id.pollTitle)).setText(rankQuestion.getTitle());
+        rankOptionAdapter.setOptions(rankQuestion.getOptions());
+    }
+
+    private class RankOptionAdapter extends RecyclerView.Adapter<RankOptionViewHolder> {
+
+        private final Context context;
+
+        private List<String> options;
+
+        public RankOptionAdapter(Context context) {
+            this.context = context;
+            this.options = Collections.emptyList();
         }
 
-        responseListener = new ResponseListener();
-        List<String> options = rankQuestion.getOptions();
+        public void setOptions(List<String> options) {
+            this.options = options;
+            this.notifyDataSetChanged();
+        }
 
-        Log.i(TAG, "refreshView started");
+        @Override
+        public RankOptionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            CardView optionCard = (CardView) LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.rank_response_option, parent, false);
+            RankOptionViewHolder viewHolder = new RankOptionViewHolder(context, optionCard);
+            // you don't have to set the content here before you return the viewHolder
+            // onBindViewHolder will get called next and set the content for us
+            // so just make and return an empty view
+            return viewHolder;
+        }
 
-        RadioGroup optionsGroup = (RadioGroup) rootView.findViewById(R.id.options_group);
-        TextView pollTitle = (TextView) rootView.findViewById(R.id.pollTitle);
+        @Override
+        public void onBindViewHolder(RankOptionViewHolder holder, int position) {
+            holder.setContent(options.get(position), position);
+        }
 
-        pollTitle.setText(rankQuestion.getTitle());
+        @Override
+        public int getItemCount() {
+            return options.size();
+        }
+    }
 
-        optionsGroup.removeAllViews();
+    private class RankOptionViewHolder extends RecyclerView.ViewHolder {
+
+        private Context context;
+
+        private CardView pollCard;
+
+        public RankOptionViewHolder(Context context, CardView optionCard) {
+            super(optionCard);
+            this.context = context;
+            this.pollCard = optionCard;
+        }
+
+        public void setContent(String option, int position) {
+            ((TextView)pollCard.findViewById(R.id.optionIndex)).setText("" + (position + 1));
+            ((TextView)pollCard.findViewById(R.id.optionName)).setText(option);
+        }
     }
 
     private class ResponseListener implements RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener {

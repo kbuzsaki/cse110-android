@@ -12,7 +12,10 @@ import edu.ucsd.studentpoll.models.Question;
 import edu.ucsd.studentpoll.models.RankQuestion;
 import edu.ucsd.studentpoll.models.RankResponse;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -106,22 +109,22 @@ public class RankResultFragment extends ResultFragment {
         TextView pollTitle = (TextView) rootView.findViewById(R.id.pollTitle);
         pollTitle.setText(rankQuestion.getTitle());
 
-        int totalCount = 0;
-        for(int count : results.values()) {
-            totalCount += count;
-        }
+        List<String> orderedResults = new ArrayList<>(results.keySet());
+        Collections.sort(orderedResults, new Comparator<String>() {
+            @Override
+            public int compare(String lhs, String rhs) {
+                return Integer.compare(results.get(lhs), results.get(rhs));
+            }
+        });
 
         resultList.removeAllViews();
-        for(String choice : rankQuestion.getOptions()) {
+        for(String choice : orderedResults) {
             LinearLayout option = (LinearLayout) inflater.inflate(R.layout.rank_result_option, null, false);
 
             TextView choiceText = (TextView) option.findViewById(R.id.voteOption);
-            ProgressBar choiceBar = (ProgressBar) option.findViewById(R.id.voteBar);
             TextView choiceCounter = (TextView) option.findViewById(R.id.voteCount);
 
             choiceText.setText(choice);
-            choiceBar.setMax(totalCount);
-            choiceBar.setProgress(getCountForOption(choice));
             choiceCounter.setText("" + getCountForOption(choice));
 
             resultList.addView(option);
