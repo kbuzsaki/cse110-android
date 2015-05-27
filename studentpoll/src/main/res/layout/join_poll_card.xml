@@ -7,7 +7,7 @@
         android:layout_margin="5dp"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        card_view:cardBackgroundColor="@color/cardview_dark_background">
+        card_view:cardBackgroundColor="@color/cardview_light_background">
     <LinearLayout
             android:id="@+id/joinPollCard"
             android:orientation="vertical"

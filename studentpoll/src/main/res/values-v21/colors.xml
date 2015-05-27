@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="card_background" type="color">@color/background_material_dark</item>
+    <item name="actionbar_background" type="color">#48A0C6</item>
+    <item name="actionbar_text" type="color">#FFFFFF</item>
 </resources>

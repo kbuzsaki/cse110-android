@@ -7,7 +7,7 @@
         android:layout_margin="5dp"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        card_view:cardBackgroundColor="@color/cardview_dark_background" android:id="@+id/rankOptionElement">
+        card_view:cardBackgroundColor="@color/cardview_light_background" android:id="@+id/rankOptionElement">
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
