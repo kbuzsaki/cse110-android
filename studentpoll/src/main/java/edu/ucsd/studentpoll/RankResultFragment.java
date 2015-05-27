@@ -31,7 +31,7 @@ public class RankResultFragment extends ResultFragment {
 
     private RankQuestion rankQuestion;
 
-    private Map<String, Integer> results = Collections.emptyMap();
+    private List<String> ranking = Collections.emptyList();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,7 +56,7 @@ public class RankResultFragment extends ResultFragment {
 
         if(savedInstanceState != null) {
             rankQuestion = savedInstanceState.getParcelable(SAVED_QUESTION);
-            results = RankResponse.aggregateResponses(rankQuestion.getResponses());
+            this.ranking = RankResponse.aggregateResponses(rankQuestion.getOptions(), rankQuestion.getResponses());
         }
     }
 
@@ -72,19 +72,10 @@ public class RankResultFragment extends ResultFragment {
         }
         else if(question instanceof RankQuestion) {
             this.rankQuestion = (RankQuestion) question;
-            this.results = RankResponse.aggregateResponses(rankQuestion.getResponses());
+            this.ranking = RankResponse.aggregateResponses(rankQuestion.getOptions(), rankQuestion.getResponses());
         }
         else {
             throw new AssertionError("Question is not a choice question: " + question);
-        }
-    }
-
-    private int getCountForOption(String option) {
-        if(results.containsKey(option)) {
-            return results.get(option);
-        }
-        else {
-            return 0;
         }
     }
 
@@ -104,28 +95,22 @@ public class RankResultFragment extends ResultFragment {
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        this.results = RankResponse.aggregateResponses(rankQuestion.getResponses());
+        this.ranking = RankResponse.aggregateResponses(rankQuestion.getOptions(), rankQuestion.getResponses());
 
         TextView pollTitle = (TextView) rootView.findViewById(R.id.pollTitle);
         pollTitle.setText(rankQuestion.getTitle());
 
-        List<String> orderedResults = new ArrayList<>(results.keySet());
-        Collections.sort(orderedResults, new Comparator<String>() {
-            @Override
-            public int compare(String lhs, String rhs) {
-                return Integer.compare(results.get(lhs), results.get(rhs));
-            }
-        });
-
         resultList.removeAllViews();
-        for(String choice : orderedResults) {
+        for(int i = 0; i < ranking.size(); i++) {
+            String choice = ranking.get(i);
+
             LinearLayout option = (LinearLayout) inflater.inflate(R.layout.rank_result_option, null, false);
 
             TextView choiceText = (TextView) option.findViewById(R.id.voteOption);
             TextView choiceCounter = (TextView) option.findViewById(R.id.voteCount);
 
             choiceText.setText(choice);
-            choiceCounter.setText("" + getCountForOption(choice));
+            choiceCounter.setText("" + (i + 1));
 
             resultList.addView(option);
         }

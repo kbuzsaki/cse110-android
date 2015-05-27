@@ -47,8 +47,6 @@ public class RankResponseFragment extends ResponseFragment {
 
     private RankResponse latestResponse;
 
-    private ResponseListener responseListener;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View superView = super.onCreateView(inflater, container, savedInstanceState);
@@ -74,6 +72,7 @@ public class RankResponseFragment extends ResponseFragment {
                 String toOption = rankOptionAdapter.options.get(to);
                 rankOptionAdapter.options.set(from, toOption);
                 rankOptionAdapter.options.set(to, fromOption);
+                updateResponse(rankOptionAdapter.options);
                 rankOptionAdapter.notifyDataSetChanged();
             }
         });
@@ -183,74 +182,34 @@ public class RankResponseFragment extends ResponseFragment {
         }
     }
 
-    private class ResponseListener implements RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener {
+    private void updateResponse(final List<String> choices) {
+        Log.d(TAG, "Updating response: " + choices);
 
-        private List<String> previousChoices = Collections.emptyList();
-
-        // callback for radio buttons (single selection)
-        @Override
-        public void onCheckedChanged(RadioGroup group, int checkedId) {
-            RadioButton checkedButton = (RadioButton) group.findViewById(checkedId);
-            if(checkedButton == null) {
-                Log.w(TAG, "Checked button null!");
-                return;
-            }
-
-            String choice = checkedButton.getText().toString();
-            updateResponse(Collections.singletonList(choice));
-        }
-
-        // callback for checkboxes (multiple selection)
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if(buttonView == null) {
-                Log.w(TAG, "ButtonView null!");
-            }
-
-            List<String> choices = new ArrayList<>(previousChoices);
-
-            String choice = buttonView.getText().toString();
-            if(isChecked) {
-                choices.add(choice);
-            }
-            else {
-                choices.remove(choice);
-            }
-
-            updateResponse(choices);
-        }
-
-        private void updateResponse(final List<String> choices) {
-            previousChoices = choices;
-            Log.d(TAG, "Updating response: " + choices);
-
-            new AsyncTask<Object, Object, RankResponse>() {
-                @Override
-                protected RankResponse doInBackground(Object[] params) {
-                    try {
-                        return RankResponse.putResponse(rankQuestion, choices);
-                    }
-                    catch(RESTException e) {
-                        Log.e(TAG, "Failed to send response", e);
-                        return null;
-                    }
+        new AsyncTask<Object, Object, RankResponse>() {
+            @Override
+            protected RankResponse doInBackground(Object[] params) {
+                try {
+                    return RankResponse.putResponse(rankQuestion, choices);
                 }
-
-                @Override
-                protected void onPostExecute(RankResponse rankResponse) {
-                    super.onPostExecute(rankResponse);
-
-                    if(rankResponse == null) {
-                        Toast.makeText(getActivity(), "Failed to send vote.", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        latestResponse = rankResponse;
-                        onPutResponseListener.onResponsePut(latestResponse);
-                    }
+                catch(RESTException e) {
+                    Log.e(TAG, "Failed to send response", e);
+                    return null;
                 }
-            }.execute();
-        }
+            }
 
+            @Override
+            protected void onPostExecute(RankResponse rankResponse) {
+                super.onPostExecute(rankResponse);
+
+                if(rankResponse == null) {
+                    Toast.makeText(getActivity(), "Failed to send vote.", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    latestResponse = rankResponse;
+                    onPutResponseListener.onResponsePut(latestResponse);
+                }
+            }
+        }.execute();
     }
 
 }

@@ -11,7 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,9 +135,36 @@ public class RankResponse extends Response {
         return choices;
     }
 
-    public static Map<String, Integer> aggregateResponses(Collection<RankResponse> responses) {
-        Map<String, Integer> aggregate = new HashMap<>();
-        return aggregate;
+    public static List<String> aggregateResponses(List<String> options, Collection<RankResponse> responses) {
+        final Map<String, Integer> aggregate = new HashMap<>();
+
+        for(String option : options) {
+            aggregate.put(option, 0);
+        }
+
+        for(RankResponse response : responses) {
+            for(int i = 0; i < response.getChoices().size(); i++) {
+                String choice = response.getChoices().get(i);
+                Integer count = aggregate.containsKey(choice) ? aggregate.get(choice) : 0;
+
+                aggregate.put(choice, count + i);
+            }
+        }
+
+        List<String> ranking = new ArrayList<>(aggregate.keySet());
+        Collections.sort(ranking, new Comparator<String>() {
+            @Override
+            public int compare(String lhs, String rhs) {
+                Integer lhsVal = aggregate.get(lhs);
+                Integer rhsVal = aggregate.get(rhs);
+                return Integer.compare(lhsVal != null ? lhsVal : 0, rhsVal != null ? rhsVal : 0);
+            }
+        });
+
+        Log.d(TAG, "final aggregate: " + aggregate);
+        Log.d(TAG, "final ranking: " + ranking);
+
+        return ranking;
     }
 
     public static RankResponse putResponse(RankQuestion question, List<String> choices) {
