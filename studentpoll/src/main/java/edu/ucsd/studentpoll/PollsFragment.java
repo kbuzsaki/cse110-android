@@ -113,7 +113,8 @@ public class PollsFragment extends Fragment {
         }
 
         public void setPolls(List<Poll> polls) {
-            this.polls = polls;
+            this.polls = new ArrayList<>(polls);
+            Collections.reverse(this.polls);
             this.notifyDataSetChanged();
         }
 

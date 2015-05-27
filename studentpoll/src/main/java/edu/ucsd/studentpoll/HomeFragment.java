@@ -102,7 +102,8 @@ public class HomeFragment extends Fragment {
         }
 
         public void setGroups(List<Group> groups) {
-            this.groups = groups;
+            this.groups = new ArrayList<>(groups);
+            Collections.reverse(this.groups);
             this.notifyDataSetChanged();
         }
 
