@@ -182,12 +182,20 @@ public class CreatePollActivity extends ActionBarActivity {
                     Toast.makeText(getApplicationContext(), "Failed to make poll.", Toast.LENGTH_SHORT).show();
                 }
                 else {
-
+                    Log.i(TAG, "broadcast activity about to start");
+                    startBroadcast(poll);
+                    Log.i(TAG, "broadcast activity started");
                 }
+                finish();
             }
         }.execute();
+    }
 
-        finish();
+    public void startBroadcast(Poll poll) {
+        Intent intent = new Intent(this, PollActivity.class);
+        intent.putExtra("startBroadcast", true);
+        intent.putExtra("poll", poll);
+        startActivity(intent);
     }
 
     private static class QuestionsAdapter extends RecyclerView.Adapter<QuestionsViewHolder> {

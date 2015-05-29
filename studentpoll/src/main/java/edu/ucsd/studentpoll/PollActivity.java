@@ -76,6 +76,11 @@ public class PollActivity extends ActionBarActivity {
         setPoll(poll);
 
         updateView();
+
+
+        if(getIntent().getBooleanExtra("startBroadcast", false)) {
+            broadcastPoll();
+        }
     }
 
     @Override
