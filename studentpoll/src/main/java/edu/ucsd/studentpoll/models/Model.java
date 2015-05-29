@@ -3,6 +3,7 @@ package edu.ucsd.studentpoll.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
+import android.util.Log;
 import edu.ucsd.studentpoll.rest.JsonUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,11 +13,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by kbuzsaki on 5/1/15.
  */
 public abstract class Model implements Parcelable {
+
+    private static final String TAG = "Model";
+    private static final int TIMEOUT_MINUTES = 1;
 
     static final Long UNINITIALIZED = null;
 
@@ -47,6 +55,10 @@ public abstract class Model implements Parcelable {
         timeRefreshed = SystemClock.uptimeMillis();
     }
 
+    protected boolean isOlderThan(long thresholdTime) {
+        return timeRefreshed < thresholdTime;
+    }
+
     public abstract void inflate();
 
     public void refresh() {
@@ -55,7 +67,7 @@ public abstract class Model implements Parcelable {
     }
 
     public void refreshIfOlder(long thresholdTime) {
-        if (timeRefreshed < thresholdTime) {
+        if (isOlderThan(thresholdTime)) {
             refresh();
         }
     }
@@ -91,9 +103,25 @@ public abstract class Model implements Parcelable {
         }
     }
 
-    public static void refreshAllIfOlder(Collection<? extends Model> models, long thresholdTime) {
-        for(Model model : models) {
-            model.refreshIfOlder(thresholdTime);
+    public static void refreshAllIfOlder(Collection<? extends Model> models, final long thresholdTime) {
+        ExecutorService executorService = Executors.newFixedThreadPool(4);
+
+        for(final Model model : models) {
+            if(model.isOlderThan(thresholdTime)) {
+                executorService.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        model.refreshIfOlder(thresholdTime);
+                    }
+                });
+            }
+        }
+
+        executorService.shutdown();
+        try {
+            executorService.awaitTermination(TIMEOUT_MINUTES, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            Log.e(TAG, "Failed to load!", e);
         }
     }
 
