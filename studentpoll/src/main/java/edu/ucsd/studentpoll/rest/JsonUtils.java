@@ -22,7 +22,7 @@ public class JsonUtils {
     }
 
     public static List<Long> toListOfLong(JSONArray array) throws JSONException {
-        Log.d(TAG, "Converting to list of longs: " + array);
+        Log.v(TAG, "Converting to list of longs: " + array);
         if(array == null) {
             return Collections.emptyList();
         }
@@ -37,7 +37,7 @@ public class JsonUtils {
     }
 
     public static List<String> toListOfString(JSONArray array) throws JSONException {
-        Log.d(TAG, "Converting to list of strings: " + array);
+        Log.v(TAG, "Converting to list of strings: " + array);
         if(array == null) {
             return Collections.emptyList();
         }
