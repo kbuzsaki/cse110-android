@@ -88,6 +88,7 @@ public class ChoiceResponseFragment extends ResponseFragment {
             Log.w(TAG, "rootView null!");
             return;
         }
+        // TODO: add null check for getActivity in this and other views like it
 
         responseListener = new ResponseListener();
         List<String> options = choiceQuestion.getOptions();
