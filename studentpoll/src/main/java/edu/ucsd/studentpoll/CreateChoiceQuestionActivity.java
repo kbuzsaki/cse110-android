@@ -1,6 +1,7 @@
 package edu.ucsd.studentpoll;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -200,19 +202,38 @@ public class CreateChoiceQuestionActivity extends ActionBarActivity {
     }
 
     private void addOptionFieldEnterListener(LinearLayout optionFieldLayout) {
-        EditText optionField = (EditText) optionFieldLayout.findViewById(R.id.optionField);
+        final EditText optionField = (EditText) optionFieldLayout.findViewById(R.id.optionField);
         final Button addButton = (Button) optionFieldLayout.findViewById(R.id.optionAdd);
+
+        focusKeyboardOn(optionField);
 
         optionField.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == EditorInfo.IME_ACTION_DONE) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    dismissKeyboardFrom(optionField);
                     addButton.performClick();
                     return true;
                 }
                 return false;
             }
         });
+    }
+
+    private void focusKeyboardOn(View view) {
+        if(view != null) {
+            view.requestFocus();
+            InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
+    }
+
+    private void dismissKeyboardFrom(View view) {
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
     private String getQuestionTitle() {
