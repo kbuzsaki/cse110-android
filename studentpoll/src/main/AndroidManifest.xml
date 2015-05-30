@@ -21,6 +21,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="sensorPortrait"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
@@ -29,33 +30,39 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SingleChoicePoll" />
         <activity
             android:name=".CreateChoiceQuestionActivity"
+            android:screenOrientation="sensorPortrait"
             android:label="@string/title_activity_create_choice_question"
             android:windowSoftInputMode="stateHidden" />
         <activity
-                android:name=".CreateRankQuestionActivity"
-                android:label="@string/title_activity_create_rank_question"
-                android:windowSoftInputMode="stateHidden" />
+            android:name=".CreateRankQuestionActivity"
+            android:screenOrientation="sensorPortrait"
+            android:label="@string/title_activity_create_rank_question"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".CreateSchedulePoll"
+            android:screenOrientation="sensorPortrait"
             android:label="@string/title_activity_create_schedule_poll"
             android:windowSoftInputMode="stateHidden" />
         <activity
-                android:name=".BroadcastPollActivity"
-                android:label="@string/title_broadcast_poll"
-                android:windowSoftInputMode="stateHidden" />
+            android:name=".BroadcastPollActivity"
+            android:screenOrientation="sensorPortrait"
+            android:label="@string/title_broadcast_poll"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".PollActivity"
+            android:screenOrientation="sensorPortrait"
             android:label="@string/title_poll_activity"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".CreatePollActivity"
+            android:screenOrientation="sensorPortrait"
             android:label="@string/title_create_poll_activity"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".GroupActivity"
+            android:screenOrientation="sensorPortrait"
             android:label="@string/title_activity_group" >
         </activity>
     </application>
