@@ -111,7 +111,11 @@ public abstract class Model implements Parcelable {
                 executorService.submit(new Runnable() {
                     @Override
                     public void run() {
+                        long start = SystemClock.uptimeMillis();
                         model.refreshIfOlder(thresholdTime);
+                        long end = SystemClock.uptimeMillis();
+                        long delta = end - start;
+                        Log.v(TAG, "time for request: " + delta);
                     }
                 });
             }
