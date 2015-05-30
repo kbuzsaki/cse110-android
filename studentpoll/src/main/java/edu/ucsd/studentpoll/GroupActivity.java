@@ -1,18 +1,24 @@
 package edu.ucsd.studentpoll;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 import edu.ucsd.studentpoll.models.Group;
 import edu.ucsd.studentpoll.models.Model;
@@ -88,6 +94,8 @@ public class GroupActivity extends ActionBarActivity implements RefreshRequestLi
                 return true;
             case R.id.action_create:
                 createPoll();
+            case R.id.action_edit:
+                editGroupNameDialog();
                 return true;
         }
 
@@ -170,6 +178,54 @@ public class GroupActivity extends ActionBarActivity implements RefreshRequestLi
         Intent intent = new Intent(this, CreatePollActivity.class);
         intent.putExtra("group", group);
         startActivity(intent);
+    }
+    private void editGroupNameDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Change Group Name");
+
+        final EditText groupName = new EditText(this);
+        groupName.setText(group.getName());
+
+        FrameLayout frameLayout = new FrameLayout(this);
+        frameLayout.setPadding(40, 0, 40, 0);
+        frameLayout.addView(groupName);
+
+        builder.setView(frameLayout);
+
+        builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //TODO: actually change the group name
+                dismissKeyboardFrom(groupName);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // canceled
+                dismissKeyboardFrom(groupName);
+            }
+        });
+
+        builder.show();
+        focusKeyboardOn(groupName);
+    }
+
+    private void focusKeyboardOn(View view) {
+        if(view != null) {
+            view.requestFocus();
+            InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
+    }
+
+    private void dismissKeyboardFrom(View view) {
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
     private class GroupPagerAdapter extends FragmentStatePagerAdapter {

@@ -8,7 +8,7 @@
             app:showAsAction="ifRoom" />
       <item android:id="@+id/action_edit"
             android:icon="@drawable/ic_menu_edit"
-            android:title="Create Poll"
+            android:title="Edit Group name"
             app:showAsAction="ifRoom" />
       <item android:id="@+id/action_settings"
             android:title="@string/action_settings"
