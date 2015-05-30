@@ -176,11 +176,6 @@ public class Poll extends Model {
             return this;
         }
 
-        public Builder withChoiceQuestion(String title, List<String> options) {
-            questions.add(ChoiceQuestion.makeQuestion(poll, title, options));
-            return this;
-        }
-
         public Builder withQuestions(List<Question> newQuestions) {
             for(Question question : newQuestions) {
                 if(question instanceof ChoiceQuestion) {
