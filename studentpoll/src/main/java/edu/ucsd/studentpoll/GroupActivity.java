@@ -86,8 +86,6 @@ public class GroupActivity extends ActionBarActivity implements RefreshRequestLi
         switch(item.getItemId()) {
             case R.id.action_settings:
                 return true;
-            case R.id.action_search:
-                return true;
             case R.id.action_create:
                 createPoll();
                 return true;

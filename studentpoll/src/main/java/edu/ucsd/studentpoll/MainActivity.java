@@ -114,10 +114,6 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
             case R.id.action_join:
                 joinPollDialog();
                 return true;
-            case R.id.action_search:
-                Intent intent = new Intent(this, BroadcastPollActivity.class);
-                startActivity(intent);
-                return true;
             case R.id.action_create:
                 createPoll();
                 return true;
