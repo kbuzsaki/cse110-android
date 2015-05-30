@@ -162,9 +162,7 @@ public class User extends Model {
             protected void onPostExecute(User user) {
                 super.onPostExecute(user);
                 if(user != null) {
-                    SharedPreferences.Editor editor = getDeviceUserPreferences().edit();
-                    editor.putLong(DEVICE_USER_KEY, user.getId());
-                    editor.commit();
+                    setDeviceUserId(user.getId());
                     callback.onSuccess(user);
                 }
                 else {
@@ -184,6 +182,12 @@ public class User extends Model {
         }
         SharedPreferences sharedPreferences = getDeviceUserPreferences();
         return sharedPreferences.getLong(DEVICE_USER_KEY, -1);
+    }
+
+    public static void setDeviceUserId(long userId) {
+        SharedPreferences.Editor editor = getDeviceUserPreferences().edit();
+        editor.putLong(DEVICE_USER_KEY, userId);
+        editor.commit();
     }
 
     public static boolean isDeviceUserInitialized() {

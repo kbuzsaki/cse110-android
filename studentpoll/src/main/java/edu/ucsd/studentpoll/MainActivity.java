@@ -110,6 +110,7 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
         // as you specify a parent activity in AndroidManifest.xml.
         switch(item.getItemId()) {
             case R.id.action_settings:
+                settingsScreen();
                 return true;
             case R.id.action_join:
                 joinPollDialog();
@@ -229,6 +230,11 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
 
         builder.show();
         focusKeyboardOn(accessCodeInput);
+    }
+
+    private void settingsScreen() {
+        Intent intent = new Intent(this, AppSettingsActivity.class);
+        startActivity(intent);
     }
 
     private void handleAccessCode(final String accessCode) {

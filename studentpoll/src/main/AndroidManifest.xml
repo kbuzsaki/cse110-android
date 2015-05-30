@@ -65,6 +65,10 @@
             android:screenOrientation="sensorPortrait"
             android:label="@string/title_activity_group" >
         </activity>
+        <activity
+            android:name=".AppSettingsActivity"
+            android:label="@string/title_activity_app_settings" >
+        </activity>
     </application>
 
 </manifest>
