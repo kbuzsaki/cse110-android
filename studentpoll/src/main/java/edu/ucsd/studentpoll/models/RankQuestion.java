@@ -9,11 +9,7 @@ import edu.ucsd.studentpoll.rest.RestRouter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by kbuzsaki on 5/1/15.
@@ -172,7 +168,7 @@ public class RankQuestion extends Question {
     public static RankQuestion makeTemporaryQuestion(String title, List<String> options) {
         RankQuestion question = new RankQuestion();
         question.title = title;
-        question.options = options;
+        question.options = new ArrayList<String>(new LinkedHashSet<String>(options));
         question.responses = Collections.emptyList();
         return question;
     }
@@ -181,7 +177,7 @@ public class RankQuestion extends Question {
         RankQuestion newQuestion = new RankQuestion();
         newQuestion.poll = poll;
         newQuestion.title = question.title;
-        newQuestion.options = question.options;
+        newQuestion.options = new ArrayList<String>(new LinkedHashSet<String>(question.options));
         newQuestion.responses = Collections.emptyList();
         return newQuestion;
     }
