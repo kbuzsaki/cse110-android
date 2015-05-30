@@ -186,15 +186,6 @@ public class ChoiceQuestion extends Question {
         return responses;
     }
 
-    public static ChoiceQuestion makeQuestion(Poll poll, String title, List<String> options) {
-        ChoiceQuestion question = new ChoiceQuestion();
-        question.poll = poll;
-        question.title = title;
-        question.options = options;
-        question.responses = Collections.emptyList();
-        return question;
-    }
-
     public static ChoiceQuestion makeTemporaryQuestion(String title, List<String> options, boolean allowMultiple, boolean allowCustom) {
         ChoiceQuestion question = new ChoiceQuestion();
         question.title = title;
