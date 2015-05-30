@@ -122,7 +122,7 @@ public class ChoiceResponseFragment extends ResponseFragment {
 
         optionsGroup.removeAllViews();
 
-        if(choiceQuestion.getAllowMultiple()) {
+        if(!choiceQuestion.getAllowMultiple()) {
             optionsGroup.setOnCheckedChangeListener(responseListener);
         }
 
