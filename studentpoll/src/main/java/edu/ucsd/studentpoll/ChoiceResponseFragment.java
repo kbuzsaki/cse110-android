@@ -35,6 +35,8 @@ public class ChoiceResponseFragment extends ResponseFragment {
 
     private ChoiceResponse latestResponse;
 
+    private List<String> choiceQuestionOptions;
+
     private ResponseListener responseListener;
 
     @Override
@@ -90,10 +92,15 @@ public class ChoiceResponseFragment extends ResponseFragment {
         }
         else if(question instanceof ChoiceQuestion) {
             this.choiceQuestion = (ChoiceQuestion) question;
+            setOptions();
         }
         else {
             throw new IllegalArgumentException("Question is not a choice question: " + question);
         }
+    }
+
+    private void setOptions() {
+        choiceQuestionOptions = choiceQuestion.getOptions();
     }
 
     public void refreshView() {
@@ -166,7 +173,13 @@ public class ChoiceResponseFragment extends ResponseFragment {
             public void onClick(DialogInterface dialog, int which) {
                 dismissKeyboardFrom(newOption);
                 String optionText = newOption.getText().toString();
-                addOption(optionText, optionsGroup, true);
+                if(choiceQuestionOptions.contains(optionText)) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Option already exists.", Toast.LENGTH_SHORT).show();
+                } else {
+                    addOption(optionText, optionsGroup, true);
+                    choiceQuestionOptions.add(optionText);
+                    Toast.makeText(getActivity().getApplicationContext(), optionText + " added.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
