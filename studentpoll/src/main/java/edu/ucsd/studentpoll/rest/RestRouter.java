@@ -22,7 +22,7 @@ public class RestRouter {
     }
 
     public static String getUser(long userId) {
-        return API_URL + "/user/" + userId;
+        return API_URL + "/user/groups/" + userId;
     }
 
     public static String postUser() {
