@@ -72,6 +72,11 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         slidingTabLayout.setDistributeEvenly(true);
         slidingTabLayout.setViewPager(viewPager);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         if(User.isDeviceUserInitialized()) {
             refreshContent(null);
@@ -89,12 +94,6 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
                 }
             });
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        refreshContent(null);
     }
 
     @Override
@@ -133,6 +132,7 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
     }
 
     private void refreshContent(final Runnable callback) {
+        Log.i(TAG, "Refresh request made...");
         new AsyncTask<Object, List<Group>, List<Poll>>() {
             @Override
             protected List<Poll> doInBackground(Object... params) {
@@ -175,6 +175,7 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
             @Override
             protected void onPostExecute(List<Poll> polls) {
                 super.onPostExecute(polls);
+                Log.i(TAG, "Refresh request completed.");
                 if(polls != null) {
                     pagerAdapter.pollsFragment.updatePolls(polls);
                 }
