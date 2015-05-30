@@ -49,8 +49,6 @@ public class PollsFragment extends Fragment {
         pollsAdapter = new PollsAdapter(getActivity(), Collections.<Poll>emptyList());
         pollsView.setAdapter(pollsAdapter);
 
-        pollsView.setOnScrollListener(new ActionBarHider(((ActionBarActivity) getActivity()).getSupportActionBar()));
-
         Activity parent = getActivity();
         if(parent instanceof RefreshRequestListener) {
             final RefreshRequestListener refreshRequestListener = (RefreshRequestListener) parent;

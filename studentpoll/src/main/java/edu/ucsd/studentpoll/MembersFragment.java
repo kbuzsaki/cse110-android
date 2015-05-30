@@ -54,8 +54,6 @@ public class MembersFragment extends Fragment {
         membersAdapter = new MembersAdapter(getActivity(), Collections.<User>emptyList());
         membersView.setAdapter(membersAdapter);
 
-        membersView.setOnScrollListener(new ActionBarHider(((ActionBarActivity) getActivity()).getSupportActionBar()));
-
 
         Activity parent = getActivity();
         if(parent instanceof RefreshRequestListener) {

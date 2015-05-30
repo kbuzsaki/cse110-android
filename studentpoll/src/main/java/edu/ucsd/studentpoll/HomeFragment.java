@@ -46,8 +46,6 @@ public class HomeFragment extends Fragment {
         groupsAdapter = new GroupsAdapter(getActivity(), Collections.<Group>emptyList());
         groupsView.setAdapter(groupsAdapter);
 
-        groupsView.setOnScrollListener(new ActionBarHider(((ActionBarActivity) getActivity()).getSupportActionBar()));
-
         Activity parent = getActivity();
         if(parent instanceof RefreshRequestListener) {
             final RefreshRequestListener refreshRequestListener = (RefreshRequestListener) parent;
