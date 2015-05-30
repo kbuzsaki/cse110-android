@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -26,10 +27,12 @@ import edu.ucsd.studentpoll.models.Poll;
 import edu.ucsd.studentpoll.models.Question;
 import edu.ucsd.studentpoll.models.User;
 import edu.ucsd.studentpoll.rest.RESTException;
+import edu.ucsd.studentpoll.view.NewlineInterceptor;
 import edu.ucsd.studentpoll.view.RefreshRequestListener;
 import edu.ucsd.studentpoll.view.SlidingTabLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -179,11 +182,13 @@ public class GroupActivity extends ActionBarActivity implements RefreshRequestLi
         intent.putExtra("group", group);
         startActivity(intent);
     }
+
     private void editGroupNameDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Change Group Name");
 
         final EditText groupName = new EditText(this);
+        NewlineInterceptor.addInterceptor(groupName);
         groupName.setText(group.getName());
 
         FrameLayout frameLayout = new FrameLayout(this);

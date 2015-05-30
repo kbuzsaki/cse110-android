@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import edu.ucsd.studentpoll.models.*;
 import edu.ucsd.studentpoll.rest.RESTException;
+import edu.ucsd.studentpoll.view.NewlineInterceptor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,6 +59,8 @@ public class CreatePollActivity extends ActionBarActivity {
 
         questionsAdapter = new QuestionsAdapter(Collections.<Question>emptyList());
         questionsView.setAdapter(questionsAdapter);
+
+        ((EditText)findViewById(R.id.pollName)).setOnEditorActionListener(new NewlineInterceptor());
 
         addQuestion(null);
     }

@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import edu.ucsd.studentpoll.models.ChoiceQuestion;
+import edu.ucsd.studentpoll.view.NewlineInterceptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,8 @@ public class CreateChoiceQuestionActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_choice_question);
+
+        ((EditText)findViewById(R.id.titleBox)).setOnEditorActionListener(new NewlineInterceptor());
 
         Intent intent = getIntent();
 
@@ -207,17 +210,13 @@ public class CreateChoiceQuestionActivity extends ActionBarActivity {
 
         focusKeyboardOn(optionField);
 
-        optionField.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+        optionField.setOnEditorActionListener(new NewlineInterceptor(new NewlineInterceptor.OnInterceptListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    dismissKeyboardFrom(optionField);
-                    addButton.performClick();
-                    return true;
-                }
-                return false;
+            public void newlineIntercepted() {
+                dismissKeyboardFrom(optionField);
+                addButton.performClick();
             }
-        });
+        }));
     }
 
     private void focusKeyboardOn(View view) {

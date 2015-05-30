@@ -29,6 +29,7 @@ import edu.ucsd.studentpoll.models.Poll;
 import edu.ucsd.studentpoll.models.Question;
 import edu.ucsd.studentpoll.models.User;
 import edu.ucsd.studentpoll.rest.RESTException;
+import edu.ucsd.studentpoll.view.NewlineInterceptor;
 import edu.ucsd.studentpoll.view.RefreshRequestListener;
 import edu.ucsd.studentpoll.view.SlidingTabLayout;
 
@@ -228,8 +229,14 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
             }
         });
 
-        builder.show();
+        final AlertDialog dialog = builder.show();
         focusKeyboardOn(accessCodeInput);
+        NewlineInterceptor.addInterceptor(accessCodeInput, new NewlineInterceptor.OnInterceptListener() {
+            @Override
+            public void newlineIntercepted() {
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+            }
+        });
     }
 
     private void settingsScreen() {
