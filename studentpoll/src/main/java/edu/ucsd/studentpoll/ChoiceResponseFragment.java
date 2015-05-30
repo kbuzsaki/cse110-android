@@ -1,21 +1,19 @@
 package edu.ucsd.studentpoll;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.*;
 import edu.ucsd.studentpoll.models.ChoiceQuestion;
 import edu.ucsd.studentpoll.models.ChoiceResponse;
 import edu.ucsd.studentpoll.models.Question;
-import edu.ucsd.studentpoll.models.Response;
 import edu.ucsd.studentpoll.rest.RESTException;
 
 import java.util.ArrayList;
@@ -45,6 +43,21 @@ public class ChoiceResponseFragment extends ResponseFragment {
 
         responseContent = inflater.inflate(R.layout.choice_response_content, getContentContainer(), false);
         getContentContainer().addView(responseContent);
+
+        final RadioGroup optionsGroup = (RadioGroup) rootView.findViewById(R.id.options_group);
+        if(choiceQuestion.getAllowCustom()) {
+            Button button = new Button(getActivity());
+            button.setText("Add New Option");
+
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    openNewOptionDialog(optionsGroup);
+                }
+            });
+            LinearLayout buttonContainer = (LinearLayout) rootView.findViewById(R.id.custom_option_container);
+            buttonContainer.addView(button);
+        }
 
         return superView;
     }
@@ -95,34 +108,93 @@ public class ChoiceResponseFragment extends ResponseFragment {
 
         Log.i(TAG, "refreshView started");
 
-        RadioGroup optionsGroup = (RadioGroup) rootView.findViewById(R.id.options_group);
+        final RadioGroup optionsGroup = (RadioGroup) rootView.findViewById(R.id.options_group);
         TextView pollTitle = (TextView) rootView.findViewById(R.id.pollTitle);
 
         pollTitle.setText(choiceQuestion.getTitle());
 
         optionsGroup.removeAllViews();
 
-        if (choiceQuestion.getAllowMultiple()) {
-            for (String option : options) {
-                CheckBox button = new CheckBox(getActivity());
-                button.setText(option);
-                if(latestResponse != null && latestResponse.getChoices().contains(option)) {
-                    button.setChecked(true);
-                }
-                button.setOnCheckedChangeListener(responseListener);
-                optionsGroup.addView(button);
-            }
-        }
-        else {
+        if(choiceQuestion.getAllowMultiple()) {
             optionsGroup.setOnCheckedChangeListener(responseListener);
-            for (String option : options) {
-                RadioButton button = new RadioButton(getActivity());
-                if(latestResponse != null && latestResponse.getChoices().contains(option)) {
-                    button.setChecked(true);
-                }
-                button.setText(option);
-                optionsGroup.addView(button);
+        }
+
+        for (String optionText : options) {
+            addOption(optionText, optionsGroup, false);
+        }
+
+    }
+
+    private void addOption(String optionText, RadioGroup optionsGroup, Boolean startChecked) {
+        if(choiceQuestion.getAllowMultiple()) {
+            CheckBox button = new CheckBox(getActivity());
+            if(latestResponse != null && latestResponse.getChoices().contains(optionText)) {
+                button.setChecked(true);
             }
+
+            button.setText(optionText);
+            button.setOnCheckedChangeListener(responseListener);
+
+            optionsGroup.addView(button);
+
+        } else {
+            RadioButton button = new RadioButton(getActivity());
+            if(latestResponse != null && latestResponse.getChoices().contains(optionText)) {
+                button.setChecked(true);
+            }
+
+            button.setText(optionText);
+
+            optionsGroup.addView(button);
+        }
+    }
+
+    private void openNewOptionDialog(final RadioGroup optionsGroup) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Enter New Option");
+
+        final EditText newOption = new EditText(getActivity());
+
+        FrameLayout frameLayout = new FrameLayout(getActivity());
+        frameLayout.setPadding(40, 0, 40, 0);
+        frameLayout.addView(newOption);
+
+        builder.setView(frameLayout);
+
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dismissKeyboardFrom(newOption);
+                String optionText = newOption.getText().toString();
+                addOption(optionText, optionsGroup, true);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // canceled
+                dismissKeyboardFrom(newOption);
+            }
+        });
+
+        builder.show();
+        focusKeyboardOn(newOption);
+    }
+
+    private void focusKeyboardOn(View view) {
+        if(view != null) {
+            view.requestFocus();
+            InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
+    }
+
+    private void dismissKeyboardFrom(View view) {
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 
