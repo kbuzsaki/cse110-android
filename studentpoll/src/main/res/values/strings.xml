@@ -9,4 +9,14 @@
     <string name="title_activity_join_poll">JoinPoll</string>
     <string name="title_activity_create_choice_poll">CreateChoicePoll</string>
     <string name="title_activity_main">MainActivity</string>
+
+    //settings
+    <string name="title_activity_settings">Settings</string>
+
+    //user nickname
+    <string name="nickname" transferable="false">nickname</string>
+
+    //image choose button
+    <string name="pick_button" >Change Avatar</string>
+
 </resources>

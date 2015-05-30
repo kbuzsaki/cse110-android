@@ -73,12 +73,18 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch(item.getItemId()) {
             case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.action_join:
                 joinPollDialog();
                 return true;
             case R.id.action_search:
                 return true;
+        }
+
+        int id = item.getItemId();
+        if(id == R.id.action_settings) {
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
