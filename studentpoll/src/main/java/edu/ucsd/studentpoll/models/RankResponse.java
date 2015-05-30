@@ -174,7 +174,7 @@ public class RankResponse extends Response {
         rankResponse.question = question;
         rankResponse.choices = choices;
         Map<String, JSONObject> data = ImmutableMap.of("response", rankResponse.toJson());
-        JSONObject response = client.put(RestRouter.putResponse(question.getId()), data);
+        JSONObject response = client.put(RestRouter.putResponse(), data);
         try {
             return RankResponse.INSTANTIATOR.fromJson(response);
         }

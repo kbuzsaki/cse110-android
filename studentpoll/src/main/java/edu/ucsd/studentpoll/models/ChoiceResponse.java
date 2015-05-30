@@ -156,7 +156,7 @@ public class ChoiceResponse extends Response {
         choiceResponse.question = question;
         choiceResponse.choices = choices;
         Map<String, JSONObject> data = ImmutableMap.of("response", choiceResponse.toJson());
-        JSONObject response = client.put(RestRouter.putResponse(question.getId()), data);
+        JSONObject response = client.put(RestRouter.putResponse(), data);
         try {
             return ChoiceResponse.INSTANTIATOR.fromJson(response);
         }
