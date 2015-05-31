@@ -50,6 +50,7 @@ public class ChoiceResponseFragment extends ResponseFragment {
         if(choiceQuestion.getAllowCustom()) {
             Button button = new Button(getActivity());
             button.setText("Add New Option");
+            button.setWidth(200);
 
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
