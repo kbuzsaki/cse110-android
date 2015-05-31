@@ -110,7 +110,7 @@ public class AndrestClient {
      * @param url   the url you wish to connect to
      * @return JSON the JSON response from the call
      */
-    public JSONObject post(String url, Map<String, JSONObject> data) throws RESTException {
+    public JSONObject post(String url, Map<String, ?> data) throws RESTException {
         HttpPost request = new HttpPost(url);
         try {
             Log.d(TAG, "posting url: " + url);
@@ -142,7 +142,7 @@ public class AndrestClient {
      * @param data  the data object to post to the url
      * @return JSON the JSON response from the call
      */
-    public JSONObject put(String url, Map<String, JSONObject> data) throws RESTException {
+    public JSONObject put(String url, Map<String, ?> data) throws RESTException {
         HttpPut request = new HttpPut(url);
         try {
             Log.d(TAG, "putting url: " + url);
@@ -262,7 +262,7 @@ public class AndrestClient {
         return null;
     }
 
-    private StringEntity toStringEntity(Map<String, JSONObject> data) throws UnsupportedEncodingException {
+    private StringEntity toStringEntity(Map<String, ?> data) throws UnsupportedEncodingException {
         JSONObject param = new JSONObject(data);
         StringEntity entity = new StringEntity(param.toString());
         entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));

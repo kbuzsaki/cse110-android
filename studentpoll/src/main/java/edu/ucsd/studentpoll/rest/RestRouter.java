@@ -13,8 +13,8 @@ public class RestRouter {
 
     }
 
-    public static String joinPoll(String accessCode) {
-        return API_URL + "/join/" + accessCode;
+    public static String joinPoll() {
+        return API_URL + "/join";
     }
 
     public static String getGroup(long groupId) {

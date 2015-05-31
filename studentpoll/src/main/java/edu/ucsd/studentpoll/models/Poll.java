@@ -218,7 +218,8 @@ public class Poll extends Model {
 
     public static Poll joinPoll(String accessCode) {
         AndrestClient client = new AndrestClient();
-        JSONObject response = client.put(RestRouter.joinPoll(accessCode), Collections.<String, JSONObject>emptyMap());
+        Map<String, ?> data = ImmutableMap.of("code", accessCode, "user", User.getDeviceUser().getId());
+        JSONObject response = client.put(RestRouter.joinPoll(), data);
         try {
             return Poll.INSTANTIATOR.fromJson(response);
         }
