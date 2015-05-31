@@ -1,16 +1,17 @@
 package edu.ucsd.studentpoll;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import edu.ucsd.studentpoll.models.Question;
-import edu.ucsd.studentpoll.models.RankQuestion;
-import edu.ucsd.studentpoll.models.RankResponse;
+import edu.ucsd.studentpoll.models.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +40,29 @@ public class RankResultFragment extends ResultFragment {
 
         resultList = (LinearLayout) inflater.inflate(R.layout.rank_result_content, getContentContainer(), false);
         getContentContainer().addView(resultList);
+
+
+        Button refreshButton = (Button) superView.findViewById(R.id.refresh_results);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AsyncTask<Object, Object, Question>() {
+                    @Override
+                    protected Question doInBackground(Object... params) {
+                        long thresholdTime = SystemClock.uptimeMillis();
+                        getQuestion().refreshIfOlder(thresholdTime);
+                        Model.refreshAllIfOlder(getQuestion().getResponses(), thresholdTime);
+                        return getQuestion();
+                    }
+
+                    @Override
+                    protected void onPostExecute(Question question) {
+                        rankQuestion = (RankQuestion) question;
+                        refreshView();
+                    }
+                }.execute();
+            }
+        });
 
         return superView;
     }

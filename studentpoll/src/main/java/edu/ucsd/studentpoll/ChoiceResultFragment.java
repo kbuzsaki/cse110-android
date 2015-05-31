@@ -1,6 +1,8 @@
 package edu.ucsd.studentpoll;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 import edu.ucsd.studentpoll.models.ChoiceQuestion;
 import edu.ucsd.studentpoll.models.ChoiceResponse;
+import edu.ucsd.studentpoll.models.Model;
 import edu.ucsd.studentpoll.models.Question;
 
 import java.util.*;
@@ -33,6 +36,29 @@ public class ChoiceResultFragment extends ResultFragment {
 
         resultList = (LinearLayout) inflater.inflate(R.layout.choice_result_content, getContentContainer(), false);
         getContentContainer().addView(resultList);
+
+        Button refreshButton = (Button) superView.findViewById(R.id.refresh_results);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "refresh async going out");
+                new AsyncTask<Object, Object, Question>() {
+                    @Override
+                    protected Question doInBackground(Object... params) {
+                        long thresholdTime = SystemClock.uptimeMillis();
+                        getQuestion().refreshIfOlder(thresholdTime);
+                        Model.refreshAllIfOlder(getQuestion().getResponses(), thresholdTime);
+                        return getQuestion();
+                    }
+
+                    @Override
+                    protected void onPostExecute(Question question) {
+                        choiceQuestion = (ChoiceQuestion) question;
+                        refreshView();
+                    }
+                }.execute();
+            }
+        });
 
         return superView;
     }
@@ -103,9 +129,11 @@ public class ChoiceResultFragment extends ResultFragment {
         TextView pollTitle = (TextView) rootView.findViewById(R.id.pollTitle);
         pollTitle.setText(choiceQuestion.getTitle());
 
-        int totalCount = 0;
+        int largestCount = 0;
         for(int count : results.values()) {
-            totalCount += count;
+            if(count > largestCount) {
+                largestCount = count;
+            }
         }
 
         resultList.removeAllViews();
@@ -117,7 +145,7 @@ public class ChoiceResultFragment extends ResultFragment {
             TextView choiceCounter = (TextView) option.findViewById(R.id.voteCount);
 
             choiceText.setText(choice);
-            choiceBar.setMax(totalCount);
+            choiceBar.setMax(largestCount);
             choiceBar.setProgress(getCountForOption(choice));
             choiceCounter.setText("" + getCountForOption(choice));
 
