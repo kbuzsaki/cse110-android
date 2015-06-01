@@ -103,7 +103,7 @@ public class AppSettingsActivity extends PreferenceActivity {
                             return User.updateUserName(User.getDeviceUser(), newName);
                         }
                         catch (RESTException e) {
-                            Log.w(TAG, e);
+                            Log.e(TAG, "Failed to update username", e);
                             return null;
                         }
                     }
@@ -112,11 +112,9 @@ public class AppSettingsActivity extends PreferenceActivity {
                     protected void onPostExecute(User result) {
                         super.onPostExecute(result);
                         if(result != null) {
-                            Log.d(TAG, "Attempting to toast success");
                             Toast.makeText(AppSettingsActivity.this, "Successfully updated name to '" + result.getName() + "'", Toast.LENGTH_SHORT).show();
                         }
                         else {
-                            Log.d(TAG, "Attempting to toast failure");
                             Toast.makeText(AppSettingsActivity.this, "Failed to update name", Toast.LENGTH_SHORT).show();
                         }
                     }
