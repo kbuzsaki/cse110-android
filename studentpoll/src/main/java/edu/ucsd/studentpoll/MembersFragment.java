@@ -166,7 +166,7 @@ public class MembersFragment extends Fragment {
             memberCard.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(context, "Nope.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "User Id: " + member.getId(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
