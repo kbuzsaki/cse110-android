@@ -68,10 +68,8 @@ public class RankResponseFragment extends ResponseFragment {
         dragSortRecycler.setOnItemMovedListener(new DragSortRecycler.OnItemMovedListener() {
             @Override
             public void onItemMoved(int from, int to) {
-                String fromOption = rankOptionAdapter.options.get(from);
-                String toOption = rankOptionAdapter.options.get(to);
-                rankOptionAdapter.options.set(from, toOption);
-                rankOptionAdapter.options.set(to, fromOption);
+                String fromOption = rankOptionAdapter.options.remove(from);
+                rankOptionAdapter.options.add(to, fromOption);
                 updateResponse(rankOptionAdapter.options);
                 rankOptionAdapter.notifyDataSetChanged();
             }
