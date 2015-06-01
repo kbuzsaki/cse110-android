@@ -162,6 +162,7 @@ public class CreateRankQuestionActivity extends ActionBarActivity {
         RankQuestion question = RankQuestion.makeTemporaryQuestion(name, options);
 
         returnIntent.putExtra("question", question);
+        returnIntent.putExtra("index", getIntent().getIntExtra("index", 0));
         setResult(RESULT_OK, returnIntent);
 
         finish();

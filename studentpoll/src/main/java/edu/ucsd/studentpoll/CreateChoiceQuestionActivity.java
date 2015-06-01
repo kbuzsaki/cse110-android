@@ -198,7 +198,7 @@ public class CreateChoiceQuestionActivity extends ActionBarActivity {
         ChoiceQuestion question = ChoiceQuestion.makeTemporaryQuestion(name, options, allowMultiple, allowCustom);
 
         returnIntent.putExtra("question", question);
-        returnIntent.putExtra("index", getIntent().getParcelableExtra("index"));
+        returnIntent.putExtra("index", getIntent().getIntExtra("index", 0));
         setResult(RESULT_OK, returnIntent);
 
         finish();
