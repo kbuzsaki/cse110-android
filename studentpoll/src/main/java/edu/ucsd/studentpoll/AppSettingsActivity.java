@@ -83,7 +83,7 @@ public class AppSettingsActivity extends PreferenceActivity {
                     @Override
                     public void onSuccess(User result) {
                         Toast.makeText(AppSettingsActivity.this, "Hi, " + result.getName() + "!", Toast.LENGTH_LONG).show();
-                        userIdPreference.setSummary(result.getId().toString());
+                        updateSettings(result);
                     }
 
                     @Override
@@ -151,6 +151,7 @@ public class AppSettingsActivity extends PreferenceActivity {
                     protected void onPostExecute(User result) {
                         super.onPostExecute(result);
                         if(result != null) {
+                            updateSettings(result);
                             Toast.makeText(AppSettingsActivity.this, "Successfully updated name to '" + result.getName() + "'", Toast.LENGTH_SHORT).show();
                         }
                         else {
@@ -171,19 +172,39 @@ public class AppSettingsActivity extends PreferenceActivity {
     };
 
     private void syncSettings() {
-        new AsyncTask() {
+        new AsyncTask<Object, Object, User>() {
             @Override
-            protected Object doInBackground(Object[] params) {
-                User.getDeviceUser().refresh();
-                return null;
+            protected User doInBackground(Object[] params) {
+                try {
+                    User user = User.getDeviceUser();
+                    user.refresh();
+                    return user;
+                }
+                catch (RESTException e) {
+                    Log.e(TAG, "Failed to refresh user", e);
+                    return null;
+                }
             }
 
             @Override
-            protected void onPostExecute(Object o) {
-                super.onPostExecute(o);
-                findPreference("user_name").setSummary(User.getDeviceUser().getName());
+            protected void onPostExecute(User user) {
+                super.onPostExecute(user);
+                if(user == null) {
+                    Toast.makeText(AppSettingsActivity.this, "Failed to refresh user", Toast.LENGTH_SHORT);
+                    return;
+                }
+
+                updateSettings(user);
             }
         }.execute();
+    }
+
+    private void updateSettings(User user) {
+        findPreference("device.user.key").setSummary(user.getId().toString());
+        findPreference("user_name").setSummary(user.getName());
+        final Resources resources = getResources();
+        Drawable avatar = user.getAvatar() != null ? user.getDrawableAvatar(resources) : resources.getDrawable(R.drawable.pollr_bear);
+        findPreference("user_avatar").setIcon(avatar);
     }
 
     /**
