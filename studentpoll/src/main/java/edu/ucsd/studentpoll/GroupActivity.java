@@ -55,6 +55,7 @@ public class GroupActivity extends ActionBarActivity implements RefreshRequestLi
 
         Intent intent = getIntent();
         group = intent.getParcelableExtra("group");
+        setTitle(group.getName());
 
         // Instantiate a ViewPager and a PagerAdapter.
         viewPager = (ViewPager) findViewById(R.id.pager);
