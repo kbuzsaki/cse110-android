@@ -201,6 +201,7 @@ public class ChoiceQuestion extends Question {
         newQuestion.poll = poll;
         newQuestion.title = question.title;
         newQuestion.options = new ArrayList<String>(new LinkedHashSet<String>(question.options));
+        newQuestion.options.remove(""); //prevent empty option
         newQuestion.responses = Collections.emptyList();
         newQuestion.allowMultiple = question.allowMultiple;
         newQuestion.allowCustom = question.allowCustom;
