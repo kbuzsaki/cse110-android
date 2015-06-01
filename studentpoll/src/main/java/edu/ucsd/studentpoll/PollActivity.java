@@ -98,6 +98,7 @@ public class PollActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch(item.getItemId()) {
             case R.id.action_settings:
+                settingsScreen();
                 return true;
             case R.id.action_broadcast:
                 broadcastPoll();
@@ -110,6 +111,11 @@ public class PollActivity extends ActionBarActivity {
     public void broadcastPoll() {
         Intent intent = new Intent(this, BroadcastPollActivity.class);
         intent.putExtra("poll", poll);
+        startActivity(intent);
+    }
+
+    private void settingsScreen() {
+        Intent intent = new Intent(this, AppSettingsActivity.class);
         startActivity(intent);
     }
 

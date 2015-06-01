@@ -94,6 +94,7 @@ public class GroupActivity extends ActionBarActivity implements RefreshRequestLi
         // as you specify a parent activity in AndroidManifest.xml.
         switch(item.getItemId()) {
             case R.id.action_settings:
+                settingsScreen();
                 return true;
             case R.id.action_create:
                 createPoll();
@@ -180,6 +181,11 @@ public class GroupActivity extends ActionBarActivity implements RefreshRequestLi
     private void createPoll() {
         Intent intent = new Intent(this, CreatePollActivity.class);
         intent.putExtra("group", group);
+        startActivity(intent);
+    }
+
+    private void settingsScreen() {
+        Intent intent = new Intent(this, AppSettingsActivity.class);
         startActivity(intent);
     }
 
