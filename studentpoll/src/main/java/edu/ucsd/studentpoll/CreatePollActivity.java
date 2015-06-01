@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -60,9 +61,23 @@ public class CreatePollActivity extends ActionBarActivity {
         questionsAdapter = new QuestionsAdapter(Collections.<Question>emptyList());
         questionsView.setAdapter(questionsAdapter);
 
-        ((EditText)findViewById(R.id.pollName)).setOnEditorActionListener(new NewlineInterceptor());
+        final EditText pollNameEditText = (EditText) findViewById(R.id.pollName);
+        NewlineInterceptor.addInterceptor(pollNameEditText, new NewlineInterceptor.OnInterceptListener() {
+            @Override
+            public void newlineIntercepted() {
+                dismissKeyboardFrom(pollNameEditText);
+            }
+        });
 
         addQuestion(null);
+    }
+
+    private void dismissKeyboardFrom(View view) {
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
     public void addQuestion(View view) {

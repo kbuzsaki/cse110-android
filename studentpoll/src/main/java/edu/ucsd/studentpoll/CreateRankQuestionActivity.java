@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import edu.ucsd.studentpoll.models.RankQuestion;
+import edu.ucsd.studentpoll.view.NewlineInterceptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,14 @@ public class CreateRankQuestionActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_rank_question);
+
+        final EditText titleBox = (EditText) findViewById(R.id.titleBox);
+        NewlineInterceptor.addInterceptor(titleBox, new NewlineInterceptor.OnInterceptListener() {
+            @Override
+            public void newlineIntercepted() {
+                dismissKeyboardFrom(titleBox);
+            }
+        });
 
         Intent intent = getIntent();
 

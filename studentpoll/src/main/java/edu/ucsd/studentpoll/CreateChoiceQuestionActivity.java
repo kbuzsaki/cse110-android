@@ -39,7 +39,13 @@ public class CreateChoiceQuestionActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_choice_question);
 
-        ((EditText)findViewById(R.id.titleBox)).setOnEditorActionListener(new NewlineInterceptor());
+        final EditText titleBox = (EditText) findViewById(R.id.titleBox);
+        NewlineInterceptor.addInterceptor(titleBox, new NewlineInterceptor.OnInterceptListener() {
+            @Override
+            public void newlineIntercepted() {
+                dismissKeyboardFrom(titleBox);
+            }
+        });
 
         Intent intent = getIntent();
 
