@@ -3,10 +3,6 @@ package edu.ucsd.studentpoll;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.net.Uri;
@@ -53,7 +49,7 @@ public class AppSettingsActivity extends PreferenceActivity {
         bindPreferenceSummaryToValue(usernamePreference, user.getName());
 
         final Preference avatarPreference = findPreference("user_avatar");
-        Resources resources = getResources();
+        final Resources resources = getResources();
         Drawable avatar = user.getAvatar() != null ? user.getDrawableAvatar(resources) : resources.getDrawable(R.drawable.pollr_bear);
         avatarPreference.setIcon(avatar);
         avatarPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -61,6 +57,15 @@ public class AppSettingsActivity extends PreferenceActivity {
             public boolean onPreferenceClick(Preference preference) {
                 Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, LOAD_IMAGE_RESULTS);
+                return true;
+            }
+        });
+
+        final Preference resetAvatar = findPreference("avatar_reset");
+        resetAvatar.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                uploadAndSetAvatar(ImageUtils.drawableToBitmap(resources.getDrawable(R.drawable.pollr_bear)));
                 return true;
             }
         });
@@ -104,33 +109,7 @@ public class AppSettingsActivity extends PreferenceActivity {
                 final Bitmap bitmapAvatar = ImageUtils.drawableToBitmap(drawableAvatar);
                 final Bitmap resized = ImageUtils.resizeIfNecessary(bitmapAvatar);
 
-                final Preference avatarPreference = findPreference("user_avatar");
-
-                new AsyncTask<Object, Object, User>() {
-                    @Override
-                    protected User doInBackground(Object... params) {
-                        try {
-                            return User.updateUserAvatar(User.getDeviceUser(), resized);
-                        }
-                        catch (RESTException e) {
-                            Log.e(TAG, "Failed to upload avatar", e);
-                            return null;
-                        }
-                    }
-
-                    @Override
-                    protected void onPostExecute(User user) {
-                        super.onPostExecute(user);
-
-                        if(user != null) {
-                            Toast.makeText(AppSettingsActivity.this, "Avatar uploaded!", Toast.LENGTH_SHORT);
-                            avatarPreference.setIcon(user.getDrawableAvatar(getResources()));
-                        }
-                        else {
-                            Toast.makeText(AppSettingsActivity.this, "Failed to upload avatar.", Toast.LENGTH_SHORT);
-                        }
-                    }
-                }.execute();
+                uploadAndSetAvatar(resized);
             } catch (FileNotFoundException e) {
                 Log.e(TAG, "Failed to load avatar", e);
                 Toast.makeText(this, "Failed to load avatar.", Toast.LENGTH_SHORT);
@@ -220,6 +199,36 @@ public class AppSettingsActivity extends PreferenceActivity {
         // Set the listener to watch for value changes.
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
         preference.setSummary(newValue.toString());
+    }
+
+    private void uploadAndSetAvatar(final Bitmap avatar) {
+        final Preference avatarPreference = findPreference("user_avatar");
+
+        new AsyncTask<Object, Object, User>() {
+            @Override
+            protected User doInBackground(Object... params) {
+                try {
+                    return User.updateUserAvatar(User.getDeviceUser(), avatar);
+                }
+                catch (RESTException e) {
+                    Log.e(TAG, "Failed to upload avatar", e);
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(User user) {
+                super.onPostExecute(user);
+
+                if(user != null) {
+                    Toast.makeText(AppSettingsActivity.this, "Avatar uploaded!", Toast.LENGTH_SHORT);
+                    avatarPreference.setIcon(user.getDrawableAvatar(getResources()));
+                }
+                else {
+                    Toast.makeText(AppSettingsActivity.this, "Failed to upload avatar.", Toast.LENGTH_SHORT);
+                }
+            }
+        }.execute();
     }
 
 }

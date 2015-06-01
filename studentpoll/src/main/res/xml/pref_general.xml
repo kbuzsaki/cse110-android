@@ -16,6 +16,11 @@
                 android:key="user_avatar"
                 android:summary="Set the avatar that others see for you!"/>
 
+    <Preference android:title="Reset Avatar"
+                android:icon="@drawable/pollr_bear"
+                android:key="avatar_reset"
+                android:summary="Reset to the default avatar"/>
+
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
     <EditTextPreference
