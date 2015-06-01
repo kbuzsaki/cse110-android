@@ -21,6 +21,10 @@ public class RestRouter {
         return API_URL + "/group/" + groupId;
     }
 
+    public static String updateGroup(long groupId) {
+        return API_URL + "/group/update/" + groupId;
+    }
+
     public static String getUser(long userId) {
         return API_URL + "/user/groups/" + userId;
     }

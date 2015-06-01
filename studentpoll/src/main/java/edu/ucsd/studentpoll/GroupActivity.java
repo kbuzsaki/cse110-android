@@ -60,7 +60,6 @@ public class GroupActivity extends ActionBarActivity implements RefreshRequestLi
         viewPager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new GroupPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
-        viewPager.setCurrentItem(1);
 
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         slidingTabLayout.setDistributeEvenly(true);
@@ -200,7 +199,31 @@ public class GroupActivity extends ActionBarActivity implements RefreshRequestLi
         builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //TODO: actually change the group name
+                final String newName = groupName.getText().toString();
+
+                new AsyncTask<Object, Object, Group>() {
+                    @Override
+                    protected Group doInBackground(Object[] params) {
+                        try {
+                            return Group.updateGroupName(group, newName);
+                        }
+                        catch (RESTException e) {
+                            Log.e(TAG, "Failed to update Group name", e);
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected void onPostExecute(Group result) {
+                        super.onPostExecute(result);
+                        if(result != null) {
+                            Toast.makeText(GroupActivity.this, "Successfully updated name to '" + result.getName() + "'", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(GroupActivity.this, "Failed to update name", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }.execute();
                 dismissKeyboardFrom(groupName);
             }
         });

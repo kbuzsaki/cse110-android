@@ -3,6 +3,7 @@ package edu.ucsd.studentpoll.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import com.google.common.collect.ImmutableMap;
 import edu.ucsd.studentpoll.rest.AndrestClient;
 import edu.ucsd.studentpoll.rest.JsonUtils;
 import edu.ucsd.studentpoll.rest.RestRouter;
@@ -126,6 +127,14 @@ public class Group extends Model {
 
     public Date getCreationTime() {
         return creationTime;
+    }
+
+    public static Group updateGroupName(Group group, String newName) {
+        AndrestClient client = new AndrestClient();
+        Map<String, ?> data = ImmutableMap.of("name", newName);
+        JSONObject response = client.put(RestRouter.updateGroup(group.getId()), data);
+        group.initFromJson(response);
+        return group;
     }
 
 }
