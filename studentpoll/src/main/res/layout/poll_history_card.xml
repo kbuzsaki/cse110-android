@@ -20,7 +20,7 @@
             <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="fill_parent"
-                    android:layout_height="fill_parent" android:layout_weight="6">
+                    android:layout_height="fill_parent" android:layout_weight="11">
                 <TextView
                         android:id="@+id/title"
                         android:layout_width="wrap_content"
@@ -37,7 +37,7 @@
             <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="fill_parent"
-                    android:layout_height="fill_parent" android:layout_weight="14" android:gravity="right">
+                    android:layout_height="fill_parent" android:layout_weight="29" android:gravity="right">
                 <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="fill_parent"
@@ -62,7 +62,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:text="By John Smith"
+                            android:text="By JohnnyLong NameSmitherson"
                             android:id="@+id/votes" android:layout_alignParentBottom="true"
                             android:layout_alignParentEnd="true" android:layout_gravity="bottom|right"
                             />

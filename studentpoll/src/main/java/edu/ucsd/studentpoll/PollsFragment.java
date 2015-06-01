@@ -151,12 +151,23 @@ public class PollsFragment extends Fragment {
         }
 
         public void setContent(final Poll poll) {
-            ((TextView) pollCard.findViewById(R.id.title)).setText(poll.getName());
+            String pollName = poll.getName();
+            if(pollName.length() > 26) {
+                pollName = pollName.substring(0,23) + "...";
+            }
+
             String questionNames = TextUtils.join("\n", getQuestionTitles(poll));
             String fullTimeString = (String)DateUtils.getRelativeDateTimeString(context, poll.getCreationTime().getTime(), DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, 0);
             String[] partialTimeStrings = fullTimeString.split(",");
-            String voteText = poll.getQuestions().size() + " questions";
 
+            String voteText = poll.getQuestions().size() + " ";
+            if(poll.getQuestions().size() > 1) {
+                voteText += "questions";
+            } else {
+                voteText += "question";
+            }
+
+            ((TextView) pollCard.findViewById(R.id.title)).setText(pollName);
             ((TextView) pollCard.findViewById(R.id.cardContent)).setText(questionNames);
             ((TextView) pollCard.findViewById(R.id.time)).setText(partialTimeStrings[0]);
             ((TextView) pollCard.findViewById(R.id.time2)).setText(partialTimeStrings[1]);

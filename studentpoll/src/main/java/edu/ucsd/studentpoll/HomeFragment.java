@@ -141,12 +141,23 @@ public class HomeFragment extends Fragment {
         }
 
         public void setContent(final Group group) {
-            ((TextView)groupCard.findViewById(R.id.title)).setText(group.getName());
+            String groupName = group.getName();
+            if(groupName.length() > 26) {
+                groupName = groupName.substring(0,23) + "...";
+            }
+
             String pollNames = TextUtils.join("\n", getPollNames(group));
             String fullTimeString = (String)DateUtils.getRelativeDateTimeString(context, group.getCreationTime().getTime(), DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, 0);
             String[] partialTimeStrings = fullTimeString.split(",");
-            String voteText = group.getMembers().size() + " members";
 
+            String voteText = group.getMembers().size() + " ";
+            if(group.getMembers().size() > 1) {
+                voteText += "members";
+            } else {
+                voteText += "member";
+            }
+
+            ((TextView)groupCard.findViewById(R.id.title)).setText(groupName);
             ((TextView)groupCard.findViewById(R.id.cardContent)).setText(pollNames);
             ((TextView)groupCard.findViewById(R.id.time)).setText(partialTimeStrings[0]);
             ((TextView)groupCard.findViewById(R.id.time2)).setText(partialTimeStrings[1]);
