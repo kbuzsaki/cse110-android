@@ -1,7 +1,14 @@
 package edu.ucsd.studentpoll;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +18,7 @@ import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.widget.Toast;
 import com.google.common.util.concurrent.FutureCallback;
+import edu.ucsd.studentpoll.misc.ImageUtils;
 import edu.ucsd.studentpoll.models.User;
 import edu.ucsd.studentpoll.rest.RESTException;
 
@@ -45,7 +53,8 @@ public class AppSettingsActivity extends PreferenceActivity {
         bindPreferenceSummaryToValue(usernamePreference, user.getName());
 
         final Preference avatarPreference = findPreference("user_avatar");
-        Drawable avatar = user.getAvatar() != null ? user.getAvatar() : getResources().getDrawable(R.drawable.pollr_bear);
+        Resources resources = getResources();
+        Drawable avatar = user.getAvatar() != null ? user.getDrawableAvatar(resources) : resources.getDrawable(R.drawable.pollr_bear);
         avatarPreference.setIcon(avatar);
         avatarPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -91,10 +100,37 @@ public class AppSettingsActivity extends PreferenceActivity {
 
             try {
                 InputStream inputStream = getContentResolver().openInputStream(imageUri);
-                Drawable avatar = Drawable.createFromStream(inputStream, imageUri.toString());
+                Drawable drawableAvatar = Drawable.createFromStream(inputStream, imageUri.toString());
+                final Bitmap bitmapAvatar = ImageUtils.drawableToBitmap(drawableAvatar);
+                final Bitmap resized = ImageUtils.resizeIfNecessary(bitmapAvatar);
 
                 final Preference avatarPreference = findPreference("user_avatar");
-                avatarPreference.setIcon(avatar);
+
+                new AsyncTask<Object, Object, User>() {
+                    @Override
+                    protected User doInBackground(Object... params) {
+                        try {
+                            return User.updateUserAvatar(User.getDeviceUser(), resized);
+                        }
+                        catch (RESTException e) {
+                            Log.e(TAG, "Failed to upload avatar", e);
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected void onPostExecute(User user) {
+                        super.onPostExecute(user);
+
+                        if(user != null) {
+                            Toast.makeText(AppSettingsActivity.this, "Avatar uploaded!", Toast.LENGTH_SHORT);
+                            avatarPreference.setIcon(user.getDrawableAvatar(getResources()));
+                        }
+                        else {
+                            Toast.makeText(AppSettingsActivity.this, "Failed to upload avatar.", Toast.LENGTH_SHORT);
+                        }
+                    }
+                }.execute();
             } catch (FileNotFoundException e) {
                 Log.e(TAG, "Failed to load avatar", e);
                 Toast.makeText(this, "Failed to load avatar.", Toast.LENGTH_SHORT);

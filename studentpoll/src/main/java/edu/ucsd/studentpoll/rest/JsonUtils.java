@@ -1,10 +1,16 @@
 package edu.ucsd.studentpoll.rest;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.util.Base64;
 import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -76,6 +82,30 @@ public class JsonUtils {
         }
 
         return list;
+    }
+
+    public static String encodeBitmap(Bitmap bitmap) {
+        if(bitmap == null) {
+            return null;
+        }
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        String imageEncoded = Base64.encodeToString(bytes, Base64.DEFAULT);
+
+        Log.v(TAG, "encoded image: " + imageEncoded);
+        return imageEncoded;
+    }
+
+    public static Bitmap decodeBitmap(String encoded) {
+        if(encoded == null) {
+            return null;
+        }
+
+        byte[] decodedByte = Base64.decode(encoded, 0);
+        return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
     }
 
     public static Builder builder() {

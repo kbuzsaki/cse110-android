@@ -2,6 +2,9 @@ package edu.ucsd.studentpoll.models;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Parcel;
@@ -65,7 +68,7 @@ public class User extends Model {
 
     private String name;
 
-    private Drawable avatar;
+    private Bitmap avatar;
 
     private List<Group> groups;
 
@@ -102,7 +105,7 @@ public class User extends Model {
         try {
             id = json.getLong("id");
             name = json.getString("name");
-            avatar = null;
+            avatar = JsonUtils.decodeBitmap(json.optString("avatar"));
             groups = Model.ripModelList(json.optJSONArray("groups"), Group.INSTANTIATOR);
 
             markRefreshed();
@@ -127,8 +130,17 @@ public class User extends Model {
         return name;
     }
 
-    public Drawable getAvatar() {
+    public Bitmap getAvatar() {
         return avatar;
+    }
+
+    public Drawable getDrawableAvatar(Resources resources) {
+        if(getAvatar() != null) {
+            return new BitmapDrawable(resources, getAvatar());
+        }
+        else {
+            return null;
+        }
     }
 
     public List<Group> getGroups() {
@@ -138,6 +150,14 @@ public class User extends Model {
     public static User updateUserName(User user, String newName) {
         AndrestClient client = new AndrestClient();
         Map<String, ?> data = ImmutableMap.of("name", newName);
+        JSONObject response = client.put(RestRouter.updateUser(user.getId()), data);
+        user.initFromJson(response);
+        return user;
+    }
+
+    public static User updateUserAvatar(User user, Bitmap avatar) {
+        AndrestClient client = new AndrestClient();
+        Map<String, ?> data = ImmutableMap.of("avatar", JsonUtils.encodeBitmap(avatar));
         JSONObject response = client.put(RestRouter.updateUser(user.getId()), data);
         user.initFromJson(response);
         return user;

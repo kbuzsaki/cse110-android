@@ -3,6 +3,7 @@ package edu.ucsd.studentpoll;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -158,7 +159,8 @@ public class MembersFragment extends Fragment {
 
         public void setContent(final User member) {
             ((TextView) memberCard.findViewById(R.id.name)).setText(member.getName());
-            Drawable avatar = member.getAvatar() != null ? member.getAvatar() : context.getResources().getDrawable(R.drawable.pollr_bear);
+            Resources resources = context.getResources();
+            Drawable avatar = member.getAvatar() != null ? member.getDrawableAvatar(resources) : resources.getDrawable(R.drawable.pollr_bear);
             ((ImageView) memberCard.findViewById(R.id.avatar)).setImageDrawable(avatar);
 
             memberCard.setOnClickListener(new View.OnClickListener() {
