@@ -86,12 +86,12 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
             User.createDeviceUser("NewUserName", new FutureCallback<User>() {
                 @Override
                 public void onSuccess(User result) {
-                    Toast.makeText(MainActivity.this, "Hi, " + result.getName() + "!", Toast.LENGTH_LONG);
+                    Toast.makeText(MainActivity.this, "Hi, " + result.getName() + "!", Toast.LENGTH_LONG).show();
                 }
 
                 @Override
                 public void onFailure(Throwable t) {
-                    Toast.makeText(MainActivity.this, "Failed to create user :(", Toast.LENGTH_LONG);
+                    Toast.makeText(MainActivity.this, "Failed to create user :(", Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -173,13 +173,14 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
             @Override
             protected void onPostExecute(List<Poll> polls) {
                 super.onPostExecute(polls);
+
                 Log.i(TAG, "Refresh request completed.");
                 if(polls != null) {
                     pagerAdapter.pollsFragment.updatePolls(polls);
                 }
                 else {
                     Log.w(TAG, "Failed to refresh polls...");
-                    Toast.makeText(MainActivity.this, "Failed Refresh", Toast.LENGTH_SHORT);
+                    Toast.makeText(MainActivity.this, "Failed Refresh", Toast.LENGTH_SHORT).show();
                 }
                 if(callback != null) {
                     callback.run();

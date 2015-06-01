@@ -162,7 +162,7 @@ public class GroupActivity extends ActionBarActivity implements RefreshRequestLi
                 }
                 else {
                     Log.w(TAG, "Failed to refresh polls...");
-                    Toast.makeText(GroupActivity.this, "Failed Refresh", Toast.LENGTH_SHORT);
+                    Toast.makeText(GroupActivity.this, "Failed Refresh", Toast.LENGTH_SHORT).show();
                 }
                 if(callback != null) {
                     callback.run();

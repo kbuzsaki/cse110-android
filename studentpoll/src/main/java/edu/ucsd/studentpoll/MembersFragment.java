@@ -163,7 +163,7 @@ public class MembersFragment extends Fragment {
             memberCard.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(context, "Lol no", Toast.LENGTH_SHORT);
+                    Toast.makeText(context, "Nope.", Toast.LENGTH_SHORT).show();
                 }
             });
         }
