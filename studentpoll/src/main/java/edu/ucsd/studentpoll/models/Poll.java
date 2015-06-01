@@ -13,12 +13,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by kbuzsaki on 5/1/15.
@@ -96,12 +94,15 @@ public class Poll extends Model {
             id = json.getLong("id");
             group = Model.ripModel(json.get("group"), Group.INSTANTIATOR);
             creator = Model.ripModel(json.get("creator"), User.INSTANTIATOR);
-            creationTime = null;
+            DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
+            String creationTimeString = json.getString("createdAt");
+            creationTime = iso8601Format.parse(creationTimeString);
             name = json.getString("name");
             questions = Model.ripModelList(json.optJSONArray("questions"), Question.INSTANTIATOR);
 
             markRefreshed();
-        } catch (JSONException e) {
+        } catch (JSONException|ParseException e) {
             Log.wtf(TAG, e);
         }
 

@@ -11,6 +11,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -152,10 +153,13 @@ public class PollsFragment extends Fragment {
         public void setContent(final Poll poll) {
             ((TextView) pollCard.findViewById(R.id.title)).setText(poll.getName());
             String questionNames = TextUtils.join("\n", getQuestionTitles(poll));
-            String timeText = randInt(2, 21) + " minutes ago";
+            String fullTimeString = (String)DateUtils.getRelativeDateTimeString(context, poll.getCreationTime().getTime(), DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, 0);
+            String[] partialTimeStrings = fullTimeString.split(",");
             String voteText = poll.getQuestions().size() + " questions";
+
             ((TextView) pollCard.findViewById(R.id.cardContent)).setText(questionNames);
-            ((TextView) pollCard.findViewById(R.id.time)).setText(timeText);
+            ((TextView) pollCard.findViewById(R.id.time)).setText(partialTimeStrings[0]);
+            ((TextView) pollCard.findViewById(R.id.time2)).setText(partialTimeStrings[1]);
             ((TextView) pollCard.findViewById(R.id.votes)).setText(voteText);
 
             pollCard.setOnClickListener(new View.OnClickListener() {
@@ -176,9 +180,4 @@ public class PollsFragment extends Fragment {
             return titles;
         }
     }
-
-    private static int randInt(int min, int max) {
-        return (int)Math.floor(Math.random() * (max - min)) + min;
-    }
-
 }

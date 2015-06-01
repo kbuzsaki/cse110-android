@@ -11,6 +11,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -142,10 +143,13 @@ public class HomeFragment extends Fragment {
         public void setContent(final Group group) {
             ((TextView)groupCard.findViewById(R.id.title)).setText(group.getName());
             String pollNames = TextUtils.join("\n", getPollNames(group));
-            String timeText = randInt(2, 21) + " minutes ago";
+            String fullTimeString = (String)DateUtils.getRelativeDateTimeString(context, group.getCreationTime().getTime(), DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, 0);
+            String[] partialTimeStrings = fullTimeString.split(",");
             String voteText = group.getMembers().size() + " members";
+
             ((TextView)groupCard.findViewById(R.id.cardContent)).setText(pollNames);
-            ((TextView)groupCard.findViewById(R.id.time)).setText(timeText);
+            ((TextView)groupCard.findViewById(R.id.time)).setText(partialTimeStrings[0]);
+            ((TextView)groupCard.findViewById(R.id.time2)).setText(partialTimeStrings[1]);
             ((TextView)groupCard.findViewById(R.id.votes)).setText(voteText);
 
             groupCard.setOnClickListener(new View.OnClickListener() {
@@ -165,9 +169,5 @@ public class HomeFragment extends Fragment {
             }
             return titles;
         }
-    }
-
-    private static int randInt(int min, int max) {
-        return (int)Math.floor(Math.random() * (max - min)) + min;
     }
 }

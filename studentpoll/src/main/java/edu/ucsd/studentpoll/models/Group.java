@@ -9,11 +9,10 @@ import edu.ucsd.studentpoll.rest.RestRouter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by kbuzsaki on 4/26/15.
@@ -53,6 +52,8 @@ public class Group extends Model {
 
     private List<Poll> polls;
 
+    private Date creationTime;
+
     private Group() {
     }
 
@@ -88,9 +89,13 @@ public class Group extends Model {
             name = json.getString("name");
             members = Model.ripModelList(json.optJSONArray("members"), User.INSTANTIATOR);
             polls = Model.ripModelList(json.optJSONArray("polls"), Poll.INSTANTIATOR);
+            DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
+            String creationTimeString = json.getString("createdAt");
+            creationTime = iso8601Format.parse(creationTimeString);
 
             markRefreshed();
-        } catch (JSONException e) {
+        } catch (JSONException|ParseException e) {
             Log.wtf(TAG, e);
         }
 
@@ -117,6 +122,10 @@ public class Group extends Model {
 
     public List<Poll> getPolls() {
         return polls;
+    }
+
+    public Date getCreationTime() {
+        return creationTime;
     }
 
 }
