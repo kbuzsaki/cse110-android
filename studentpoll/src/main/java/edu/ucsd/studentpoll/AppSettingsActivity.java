@@ -1,23 +1,13 @@
 package edu.ucsd.studentpoll;
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.res.Configuration;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 import com.google.common.util.concurrent.FutureCallback;
@@ -25,7 +15,8 @@ import edu.ucsd.studentpoll.models.User;
 import edu.ucsd.studentpoll.rest.RESTException;
 
 
-import java.util.List;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -41,6 +32,7 @@ import java.util.List;
 public class AppSettingsActivity extends PreferenceActivity {
 
     private static final String TAG = "AppSettingsActivity";
+    private static final int LOAD_IMAGE_RESULTS = 1;
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -51,6 +43,18 @@ public class AppSettingsActivity extends PreferenceActivity {
 
         final EditTextPreference usernamePreference = (EditTextPreference)findPreference("user_name");
         bindPreferenceSummaryToValue(usernamePreference, user.getName());
+
+        final Preference avatarPreference = findPreference("user_avatar");
+        Drawable avatar = user.getAvatar() != null ? user.getAvatar() : getResources().getDrawable(R.drawable.pollr_bear);
+        avatarPreference.setIcon(avatar);
+        avatarPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, LOAD_IMAGE_RESULTS);
+                return true;
+            }
+        });
 
         final EditTextPreference userIdPreference = (EditTextPreference)findPreference("device.user.key");
         bindPreferenceSummaryToValue(userIdPreference, user.getId());
@@ -76,6 +80,26 @@ public class AppSettingsActivity extends PreferenceActivity {
                 return true;
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == LOAD_IMAGE_RESULTS && resultCode == RESULT_OK && data != null) {
+            Uri imageUri = data.getData();
+            Log.d(TAG, "Got uri: " + imageUri);
+
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                Drawable avatar = Drawable.createFromStream(inputStream, imageUri.toString());
+
+                final Preference avatarPreference = findPreference("user_avatar");
+                avatarPreference.setIcon(avatar);
+            } catch (FileNotFoundException e) {
+                Log.e(TAG, "Failed to load avatar", e);
+                Toast.makeText(this, "Failed to load avatar.", Toast.LENGTH_SHORT);
+            }
+        }
     }
 
     /**
