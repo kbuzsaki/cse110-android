@@ -25,6 +25,10 @@ public class RestRouter {
         return API_URL + "/user/groups/" + userId;
     }
 
+    public static String updateUser(long userId) {
+        return API_URL + "/user/update/" + userId;
+    }
+
     public static String postUser() {
         return API_URL + "/user/create";
     }

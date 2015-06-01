@@ -135,6 +135,14 @@ public class User extends Model {
         return groups;
     }
 
+    public static User updateUserName(User user, String newName) {
+        AndrestClient client = new AndrestClient();
+        Map<String, ?> data = ImmutableMap.of("name", newName);
+        JSONObject response = client.put(RestRouter.updateUser(user.getId()), data);
+        user.initFromJson(response);
+        return user;
+    }
+
     public static void createDeviceUser(final String name, final FutureCallback<User> callback) {
         new AsyncTask<Object, Object, User>() {
             @Override

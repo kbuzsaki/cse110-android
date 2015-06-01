@@ -6,8 +6,10 @@ import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -17,7 +19,10 @@ import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
+import com.google.common.util.concurrent.FutureCallback;
 import edu.ucsd.studentpoll.models.User;
+import edu.ucsd.studentpoll.rest.RESTException;
 
 
 import java.util.List;
@@ -37,130 +42,112 @@ public class AppSettingsActivity extends PreferenceActivity {
 
     private static final String TAG = "AppSettingsActivity";
 
-
-    /**
-     * Determines whether to always show the simplified settings UI, where
-     * settings are presented in a single list. When false, settings are shown
-     * as a master/detail two-pane view on tablets. When true, a single pane is
-     * shown on tablets.
-     */
-    private static final boolean ALWAYS_SIMPLE_PREFS = false;
-
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
-        setupSimplePreferencesScreen();
-    }
-
-    /**
-     * Shows the simplified settings UI if the device configuration if the
-     * device configuration dictates that a simplified, single-pane UI should be
-     * shown.
-     */
-    private void setupSimplePreferencesScreen() {
-        if(!isSimplePreferences(this)) {
-            return;
-        }
-
-        // In the simplified UI, fragments are not used at all and we instead
-        // use the older PreferenceActivity APIs.
-
-        // Add 'general' preferences.
         addPreferencesFromResource(R.xml.pref_general);
 
-        // Bind the summaries of EditText/List/Dialog/Ringtone preferences to
-        // their values. When their values change, their summaries are updated
-        // to reflect the new value, per the Android Design guidelines.
-        bindPreferenceSummaryToValue(findPreference("user_name"));
-        bindPreferenceSummaryToValue(findPreference("device.user.key"));
-        bindPreferenceSummaryToValue(findPreference("example_list"));
+        User user = User.getDeviceUser();
+
+        final EditTextPreference usernamePreference = (EditTextPreference)findPreference("user_name");
+        bindPreferenceSummaryToValue(usernamePreference, user.getName());
+
+        final EditTextPreference userIdPreference = (EditTextPreference)findPreference("device.user.key");
+        bindPreferenceSummaryToValue(userIdPreference, user.getId());
+
+        Preference button = (Preference)findPreference("gen_user");
+        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                String username = usernamePreference.getSummary().toString();
+
+                User.createDeviceUser(username, new FutureCallback<User>() {
+                    @Override
+                    public void onSuccess(User result) {
+                        Toast.makeText(AppSettingsActivity.this, "Hi, " + result.getName() + "!", Toast.LENGTH_LONG).show();
+                        userIdPreference.setSummary(result.getId().toString());
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        Toast.makeText(AppSettingsActivity.this, "Failed to create user :(", Toast.LENGTH_LONG).show();
+                    }
+                });
+                return true;
+            }
+        });
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean onIsMultiPane() {
-        return isXLargeTablet(this) && !isSimplePreferences(this);
-    }
-
-    /**
-     * Helper method to determine if the device has an extra-large screen. For
-     * example, 10" tablets are extra-large.
-     */
-    private static boolean isXLargeTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
-
-    /**
-     * Determines whether the simplified settings UI should be shown. This is
-     * true if this is forced via {@link #ALWAYS_SIMPLE_PREFS}, or the device
-     * doesn't have newer APIs like {@link PreferenceFragment}, or the device
-     * doesn't have an extra-large screen. In these cases, a single-pane
-     * "simplified" settings UI should be shown.
-     */
-    private static boolean isSimplePreferences(Context context) {
-        return ALWAYS_SIMPLE_PREFS
-                || Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
-                || !isXLargeTablet(context);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void onBuildHeaders(List<Header> target) {
-        if(!isSimplePreferences(this)) {
-            loadHeadersFromResource(R.xml.pref_headers, target);
-        }
-    }
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+    private Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
 
-            if(preference instanceof ListPreference) {
-                // For list preferences, look up the correct display value in
-                // the preference's 'entries' list.
-                ListPreference listPreference = (ListPreference) preference;
-                int index = listPreference.findIndexOfValue(stringValue);
+            preference.setSummary(stringValue);
 
-                // Set the summary to reflect the new value.
-                preference.setSummary(
-                        index >= 0
-                                ? listPreference.getEntries()[index]
-                                : null);
-
+            // handle changing the settings
+            if(!preference.hasKey()) {
+                // no key so just eat it
             }
-            else {
-                // For all other preferences, set the summary to the value's
-                // simple string representation.
-                preference.setSummary(stringValue);
+            else if(preference.getKey().equals("user_name")) {
+                Log.d(TAG, "got username: " + value);
+                final String newName = value.toString();
+                new AsyncTask<Object, Object, User>() {
+                    @Override
+                    protected User doInBackground(Object[] params) {
+                        try {
+                            return User.updateUserName(User.getDeviceUser(), newName);
+                        }
+                        catch (RESTException e) {
+                            Log.w(TAG, e);
+                            return null;
+                        }
+                    }
 
-                // handle changing the settings
-                if(!preference.hasKey()) {
-                    // no key so just eat it
-                }
-                else if(preference.getKey().equals("user_name")) {
-                    Log.d(TAG, "got username: " + value);
-                }
-                else if(preference.getKey().equals("device.user.key")) {
-                    Log.d(TAG, "got user id: " + value);
-                    long newUserId = Long.valueOf(value.toString());
-                    User.setDeviceUserId(newUserId);
-                }
+                    @Override
+                    protected void onPostExecute(User result) {
+                        super.onPostExecute(result);
+                        if(result != null) {
+                            Log.d(TAG, "Attempting to toast success");
+                            Toast.makeText(AppSettingsActivity.this, "Successfully updated name to '" + result.getName() + "'", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Log.d(TAG, "Attempting to toast failure");
+                            Toast.makeText(AppSettingsActivity.this, "Failed to update name", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }.execute();
             }
+            else if(preference.getKey().equals("device.user.key")) {
+                Log.d(TAG, "got user id: " + value);
+                long newUserId = Long.valueOf(value.toString());
+                User.setDeviceUserId(newUserId);
+                syncSettings();
+            }
+
             return true;
         }
     };
+
+    private void syncSettings() {
+        new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] params) {
+                User.getDeviceUser().refresh();
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                super.onPostExecute(o);
+                findPreference("user_name").setSummary(User.getDeviceUser().getName());
+            }
+        }.execute();
+    }
 
     /**
      * Binds a preference's summary to its value. More specifically, when the
@@ -171,36 +158,10 @@ public class AppSettingsActivity extends PreferenceActivity {
      *
      * @see #sBindPreferenceSummaryToValueListener
      */
-    private static void bindPreferenceSummaryToValue(Preference preference) {
+    private void bindPreferenceSummaryToValue(Preference preference, Object newValue) {
         // Set the listener to watch for value changes.
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-        // Trigger the listener immediately with the preference's
-        // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(MainActivity.getGlobalContext())
-                        .getString(preference.getKey(), ""));
-    }
-
-    /**
-     * This fragment shows general preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class GeneralPreferenceFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_general);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            bindPreferenceSummaryToValue(findPreference("example_text"));
-            bindPreferenceSummaryToValue(findPreference("example_list"));
-        }
+        preference.setSummary(newValue.toString());
     }
 
 }
