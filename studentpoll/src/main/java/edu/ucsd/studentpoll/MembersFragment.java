@@ -3,6 +3,7 @@ package edu.ucsd.studentpoll;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import edu.ucsd.studentpoll.models.Group;
@@ -124,7 +126,7 @@ public class MembersFragment extends Fragment {
         @Override
         public MembersViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             CardView memberCard = (CardView) LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.poll_history_card, parent, false);
+                    .inflate(R.layout.member_card, parent, false);
             MembersViewHolder viewHolder = new MembersViewHolder(context, memberCard);
             // you don't have to set the content here before you return the viewHolder
             // onBindViewHolder will get called next and set the content for us
@@ -155,10 +157,9 @@ public class MembersFragment extends Fragment {
         }
 
         public void setContent(final User member) {
-            ((TextView) memberCard.findViewById(R.id.title)).setText(member.getName());
-            ((TextView) memberCard.findViewById(R.id.cardContent)).setText("");
-            ((TextView) memberCard.findViewById(R.id.time)).setText("");
-            ((TextView) memberCard.findViewById(R.id.votes)).setText("");
+            ((TextView) memberCard.findViewById(R.id.name)).setText(member.getName());
+            Drawable avatar = member.getAvatar() != null ? member.getAvatar() : context.getResources().getDrawable(R.drawable.pollr_bear);
+            ((ImageView) memberCard.findViewById(R.id.avatar)).setImageDrawable(avatar);
 
             memberCard.setOnClickListener(new View.OnClickListener() {
                 @Override
