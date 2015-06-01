@@ -4,7 +4,7 @@
       tools:context="edu.ucsd.studentpoll.PollActivity">
     <!-- get icons here: https://developer.android.com/design/downloads/index.html#action-bar-icon-pack -->
     <item android:id="@+id/action_broadcast"
-          android:icon="@drawable/ic_menu_edit"
+          android:icon="@drawable/ic_share_white"
           android:title="Broadcast Poll"
           app:showAsAction="ifRoom"/>
     <item android:id="@+id/action_settings"
