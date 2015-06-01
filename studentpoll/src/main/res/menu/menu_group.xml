@@ -3,11 +3,11 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="edu.ucsd.studentpoll.GroupActivity">
       <item android:id="@+id/action_create"
-            android:icon="@drawable/ic_action_new"
+            android:icon="@drawable/ic_add_white_48dp"
             android:title="Create Poll"
             app:showAsAction="ifRoom" />
       <item android:id="@+id/action_edit"
-            android:icon="@drawable/ic_menu_edit"
+            android:icon="@drawable/ic_edit_white_48dp"
             android:title="Edit Group name"
             app:showAsAction="ifRoom" />
       <item android:id="@+id/action_settings"

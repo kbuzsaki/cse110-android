@@ -4,11 +4,11 @@
       tools:context="edu.ucsd.studentpoll.MainActivity">
       <!-- get icons here: https://developer.android.com/design/downloads/index.html#action-bar-icon-pack -->
       <item android:id="@+id/action_create"
-            android:icon="@drawable/ic_action_new"
+            android:icon="@drawable/ic_add_white_48dp"
             android:title="Create Poll"
             app:showAsAction="ifRoom" />
       <item android:id="@+id/action_join"
-            android:icon="@drawable/ic_action_key"
+            android:icon="@drawable/ic_vpn_key_white_48dp"
             android:title="Join Poll"
             app:showAsAction="ifRoom" />
       <item android:id="@+id/action_settings"
