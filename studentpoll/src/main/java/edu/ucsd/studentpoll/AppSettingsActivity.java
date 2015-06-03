@@ -162,9 +162,35 @@ public class AppSettingsActivity extends PreferenceActivity {
             }
             else if(preference.getKey().equals("device.user.key")) {
                 Log.d(TAG, "got user id: " + value);
-                long newUserId = Long.valueOf(value.toString());
-                User.setDeviceUserId(newUserId);
-                syncSettings();
+                final long newUserId = Long.valueOf(value.toString());
+
+                new AsyncTask<Object, Object, User>() {
+                    @Override
+                    protected User doInBackground(Object... params) {
+                        try {
+                            User user = User.getOrStub(newUserId);
+                            user.refresh();
+                            return user;
+                        }
+                        catch (RESTException e) {
+                            Log.e(TAG, "Tried to set invalid user id " + newUserId, e);
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected void onPostExecute(User user) {
+                        super.onPostExecute(user);
+
+                        if(user != null) {
+                            User.setDeviceUserId(newUserId);
+                            syncSettings();
+                        }
+                        else {
+                            Toast.makeText(AppSettingsActivity.this, "Invalid User Id", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }.execute();
             }
 
             return true;
