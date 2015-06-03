@@ -98,6 +98,7 @@ public class GroupActivity extends ActionBarActivity implements RefreshRequestLi
                 return true;
             case R.id.action_create:
                 createPoll();
+                return true;
             case R.id.action_edit:
                 editGroupNameDialog();
                 return true;
