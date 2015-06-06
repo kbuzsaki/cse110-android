@@ -14,6 +14,7 @@ import android.widget.*;
 import edu.ucsd.studentpoll.models.ChoiceQuestion;
 import edu.ucsd.studentpoll.models.ChoiceResponse;
 import edu.ucsd.studentpoll.models.Question;
+import edu.ucsd.studentpoll.models.User;
 import edu.ucsd.studentpoll.rest.RESTException;
 
 import java.util.ArrayList;
@@ -104,6 +105,20 @@ public class ChoiceResponseFragment extends ResponseFragment {
         choiceQuestionOptions = choiceQuestion.getOptions();
     }
 
+    private void updateLatestResponse() {
+        if(latestResponse == null) {
+            User user = User.getDeviceUser();
+
+            for(ChoiceResponse response : choiceQuestion.getResponses()) {
+                Log.d(TAG, response.getResponder().getName());
+                if(response.getResponder() == user) {
+                    latestResponse = response;
+                    Log.d(TAG, "FOUND RESPONSE FOR CURRENT USER: " + response.getResponder().getName());
+                }
+            }
+        }
+    }
+
     public void refreshView() {
         if(rootView == null) {
             Log.w(TAG, "rootView null!");
@@ -115,6 +130,7 @@ public class ChoiceResponseFragment extends ResponseFragment {
         List<String> options = choiceQuestion.getOptions();
 
         Log.i(TAG, "refreshView started");
+        updateLatestResponse();
 
         final RadioGroup optionsGroup = (RadioGroup) rootView.findViewById(R.id.options_group);
         TextView pollTitle = (TextView) rootView.findViewById(R.id.pollTitle);
@@ -128,12 +144,12 @@ public class ChoiceResponseFragment extends ResponseFragment {
         }
 
         for (String optionText : options) {
-            addOption(optionText, optionsGroup, false);
+            addOption(optionText, optionsGroup);
         }
 
     }
 
-    private void addOption(String optionText, RadioGroup optionsGroup, Boolean startChecked) {
+    private void addOption(String optionText, RadioGroup optionsGroup) {
         if(choiceQuestion.getAllowMultiple()) {
             CheckBox button = new CheckBox(getActivity());
             if(latestResponse != null && latestResponse.getChoices().contains(optionText)) {
@@ -177,7 +193,7 @@ public class ChoiceResponseFragment extends ResponseFragment {
                 if(choiceQuestionOptions.contains(optionText)) {
                     Toast.makeText(getActivity().getApplicationContext(), "Option already exists.", Toast.LENGTH_SHORT).show();
                 } else {
-                    addOption(optionText, optionsGroup, true);
+                    addOption(optionText, optionsGroup);
                     choiceQuestionOptions.add(optionText);
                     Toast.makeText(getActivity().getApplicationContext(), optionText + " added.", Toast.LENGTH_SHORT).show();
                 }
