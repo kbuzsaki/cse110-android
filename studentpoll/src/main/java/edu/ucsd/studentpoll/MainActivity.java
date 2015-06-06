@@ -1,11 +1,15 @@
 package edu.ucsd.studentpoll;
 
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.SystemClock;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -83,7 +87,7 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
             refreshContent(null);
         }
         else {
-            User.createDeviceUser("NewUserName", new FutureCallback<User>() {
+            User.createDeviceUser(getDefaultName(), new FutureCallback<User>() {
                 @Override
                 public void onSuccess(User result) {
                     Toast.makeText(MainActivity.this, "Hi, " + result.getName() + "!", Toast.LENGTH_LONG).show();
@@ -371,5 +375,32 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
         public int getCount() {
             return NUM_PAGES;
         }
+    }
+
+    private String getDefaultName() {
+        final String[] projection = new String[]
+                { ContactsContract.Profile.DISPLAY_NAME };
+        String name = null;
+        final Uri dataUri = Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI, ContactsContract.Contacts.Data.CONTENT_DIRECTORY);
+        final ContentResolver contentResolver = getContentResolver();
+        final Cursor c = contentResolver.query(dataUri, projection, null, null, null);
+
+        try
+        {
+            if (c.moveToFirst())
+            {
+                name = c.getString(c.getColumnIndex(ContactsContract.Profile.DISPLAY_NAME));
+            }
+        }
+        finally
+        {
+            c.close();
+        }
+
+        if(name == null) {
+            name = "Anonymous Pollr Bear";
+        }
+
+        return name;
     }
 }
