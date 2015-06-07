@@ -164,6 +164,14 @@ public class CreateRankQuestionActivity extends ActionBarActivity {
         String name = getQuestionTitle();
         List<String> options = getQuestionOptions();
 
+        if(name.length() == 0 ) {
+            Toast.makeText(getApplicationContext(), "Please add a title", Toast.LENGTH_SHORT).show();
+            return;
+        } else if(options.size() == 1) {
+            Toast.makeText(getApplicationContext(), "Please add more options.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Log.d(TAG, "name: " + name);
         Log.d(TAG, "options: " + options);
 

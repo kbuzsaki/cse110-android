@@ -13,11 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.*;
 import edu.ucsd.studentpoll.models.ChoiceQuestion;
 import edu.ucsd.studentpoll.view.NewlineInterceptor;
 
@@ -196,6 +192,14 @@ public class CreateChoiceQuestionActivity extends ActionBarActivity {
         List<String> options = getQuestionOptions();
         Boolean allowCustom = getAllowCustom();
         Boolean allowMultiple = getAllowMultiple();
+
+        if(name.length() == 0 ) {
+            Toast.makeText(getApplicationContext(), "Please add a title", Toast.LENGTH_SHORT).show();
+            return;
+        } else if(options.size() == 1) {
+            Toast.makeText(getApplicationContext(), "Please add more options.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         Log.d(TAG, "name: " + name);
         Log.d(TAG, "options: " + options);
