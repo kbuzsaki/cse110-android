@@ -132,8 +132,7 @@ public class CreatePollActivity extends ActionBarActivity {
     }
 
     public void createScheduleQuestion() {
-        Intent intent = new Intent(this, CreateSchedulePoll.class);
-        startActivityForResult(intent, REQ_CODE_ADD_QUESTION);
+        Toast.makeText(getApplicationContext(), "Not Yet Implemented.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
