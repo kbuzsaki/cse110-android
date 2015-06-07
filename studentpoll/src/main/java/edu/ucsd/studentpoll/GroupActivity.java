@@ -235,6 +235,7 @@ public class GroupActivity extends ActionBarActivity implements RefreshRequestLi
                     protected void onPostExecute(Group result) {
                         super.onPostExecute(result);
                         if(result != null) {
+                            setTitle(group.getName());
                             Toast.makeText(GroupActivity.this, "Successfully updated name to '" + result.getName() + "'", Toast.LENGTH_SHORT).show();
                         }
                         else {
