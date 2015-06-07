@@ -190,17 +190,21 @@ public class CreateRankQuestionActivity extends ActionBarActivity {
         final Button addButton = (Button) optionFieldLayout.findViewById(R.id.optionAdd);
         focusKeyboardOn(optionField);
 
-        optionField.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+        optionField.setOnEditorActionListener(new NewlineInterceptor(new NewlineInterceptor.OnInterceptListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    dismissKeyboardFrom(optionField);
+            public void newlineIntercepted() {
+                dismissKeyboardFrom(optionField);
+                if(addButton.getText().equals("+")) {
                     addButton.performClick();
-                    return true;
                 }
-                return false;
+                else {
+                    LinearLayout optionsLayout = (LinearLayout) findViewById(R.id.optionsLayout);
+                    View optionEntry = optionsLayout.getChildAt(optionsLayout.getChildCount() - 1);
+                    Button lastAddButton = (Button) optionEntry.findViewById(R.id.optionAdd);
+                    lastAddButton.performClick();
+                }
             }
-        });
+        }));
     }
 
     private void focusKeyboardOn(View view) {

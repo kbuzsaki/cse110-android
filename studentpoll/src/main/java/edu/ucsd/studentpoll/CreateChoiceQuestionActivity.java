@@ -224,7 +224,15 @@ public class CreateChoiceQuestionActivity extends ActionBarActivity {
             @Override
             public void newlineIntercepted() {
                 dismissKeyboardFrom(optionField);
-                addButton.performClick();
+                if(addButton.getText().equals("+")) {
+                    addButton.performClick();
+                }
+                else {
+                    LinearLayout optionsLayout = (LinearLayout) findViewById(R.id.optionsLayout);
+                    View optionEntry = optionsLayout.getChildAt(optionsLayout.getChildCount() - 1);
+                    Button lastAddButton = (Button) optionEntry.findViewById(R.id.optionAdd);
+                    lastAddButton.performClick();
+                }
             }
         }));
     }
