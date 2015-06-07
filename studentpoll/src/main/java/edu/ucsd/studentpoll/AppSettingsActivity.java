@@ -191,6 +191,7 @@ public class AppSettingsActivity extends PreferenceActivity {
                             User.setDeviceUserId(newUserId);
                             try {
                                 syncSettings();
+                                Toast.makeText(AppSettingsActivity.this, "Successfully switched to user id: " + newUserId, Toast.LENGTH_SHORT).show();
                             }
                             catch (NullPointerException e) {
                                 Log.e(TAG, "Failed to update settings", e);
