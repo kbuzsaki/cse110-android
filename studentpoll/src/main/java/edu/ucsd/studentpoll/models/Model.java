@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.os.SystemClock;
 import android.util.Log;
 import edu.ucsd.studentpoll.rest.JsonUtils;
+import edu.ucsd.studentpoll.rest.RESTException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,8 +14,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -106,9 +109,10 @@ public abstract class Model implements Parcelable {
     public static void refreshAllIfOlder(Collection<? extends Model> models, final long thresholdTime) {
         ExecutorService executorService = Executors.newFixedThreadPool(4);
 
+        List<Future<?>> futures = new ArrayList<>();
         for(final Model model : models) {
             if(model.isOlderThan(thresholdTime)) {
-                executorService.submit(new Runnable() {
+                Future<?> future = executorService.submit(new Runnable() {
                     @Override
                     public void run() {
                         long start = SystemClock.uptimeMillis();
@@ -118,6 +122,7 @@ public abstract class Model implements Parcelable {
                         Log.v(TAG, "time for request: " + delta);
                     }
                 });
+                futures.add(future);
             }
         }
 
@@ -126,6 +131,15 @@ public abstract class Model implements Parcelable {
             executorService.awaitTermination(TIMEOUT_MINUTES, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             Log.e(TAG, "Failed to load!", e);
+        }
+
+        for(Future future : futures) {
+            try {
+                future.get();
+            } catch (InterruptedException|ExecutionException e) {
+                Log.e(TAG, "Error while loading content", e);
+                throw new RESTException(e);
+            }
         }
     }
 
