@@ -30,11 +30,30 @@ If you wish to instead, you can clone our source repository and build the APK yo
 
 #### Steps for Installation
 
-1. Download the APK from the link above.
+You can choose to install our application using your computer or your device alone.
+Instructions for each scenario are provided below.
+
+If you have not directly installed-- "sideloaded"-- applications on your android
+device before, you may have to enable loading applications from unkown sources 
+in your device settings. You can find this setting at:
+
+`Settings -> Security -> Device Administration -> Unknown Sources`
+
+##### Transfering From Your Computer
+
+1. Download the APK from the link above on your computer.
 2. Connect your android device to your computer.
 3. Load the APK onto your device.
 4. Navigate to and install the APK using a tool like [ES File Explorer](https://play.google.com/store/apps/details?id=com.estrongs.android.pop&hl=en).
 5. Launch the application, 'Pollr'.
+
+##### Installing Directly From Device
+
+1. Download the APK from the link above on your device. 
+   You can do this by copying the link to your device or by navigating to our github repo
+   on your device and accessing the readme there.
+2. Navigate to and install the APK using a tool like [ES File Explorer](https://play.google.com/store/apps/details?id=com.estrongs.android.pop&hl=en).
+3. Launch the application, 'Pollr'.
 
 ## Information for Testing
 
