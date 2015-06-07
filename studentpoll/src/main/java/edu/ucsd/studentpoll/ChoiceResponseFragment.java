@@ -138,12 +138,12 @@ public class ChoiceResponseFragment extends ResponseFragment {
 
         optionsGroup.removeAllViews();
 
-        if(!choiceQuestion.getAllowMultiple()) {
-            optionsGroup.setOnCheckedChangeListener(responseListener);
-        }
-
         for (String optionText : options) {
             addOption(optionText, optionsGroup);
+        }
+
+        if(!choiceQuestion.getAllowMultiple()) {
+            optionsGroup.setOnCheckedChangeListener(responseListener);
         }
 
     }
@@ -153,6 +153,7 @@ public class ChoiceResponseFragment extends ResponseFragment {
             CheckBox button = new CheckBox(getActivity());
             if(latestResponse != null && latestResponse.getChoices().contains(optionText)) {
                 button.setChecked(true);
+                //optionsGroup.check(button.getId());
             }
 
             button.setText(optionText);
@@ -162,13 +163,16 @@ public class ChoiceResponseFragment extends ResponseFragment {
 
         } else {
             RadioButton button = new RadioButton(getActivity());
-            if(latestResponse != null && latestResponse.getChoices().contains(optionText)) {
-                button.setChecked(true);
-            }
 
+            button.setId(View.generateViewId());
             button.setText(optionText);
-
             optionsGroup.addView(button);
+
+            Log.d(TAG, "Made button for option: " + optionText + ", with id: " + button.getId());
+            if(latestResponse != null && latestResponse.getChoices().contains(optionText)) {
+                Log.d(TAG, "Button with id: " + button.getId() + " is being selected.");
+                optionsGroup.check(button.getId());
+            }
         }
     }
 
