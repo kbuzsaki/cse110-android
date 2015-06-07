@@ -242,11 +242,19 @@ public class AppSettingsActivity extends PreferenceActivity {
     }
 
     private void updateSettings(User user) {
-        findPreference("device.user.key").setSummary(user.getId().toString());
-        findPreference("user_name").setSummary(user.getName());
+        updateSetting(findPreference("device.user.key"), user.getId().toString());
+        updateSetting(findPreference("user_name"), user.getName());
+        
         final Resources resources = getResources();
         Drawable avatar = user.getAvatar() != null ? user.getDrawableAvatar(resources) : resources.getDrawable(R.drawable.pollr_bear);
         findPreference("user_avatar").setIcon(avatar);
+    }
+
+    private void updateSetting(Preference preference, String content) {
+        preference.setSummary(content);
+        if(preference instanceof EditTextPreference) {
+            ((EditTextPreference) preference).setText(content);
+        }
     }
 
     /**
