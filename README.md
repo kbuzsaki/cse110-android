@@ -24,7 +24,8 @@ at a time so that you can create and join polls separately.
 
 #### APK Download Link
 
-You can download a pre-built APK [here](http://google.com).  
+You can download a pre-built APK
+[here](https://github.com/kbuzsaki/cse110-android/releases/download/pollr-0.1/pollr.apk).  
 If you wish to instead, you can clone our source repository and build the APK yourself using Android Studio.
 
 #### Steps for Installation
