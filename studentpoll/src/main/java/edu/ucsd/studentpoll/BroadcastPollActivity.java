@@ -51,7 +51,12 @@ public class BroadcastPollActivity extends ActionBarActivity {
 
             @Override
             protected void onPostExecute(String accessCode) {
-                setAccessCode(accessCode);
+                try {
+                    setAccessCode(accessCode);
+                }
+                catch (NullPointerException e) {
+                    Log.e(TAG, "Failed to initialize broadcast", e);
+                }
                 Toast.makeText(getApplicationContext(), "Now Broadcasting", Toast.LENGTH_SHORT).show();
             }
         }.execute();

@@ -53,8 +53,13 @@ public class ChoiceResultFragment extends ResultFragment {
 
                     @Override
                     protected void onPostExecute(Question question) {
-                        choiceQuestion = (ChoiceQuestion) question;
-                        refreshView();
+                        try {
+                            choiceQuestion = (ChoiceQuestion) question;
+                            refreshView();
+                        }
+                        catch (NullPointerException e) {
+                            Log.e(TAG, "Failed to refresh choice result view", e);
+                        }
                     }
                 }.execute();
             }

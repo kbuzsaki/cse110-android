@@ -203,8 +203,13 @@ public class RankResponseFragment extends ResponseFragment {
                     Toast.makeText(getActivity(), "Failed to send vote.", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    latestResponse = rankResponse;
-                    onPutResponseListener.onResponsePut(latestResponse);
+                    try {
+                        latestResponse = rankResponse;
+                        onPutResponseListener.onResponsePut(latestResponse);
+                    }
+                    catch (NullPointerException e) {
+                        Log.e(TAG, "Failed to update response listener", e);
+                    }
                 }
             }
         }.execute();

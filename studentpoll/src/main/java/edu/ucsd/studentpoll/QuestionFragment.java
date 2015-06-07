@@ -114,7 +114,12 @@ public abstract class QuestionFragment extends Fragment {
 
             @Override
             protected void onPostExecute(Question question) {
-                refreshView();
+                try {
+                    refreshView();
+                }
+                catch (NullPointerException e) {
+                    Log.e(TAG, "Failed to refresh question content", e);
+                }
             }
         }.execute();
     }
@@ -131,7 +136,12 @@ public abstract class QuestionFragment extends Fragment {
 
             @Override
             protected void onPostExecute(Question question) {
-                getResultFragment().refreshView();
+                try {
+                    getResultFragment().refreshView();
+                }
+                catch (NullPointerException e) {
+                    Log.e(TAG, "Failed to refresh question results", e);
+                }
             }
         }.execute();
     }

@@ -159,22 +159,32 @@ public class GroupActivity extends ActionBarActivity implements RefreshRequestLi
             @Override
             protected void onPostExecute(List<Poll> polls) {
                 super.onPostExecute(polls);
-                if(polls != null) {
-                    pagerAdapter.pollsFragment.updatePolls(polls);
+                try {
+                    if(polls != null) {
+                        pagerAdapter.pollsFragment.updatePolls(polls);
+                    }
+                    else {
+                        Log.w(TAG, "Failed to refresh polls...");
+                        Toast.makeText(GroupActivity.this, "Failed Refresh", Toast.LENGTH_SHORT).show();
+                    }
+                    if(callback != null) {
+                        callback.run();
+                    }
                 }
-                else {
-                    Log.w(TAG, "Failed to refresh polls...");
-                    Toast.makeText(GroupActivity.this, "Failed Refresh", Toast.LENGTH_SHORT).show();
-                }
-                if(callback != null) {
-                    callback.run();
+                catch (NullPointerException e) {
+                    Log.e(TAG, "Failed to refresh group screen", e);
                 }
             }
 
             @Override
             protected void onProgressUpdate(List<User>... values) {
-                List<User> members = values[0];
-                pagerAdapter.membersFragment.updateMembers(members);
+                try {
+                    List<User> members = values[0];
+                    pagerAdapter.membersFragment.updateMembers(members);
+                }
+                catch (NullPointerException e) {
+                    Log.e(TAG, "Failed to update members", e);
+                }
             }
         }.execute();
     }

@@ -178,23 +178,33 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
             protected void onPostExecute(List<Poll> polls) {
                 super.onPostExecute(polls);
 
-                Log.i(TAG, "Refresh request completed.");
-                if(polls != null) {
-                    pagerAdapter.pollsFragment.updatePolls(polls);
+                try {
+                    Log.i(TAG, "Refresh request completed.");
+                    if(polls != null) {
+                        pagerAdapter.pollsFragment.updatePolls(polls);
+                    }
+                    else {
+                        Log.w(TAG, "Failed to refresh polls...");
+                        Toast.makeText(MainActivity.this, "Failed Refresh", Toast.LENGTH_SHORT).show();
+                    }
+                    if(callback != null) {
+                        callback.run();
+                    }
                 }
-                else {
-                    Log.w(TAG, "Failed to refresh polls...");
-                    Toast.makeText(MainActivity.this, "Failed Refresh", Toast.LENGTH_SHORT).show();
-                }
-                if(callback != null) {
-                    callback.run();
+                catch (NullPointerException e) {
+                    Log.e(TAG, "Failed to update groups page", e);
                 }
             }
 
             @Override
             protected void onProgressUpdate(List<Group>... values) {
-                List<Group> groups = values[0];
-                pagerAdapter.homeFragment.updateGroups(groups);
+                try {
+                    List<Group> groups = values[0];
+                    pagerAdapter.homeFragment.updateGroups(groups);
+                }
+                catch (NullPointerException e) {
+                    Log.e(TAG, "Failed to update progress", e);
+                }
             }
         }.execute();
     }
@@ -277,24 +287,29 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
             protected void onPostExecute(Poll poll) {
                 super.onPostExecute(poll);
 
-                if(poll == null) {
-                    AlertDialog errorDialog = new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("Join Failed")
-                            .setMessage("We couldn't find a poll for \"" + accessCode + "\". Did you enter it correctly?")
-                            .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    joinPollDialog();
-                                }
-                            })
-                            .setNegativeButton("Cancel", null)
-                            .create();
-                    errorDialog.show();
+                try {
+                    if(poll == null) {
+                        AlertDialog errorDialog = new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("Join Failed")
+                                .setMessage("We couldn't find a poll for \"" + accessCode + "\". Did you enter it correctly?")
+                                .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        joinPollDialog();
+                                    }
+                                })
+                                .setNegativeButton("Cancel", null)
+                                .create();
+                        errorDialog.show();
+                    }
+                    else {
+                        Intent intent = new Intent(MainActivity.this, PollActivity.class);
+                        intent.putExtra("poll", poll);
+                        startActivity(intent);
+                    }
                 }
-                else {
-                    Intent intent = new Intent(MainActivity.this, PollActivity.class);
-                    intent.putExtra("poll", poll);
-                    startActivity(intent);
+                catch (NullPointerException e) {
+                    Log.e(TAG, "Failed to start poll", e);
                 }
             }
         }.execute();

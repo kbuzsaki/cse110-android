@@ -151,7 +151,12 @@ public class AppSettingsActivity extends PreferenceActivity {
                     protected void onPostExecute(User result) {
                         super.onPostExecute(result);
                         if(result != null) {
-                            updateSettings(result);
+                            try {
+                                updateSettings(result);
+                            }
+                            catch (NullPointerException e) {
+                                Log.e(TAG, "Failed to update settings", e);
+                            }
                             Toast.makeText(AppSettingsActivity.this, "Successfully updated name to '" + result.getName() + "'", Toast.LENGTH_SHORT).show();
                         }
                         else {
@@ -184,7 +189,12 @@ public class AppSettingsActivity extends PreferenceActivity {
 
                         if(user != null) {
                             User.setDeviceUserId(newUserId);
-                            syncSettings();
+                            try {
+                                syncSettings();
+                            }
+                            catch (NullPointerException e) {
+                                Log.e(TAG, "Failed to update settings", e);
+                            }
                         }
                         else {
                             Toast.makeText(AppSettingsActivity.this, "Invalid User Id", Toast.LENGTH_SHORT).show();
@@ -220,7 +230,12 @@ public class AppSettingsActivity extends PreferenceActivity {
                     return;
                 }
 
-                updateSettings(user);
+                try {
+                    updateSettings(user);
+                }
+                catch (NullPointerException e) {
+                    Log.e(TAG, "Failed to update settings", e);
+                }
             }
         }.execute();
     }
@@ -269,7 +284,12 @@ public class AppSettingsActivity extends PreferenceActivity {
 
                 if(user != null) {
                     Toast.makeText(AppSettingsActivity.this, "Avatar uploaded!", Toast.LENGTH_SHORT);
-                    avatarPreference.setIcon(user.getDrawableAvatar(getResources()));
+                    try {
+                        avatarPreference.setIcon(user.getDrawableAvatar(getResources()));
+                    }
+                    catch (NullPointerException e) {
+                        Log.e(TAG, "Failed to update avatar preference", e);
+                    }
                 }
                 else {
                     Toast.makeText(AppSettingsActivity.this, "Failed to upload avatar.", Toast.LENGTH_SHORT);

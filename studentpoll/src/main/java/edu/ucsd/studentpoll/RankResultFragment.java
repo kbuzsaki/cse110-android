@@ -57,8 +57,13 @@ public class RankResultFragment extends ResultFragment {
 
                     @Override
                     protected void onPostExecute(Question question) {
-                        rankQuestion = (RankQuestion) question;
-                        refreshView();
+                        try {
+                            rankQuestion = (RankQuestion) question;
+                            refreshView();
+                        }
+                        catch (NullPointerException e) {
+                            Log.e(TAG, "Failed to update rank result fragment", e);
+                        }
                     }
                 }.execute();
             }

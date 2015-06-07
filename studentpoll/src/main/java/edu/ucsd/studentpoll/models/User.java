@@ -189,12 +189,17 @@ public class User extends Model {
             @Override
             protected void onPostExecute(User user) {
                 super.onPostExecute(user);
-                if(user != null) {
-                    setDeviceUserId(user.getId());
-                    callback.onSuccess(user);
+                try {
+                    if(user != null) {
+                        setDeviceUserId(user.getId());
+                        callback.onSuccess(user);
+                    }
+                    else {
+                        callback.onFailure(new RuntimeException("Failed to create user!"));
+                    }
                 }
-                else {
-                    callback.onFailure(new RuntimeException("Failed to create user!"));
+                catch (NullPointerException e) {
+                    Log.e(TAG, "Failed to create device user", e);
                 }
             }
         }.execute();

@@ -110,7 +110,6 @@ public class ChoiceResponseFragment extends ResponseFragment {
             User user = User.getDeviceUser();
 
             for(ChoiceResponse response : choiceQuestion.getResponses()) {
-                Log.d(TAG, response.getResponder().getName());
                 if(response.getResponder() == user) {
                     latestResponse = response;
                     Log.d(TAG, "FOUND RESPONSE FOR CURRENT USER: " + response.getResponder().getName());
@@ -289,8 +288,13 @@ public class ChoiceResponseFragment extends ResponseFragment {
                         Toast.makeText(getActivity(), "Failed to send vote.", Toast.LENGTH_SHORT).show();
                     }
                     else {
-                        latestResponse = choiceResponse;
-                        onPutResponseListener.onResponsePut(latestResponse);
+                        try {
+                            latestResponse = choiceResponse;
+                            onPutResponseListener.onResponsePut(latestResponse);
+                        }
+                        catch (NullPointerException e) {
+                            Log.e(TAG, "Failed to update response listener", e);
+                        }
                     }
                 }
             }.execute();

@@ -200,7 +200,12 @@ public class CreatePollActivity extends ActionBarActivity {
                 }
                 else {
                     Log.i(TAG, "broadcast activity about to start");
-                    startBroadcast(poll);
+                    try {
+                        startBroadcast(poll);
+                    }
+                    catch (NullPointerException e) {
+                        Log.e(TAG, "Failed start broadcast", e);
+                    }
                     Log.i(TAG, "broadcast activity started");
                 }
                 finish();
