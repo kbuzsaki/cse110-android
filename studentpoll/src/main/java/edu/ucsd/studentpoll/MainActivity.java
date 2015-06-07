@@ -95,7 +95,7 @@ public class MainActivity extends ActionBarActivity implements RefreshRequestLis
 
                 @Override
                 public void onFailure(Throwable t) {
-                    Toast.makeText(MainActivity.this, "Failed to create user :(", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Failed to create user, could not connect to network.", Toast.LENGTH_LONG).show();
                 }
             });
         }
