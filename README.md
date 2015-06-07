@@ -45,6 +45,13 @@ This "account" is usually hidden from the user and cannot be changed or deleted.
 For the purposes of testing, we have provided a way to switch between user "accounts"
 and generate fresh new user accounts from the settings screen.
 
+#### Sample User Account Information
+
+The following accounts have been prepopulated with sample data from our first Test Suite:
+
+- User Id 268
+- User Id 269
+
 #### Switching to a Different User
 
 1. Navigate to the home screen by pressing the back button until you see the
