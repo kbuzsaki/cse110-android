@@ -47,6 +47,7 @@ public class AppSettingsActivity extends PreferenceActivity {
 
         final EditTextPreference usernamePreference = (EditTextPreference)findPreference("user_name");
         bindPreferenceSummaryToValue(usernamePreference, user.getName());
+        usernamePreference.setText(user.getName());
 
         final Preference avatarPreference = findPreference("user_avatar");
         final Resources resources = getResources();
@@ -72,6 +73,7 @@ public class AppSettingsActivity extends PreferenceActivity {
 
         final EditTextPreference userIdPreference = (EditTextPreference)findPreference("device.user.key");
         bindPreferenceSummaryToValue(userIdPreference, user.getId());
+        userIdPreference.setText("" + user.getId());
 
         Preference button = (Preference)findPreference("gen_user");
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
