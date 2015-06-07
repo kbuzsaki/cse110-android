@@ -121,7 +121,6 @@ public class RankResponseFragment extends ResponseFragment {
             User user = User.getDeviceUser();
 
             for(RankResponse response : rankQuestion.getResponses()) {
-                Log.d(TAG, response.getResponder().getName());
                 if(response.getResponder() == user) {
                     latestResponse = response;
                     rankOptionAdapter.setOptions(latestResponse.getChoices());
