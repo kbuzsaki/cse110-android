@@ -25,7 +25,7 @@ at a time so that you can create and join polls separately.
 #### APK Download Link
 
 You can download a pre-built APK
-[here](https://github.com/kbuzsaki/cse110-android/releases/download/pollr-0.1.1/pollr.apk).
+[here](https://github.com/kbuzsaki/cse110-android/releases/download/pollr-0.1.2/pollr.apk).
 If you wish to instead, you can clone our source repository and build the APK yourself using Android Studio.
 
 #### Steps for Installation
@@ -104,7 +104,7 @@ Our package structure from the `main` directory is as follows:
 #### iOS Application - Deferred 
 
 The repository for the iOS application can be found
-[here](https://github.com/kbuzsaki/cse110-ios).
+[here](https://github.com/kbuzsaki/cse110-ios/tree/develop).
 The most up to date code is located on the `develop` branch.
 
 The iOS application is not complete and has been deferred for this release.
@@ -113,7 +113,7 @@ As such, there are no testing instructions for the iOS application.
 #### Web Backend
 
 The repository for the web application can be found
-[here](https://github.com/kbuzsaki/cse110-web).
+[here](https://github.com/kbuzsaki/cse110-web/tree/fullcircle).
 The most up to date code is located on the `fullcircle` branch.
 
 The web backend for our application is not user facing. Instead, the 
