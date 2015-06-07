@@ -16,9 +16,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-import edu.ucsd.studentpoll.models.Question;
-import edu.ucsd.studentpoll.models.RankQuestion;
-import edu.ucsd.studentpoll.models.RankResponse;
+import edu.ucsd.studentpoll.models.*;
 import edu.ucsd.studentpoll.rest.RESTException;
 import edu.ucsd.studentpoll.view.DragSortRecycler;
 
@@ -118,10 +116,27 @@ public class RankResponseFragment extends ResponseFragment {
         }
     }
 
+    private void updateLatestResponse() {
+        if(latestResponse == null) {
+            User user = User.getDeviceUser();
+
+            for(RankResponse response : rankQuestion.getResponses()) {
+                Log.d(TAG, response.getResponder().getName());
+                if(response.getResponder() == user) {
+                    latestResponse = response;
+                    rankOptionAdapter.setOptions(latestResponse.getChoices());
+                    Log.d(TAG, "FOUND RESPONSE FOR CURRENT USER: " + response.getResponder().getName());
+                }
+            }
+        }
+    }
+
     @Override
     public void refreshView() {
         ((TextView)rootView.findViewById(R.id.pollTitle)).setText(rankQuestion.getTitle());
         rankOptionAdapter.setOptions(rankQuestion.getOptions());
+        updateLatestResponse();
+
     }
 
     private class RankOptionAdapter extends RecyclerView.Adapter<RankOptionViewHolder> {
